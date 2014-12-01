@@ -1,4 +1,4 @@
-ralc
+RALC
 ====
 
 Randomized Adventure Lore Creator
@@ -7,14 +7,22 @@ Python-based set of scripts to make playing adventure-type games requiring lore 
 
 Will handle:
 
-==Character Generation==
+Character Generation
+-
+1. Stats
+2. Desc
+3. Abilites
+4. Biography
 
--Stats, Desc, Abilites, Bio, etc
+Areas
+-
+1. Biomes
+2. Terrain
+3. Cities
+4. Residents
 
-==Areas==
-
--Biomes, Terrain, Cities, Residents
-
-==Encounters==
-
--use character generation and areas to build a scene
+Encounters
+-
+1. Scene Generation
+2. Terrain Usage
+3. Opponenet Generation
