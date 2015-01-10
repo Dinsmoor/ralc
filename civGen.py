@@ -25,7 +25,12 @@
 #  Responsible for popluating buildings via charGen
 
 
+<<<<<<< HEAD
 # this is my shit
+=======
+# I love you so much Tyler. Smile :)
+
+>>>>>>> 5612093366ccc9d06ed35e46004cfb2a755cf8f7
 
 def getTownDesc():
 	pass
