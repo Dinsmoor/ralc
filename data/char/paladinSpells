@@ -1,0 +1,22 @@
+# See sampleConfig for comments usage data
+
+# Configuration for spells for the "Paladin" class type
+
+# Cantrips	spells[0]
+None, None, None, None, None, None
+
+# Lvl 1		spells[1]
+Bless, Command, Compelled Duel, Cure Wounds, Detect Evil and Good, Detect Magic, Detect Poison and Disease, Divine Favor, Heroism, Protection from Evil and Good, Purify Food and Drink, Searing Smite, Shield of Faith, Thunderous Smite, Wrathful Smite
+
+# Lvl 2		spells[2]
+Aid, Branding Smite, Find Steed, Lesser Restoration, Locate Object, Magic Weapon, Protection from Poison, Zone of Truth
+
+# Lvl 3		spells[3]
+Aura of Vitality, Blinding Smite, Create Food and Water, Crusader's Mantle, Daylight, Dispel Magic, Elemental Weapon, Magic Circle, Remove Curse, Revivify
+
+# Lvl 4		spells[4]
+Aura of Life, Aura of Purity, Banishment, Death Ward, Locate Creature, Staggering Smite
+
+# Lvl 5		spells[5]
+Banishing Smite, Circle of Power, Destructive Smite, Dispel Evil and Good, Geas, Raise Dead
+

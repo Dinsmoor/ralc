@@ -1,0 +1,12 @@
+# See sampleConfig for comments usage data
+
+# Configuration file for the "Half-Orc" race
+
+# male names
+Dench,Feng,Gell,Henk,Holg,Imsh,Keth,Krusk,Mhurren,Ront,Shump,Thokk
+
+# female names
+Baggi,Emen,Engong,Kansif,Myev,Neega,Ovak,Ownka,Shautha,Sutha,Vola,Volen,Yevelda
+
+# There are no last names, so use empty spaces
+,

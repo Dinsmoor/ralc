@@ -1,0 +1,12 @@
+# See sampleConfig for comments usage data
+
+# Configuration file for the "Human" race
+
+# male names		names[0]
+Floyd,Pablo,Cooper,Allan,Torren,Nate,Zed,Jasper,Jordy,Kelvin,Tyrone,Landon,Ayaan,Kevin,Austin,Stuart,Fred,Evan,Otis,Trevor,Luke,Homer,Doug,Kenny,Nathan,Luther,Omar,Neal,Cam,Rex,Carlton,Ernesto,Lorenzo,Grant,Greg,Horace,Kerry,Hubert,Willis
+
+# female names		names[1]
+Sasha,Bailey,Salome,Jess,Ellis,Annabel,June,Rene,Giselle,Alisha,Annette,Elinor,Marge,Rosa,Mary,Patricia,Linda,Barbara,Laura,Sarah,JackLyn,Lacy,Hester,Dionne,Liz,Helga
+
+# last names		names[2]
+Smith,Johnson,Williams,Jones,Brown,Davis,Miller,Wilson,Moore,Taylor,Anderson,Thomas,Jackson,White,Harris,Martin,Thompson,Garcia,Martinez,Robinson,Clark,Lewis,Lee,Walker

@@ -1,0 +1,33 @@
+# See sampleConfig for comments usage data
+
+# Configuration for spells for the "Bard" class type
+
+# Cantrips	spells[0]
+Blade Ward, Dancing Lights, Friends, Light, Mage Hand, Mending, Message, Minor Illusion, Prestidigination, True Strike, Vicious Mockery
+
+# Lvl 1		spells[1]
+Animal Friendship, Bane, Charm Person, Comprehend Languages, Cure Wounds, Detect Magic, Disguise Self, Dissonant Whispers, Faerie Fire, Feather Fall, Healing Word, Heroism, Identify, Illusory Script, Longstrider, Silent Image, Sleep, Speak with Animals, Tasha's Hideous Laughter, Thunderwave, Unseen Servent
+
+# Lvl 2		spells[2]
+Animal Messanger, Blindness/Deafness, Calm Emotions, Cloud of Daggers, Crown of Madness, Detect Thoughts, Enhance Ability, Enthrall, Heat Metal, Hold Person, Invisibility, Knock, Lesser Restoration, Locate Animals or Plants, Locate Object, Magic Mouth, Plantasmal Force, See Invisibility, Shatter, Silence, Siggestion, Zone of Truth
+
+# Lvl 3		spells[3]
+Bestow Curse, Clainvoyance, Dispel Magic, Fear, Feign Death, Glyph of Warding, Hypnotic Pattern, Leomund's Tiny Hut, Major Image, Nondetection, Plant Growth, Sending, Speak with Dead, Stinking Cloud, Tongues
+
+# Lvl 4		spells[4]
+Compultion, Confusion, Dimension Door, Freedom of Movement, Greater Invisibility, Hallucinatory Terrain, Locate Creature, Polymorph
+
+# Lvl 5		spells[5]
+Animate Objects, Awaken, Dominate Person, Dream, Geas, Greater Restoration, Hold Monster, Legend Lore, Mass Cure Wounds, Mislead, Modify Memory, Planar Binding, Raise Dead, Scrying, Seeming, Teleportation Circle
+
+# Lvl 6		spells[6]
+Eyebite, Find the Path, Cuards and Wards, Mass Suggestion, Otto's Irresistable Dance, Programmed Illusion, True Seeing
+
+# Lvl 7		spells[7]
+Etheralness, Forcecage, Mirage Arcane, Mordenkainen's Magnificent Mansion, Mordenkainen's Magnificent Sword, Project Image, Regenerate, Resurrection, Symbol, Teleport
+
+# Lvl 8		spells[8]
+Dominate Monster, Feeblemind, Glibness, Mind Blank, Power Word Stun
+
+# Lvl 9		spells[9]
+Foresight, Power Word Heal, Power Word Kill, True Polymorph

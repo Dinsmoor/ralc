@@ -1,0 +1,23 @@
+# See sampleConfig for comments usage data
+
+# Configuration for spells for the "Ranger" class type
+
+# Cantrips	spells[0]
+None, None, None, None, None, None
+
+# Lvl 1		spells[1]
+Alarm, Animal Friendship, Cure Wounds, Detect Magic, Detect Poison and Disease, Ensaring Strike, Fog Cloud, Goodberry, Hail of Thorns, Hunter's Mark, Jump, Longstrider, Speak with Animals
+
+# Lvl 2		spells[2]
+Animal Messenger, Barkskin, Beast Sense, Cordon of Arrows, Darkvision, Find Traps, Lesser Restoration, Locate Animals or Plants, Locate Object, Pass without Trace, Protection from Poison, Silence, Spike Growth
+
+# Lvl 3		spells[3]
+Conjure Animals, Conjure Barrage, Daylight, Lightning Arrow, Nondetection, Plant Growth, Protection from Energy, Speak with Plants, Water Breathing, Water Walk, Wind Wall
+
+# Lvl 4		spells[4]
+Conjure Woodland Beings, Freedom of Movement, Grasping Vine, Locate Creature, Stoneskin
+
+# Lvl 5		spells[5]
+Commune with Nature, Conjure Volley, Swift Quiver, Tree Stride
+
+

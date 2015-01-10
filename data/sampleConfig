@@ -1,0 +1,41 @@
+# Comments may be placed in these sorts of files, like so.
+# Parser will ignore blank lines, and ones starting with a #
+# good idea to use comments to better desegnate what things mean
+#################
+# List of Lists:
+#################
+# spells must be on their own lines, and different names seperated
+# with a comma, leading and trailing spaces allowed.
+
+# For example:
+
+# Configuration for spells for the "spellcasting" class type
+
+# Name displayed	code-name
+
+# Cantrips	spells[0]
+weak spell, pissy spell  ,  gneric curse
+# this is allowed, although very ugly
+
+
+# Lvl 1			spells[1]
+somespell, otherspell, mehchaspell #4, megaspell #1
+# do it like this
+
+################
+# Dictionaries:
+################
+# Although ugly, the tabbed nature looks good when printed out,
+# so it is important to test the spacing for asthetics.
+# Leadin/Trailing spaces will not be stripped, because they are
+# used for spacing.
+# It would be a good idea to only use spacing on the value portion,
+# as we may need to look for a key, without having to worry about
+# all these sorts of spaces.
+# Dicitonaries will be in this format:
+
+Greataxe=1d12 slashing
+Battleaxe=1d8  slashing
+Flail=	1d8  bludgeoning
+Glaive=	1d10 slashing
+Halberd=	1d10 slashing

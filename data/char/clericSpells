@@ -1,0 +1,33 @@
+# See sampleConfig for comments usage data
+
+# Configuration for spells for the "Cleric" class type
+
+# Cantrips	spells[0]
+Guidance, Light, Mending, Resistance, Sacred Flame, Spare the Dying, Thaumaturgy
+
+# Lvl 1		spells[1]
+Bane, Bless, COmmand, Create or Destroy Water, Cure Wounds, Detect Evil and Good, Detect Magic, Detect Poison and Disease, Guiding Bolt, Healing Word, Inflict Wounds,Protection from,Evil and Good,Purify Food and Drink,Sanctuary,Shield of Faith
+
+# Lvl 2		spells[2]
+Aid, Augury, Blindness/Deafness,Calm Emotions,Continual Flame,Enhance Ability,Find Traps,Gentle Repose,Hold Person,Lesser Restoration,Locate Object,Prayer of Healing,Protection from Poison,Silence, Spiritual Weapon, Warding Bond, Zone of Truth
+
+# Lvl 3		spells[3]
+Animate Dead, Beacon of Hope, Bestow Curse, Clairvoyance, Create Food and Water, Daylight, Dispel Magic, Feign Death, Glyph of Warding, Magic Circle, Mass Healing Word, Meld into Stone, Protection from Energy,Remove Curse, Revivify, Sending, Speak with Dead, Spirit Guardians, Tongues, Water Walk
+
+# Lvl 4		spells[4]
+Banishment, Control Water, Death Ward, Divination, Freedom of Movement, Guardian of Faith, Locate Creature, Stone Shape
+
+# Lvl 5		spells[5]
+Commune, Contagion, Dispel Evil and Good, Flame Strike, Geas, Greater Restoration, Hallow, Insect Plague, Legend Lore, Mass Cure Wounds, Raise Dead, Scrying
+
+# Lvl 6		spells[6]
+Blade Barrier, Create Undead, Find the Path, Forbiddance, Harm, Heal, Heroes' Feast, Planar Ally, True Seeing, Word of Recall
+
+# Lvl 7		spells[7]
+Conjure Celestial, Divine Word, Etherealness, Fire Storm, Plane Shift, Regenerate, Resurrection, Symbol
+
+# Lvl 8		spells[8]
+Antimagic Field, Control Weather, Earthquake, Holy Aura
+
+# Lvl 9		spells[9]
+Astral Projection, Gate, Mass Heal, True Ressurrection

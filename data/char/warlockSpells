@@ -1,0 +1,33 @@
+# See sampleConfig for comments usage data
+
+# Configuration for spells for the "Warlock" class type
+
+# Cantrips	spells[0]
+Blade Ward, Chill Touch, Eldritch Blast, Friends, Mage Hand, Minor Illusion, Poison Spray, Prestidigitation, True Strike
+
+# Lvl 1		spells[1]
+Armor of Agathys, Arms of Hadar, Charm Person, Comprehend Languages, Expeditious Retreat, Hellish Rebuke, Hex, Illusory Script, Protection from Evil and Good, Unseen Servent, Witch Bolt
+
+# Lvl 2		spells[2]
+Cloud of Daggers, Crown of Madness, Darkness, Enthrall, Hold Person, Invisibility, Mirror IMage, Misty Step, Ray of Enfeeblement, Shatter, Spider Climb, Suggestion
+
+# Lvl 3		spells[3]
+Counterspell, Dispel Magic, Fear, Fly, Gaseous Form, Hunger of Hadar, Hyponotic Pattern, Magic Circle, Major Image, Remove Curse, Tongues, Vampiric Touch
+
+# Lvl 4		spells[4]
+Banishment, Blight, Dimension Door, Hallucinatory Terrain
+
+# Lvl 5		spells[5]
+Contact Other Plane, Dream, Hold Monster, Scrying
+
+# Lvl 6		spells[6]
+Arcane Gate, Circle of Death, COnjure Fey, Create Undead, Eyebite, Flesh to Stone, Mass Suggestion, True Seeing
+
+# Lvl 7		spells[7]
+Etherealness, Finger of Death, Forcecage, Plane Shift
+
+# Lvl 8		spells[8]
+Demiplane, Dominate Monster, Feeblemind, Glibness, Power Word Stun
+
+# Lvl 9		spells[9]
+Astral Projection, Foresight, Imprisonment, Power Word Kill, True Polymorph

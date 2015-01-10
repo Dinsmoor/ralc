@@ -1,0 +1,4 @@
+# must be in this format:
+# name=armorclass,hitpoints,speed,xp
+# example: 
+Goblin=15,7,30,50
