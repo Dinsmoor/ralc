@@ -26,8 +26,6 @@
 
 
 
-# fuck this shit.
-
 def getTownDesc():
 	pass
 
