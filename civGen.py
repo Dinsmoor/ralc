@@ -29,10 +29,25 @@
 # I love you so much Tyler. Smile :)
 
 
-def getTownDesc():
+def getTown():
+	'''
+	This will be used for compiling a dataset of many buildings, each
+	belonging to many roads, in order to represent a city, town or
+	villiage.
+	Eventually this will be either printed to a neat generated table,
+	or represented graphically using a map and reference sheet, tbd.
+	'''
 	pass
 
-def getStrets():
+def getStreets():
+	'''
+	Simply gets the coarse city size, then decides how may streets there
+	will be, and about how many buildings there will be per street, and
+	the building sizes themselves.
+	'''
+	pass
+
+def getJobDetails():
 	pass
 
 def main():
