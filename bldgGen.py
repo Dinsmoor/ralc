@@ -55,45 +55,46 @@ class Building(object):
 	def __init__(self, bldgID):
 		self.bldgID = bldgID
 
-	def getPurpose(self):
-		pass
-
 	def getInhabitants(self, popul):
 		peopleDat = {}
 		for inhabitant in xrange(0,popul):
 
-			personType = random.choice(('Commoner', 'Peasant', 'Noble'))
+			personType = random.choice(('Commoner', 'Merchant', 'Storekeeper', 'Peasant', 'Noble'))
 			peopleDat[personType+str(inhabitant)] = charGen.main()
 			#neatDicPrint(peopleDat[peopleID])
 		return peopleDat
 
-	def getRooms(self):
+	def getRooms(self, rooms):
 		'''
 		Should represent rooms as multiple dicts, but with spontaniously created vars
 		Need: Size, Furnishings, inhabitants
 		'''
 		roomDat = {}
-		roomDat['rooms'] = 3
+		roomDat['rooms'] = rooms
 		count = 0
 		for roomnum in xrange(0,roomDat['rooms']):
 			popul = random.randint(1,3)
 			roomNames = ('Entry','Kitchen','Living Area')
 			roomDat['roomID'+str(count)] = random.choice(roomNames)+str(roomnum)
 			#roomDat['roomID'] = Room(roomID, rooms, popul)
-			roomDat['Inhabitants'] = self.getInhabitants(popul)
+			roomDat['roomID'+str(count)+'Inhabitants'] = self.getInhabitants(popul)
 			count +=1
 
 		return roomDat
 
-	def getType(self):
+	def getPurpose(self):
+		'''
+		In the future, will be determined by what civGen needs, but used
+		here for debugging purposes. Same with getLevels.
+		'''
 		bldgtypes = ('Shack','Residence','General Store','Armorer','Courtyard',
 	'Weapon Smith', 'Tavern', 'Inn')
 		return random.choice(bldgtypes)
-	def getLevels(self):
-		return random.randint(1,2)
+
+
 	def getBldgMake(self):
 		descDict = {
-		#techlevel:roofing,walls,floor
+		#techlevel:roofing[0],walls[1],floor[2]
 		'primitive':(('thatch','straw'),('stick','mud'),('dirt','straw')),
 		'average':(('wooden','shingle'),('boarded','log','stone'),('wooden','stone')),
 		'advanced':(('sheet metal','shingle'),('concrete','stone','metal'),('wooden','metal','tile'))
@@ -103,78 +104,61 @@ class Building(object):
 		return (random.choice(materialsTup[0]),random.choice(materialsTup[1]),random.choice(materialsTup[2]))
 
 
-	def getAll(self):
-		self.btype = self.getType()
-		self.levels = self.getLevels()
+	def getAll(self,levels,rooms):
+		'''
+		Since we need all this data every time we need a building, it
+		makes the most sense just to grab it all at once.
+		'''
+		self.btype = self.getPurpose()
+		self.levels = levels #self.getLevels()
 		self.make = self.getBldgMake()
-		self.roomDat = self.getRooms()
+		self.roomDat = self.getRooms(rooms)
 		'''
 		rooms is important, it determines the types of rooms, how many
 		inhabitants, and then gets their data from chargen.
 		'''
 	def giveDesc(self):
+		'''
+		Currently a debugging/dumping area to dump data prior to actual
+		use in ralc main.
+		'''
 		print '''
 Techlevel is %s.
 		''' % techLevel
 		print '''
 The %s has %s rooms and %d floors.
-The roof is made of %s, walls %s, and floor %s.''' % (self.btype,self.roomDat['rooms'],self.levels,self.make[0],self.make[1],self.make[2])
+
+The roof is made of %s, walls %s, and floor %s.''' % (self.btype,
+		self.roomDat['rooms'],self.levels,
+
+		self.make[0],self.make[1],self.make[2])
 		#print self.roomDat
 		neatDicPrint(self.roomDat)
 		#print self.bldgID
 
-def makeBuilding(num):
+def makeBuilding(num,levels,rooms):
+	'''
+	# of bldgs, size
+	Handles the rules from civGen that each building needs to obey and
+	conform to. This will be size, levels, stored as a string to have
+	values determined for here.
+	'''
 	c = 0
 	for x in xrange(0,num):
 		a = Building(c)
-		a.getAll()
+		a.getAll(levels,rooms)
 		a.giveDesc()
 		c +=1
 
 
-def getConstruction(biome, techLevel):
-	print biome, techLevel
-	materialList = ['logs','thatch','underground','stone']
-	if biome == "forest":
-		material = materialList[0]
-	elif biome == "plains":
-		material = materialList[1]
-	elif biome == "marsh":
-		material = materialList[1]
-	elif biome == "hills":
-		material = random.choice(materialList)
-	elif biome == "mountain":
-		material = materialList[3]
-	elif biome == "desert":
-		material = materialList[2]
-
-	if material == materialList[0]:
-		constDesc = ""
-	elif material == materialList[1]:
-		constDesc = ""
-	elif material == materialList[2]:
-		constDesc = ""
-	elif material == materialList[3]:
-		constDesc = ""
-	bldgDesc='''
-	The buildings in this area are of %s constructon,
-	due to the %s-like area.
-	'''%(material,biome)
-
-
-def getBldgType():
-	typeList= ['Shack','Residence','General Store','Armorer','Courtyard',
-	'Weapon Smith', 'Tavern', 'Inn']
-	# ie. store, armorer, residence, public area
-	# mostly random
-def getNumOfResidents():
-	# dependant on building type and
-	pass
-
-#getConstruction(biome, TechLevel)
 
 def main():
-	makeBuilding(1)
+	'''
+	This function is only kept until this program is capable of running
+	indepentantly and will be removed after the program being debugged.
+	'''
+	makeBuilding(1,1,2)
+	#1 building to make, each with 1 floor, each floor with 1 room
 	return 0
 
 if __name__ == '__main__':
