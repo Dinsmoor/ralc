@@ -52,8 +52,12 @@ class Building(object):
 	'''
 	Building needs walls, height, max inhabitatants, purpose
 	'''
-	def __init__(self, bldgID):
+	def __init__(self, bldgID,levels,rooms):
 		self.bldgID = bldgID
+		self.btype = self.getPurpose()
+		self.levels = levels #self.getLevels()
+		self.make = self.getBldgMake()
+		self.roomDat = self.getRooms(rooms)
 
 	def getInhabitants(self, popul):
 		peopleDat = {}
@@ -103,20 +107,6 @@ class Building(object):
 
 		return (random.choice(materialsTup[0]),random.choice(materialsTup[1]),random.choice(materialsTup[2]))
 
-
-	def getAll(self,levels,rooms):
-		'''
-		Since we need all this data every time we need a building, it
-		makes the most sense just to grab it all at once.
-		'''
-		self.btype = self.getPurpose()
-		self.levels = levels #self.getLevels()
-		self.make = self.getBldgMake()
-		self.roomDat = self.getRooms(rooms)
-		'''
-		rooms is important, it determines the types of rooms, how many
-		inhabitants, and then gets their data from chargen.
-		'''
 	def giveDesc(self):
 		'''
 		Currently a debugging/dumping area to dump data prior to actual
@@ -145,8 +135,8 @@ def makeBuilding(num,levels,rooms):
 	'''
 	c = 0
 	for x in xrange(0,num):
-		a = Building(c)
-		a.getAll(levels,rooms)
+		a = Building(c,levels,rooms)
+		#a.getAll(levels,rooms)
 		a.giveDesc()
 		c +=1
 
