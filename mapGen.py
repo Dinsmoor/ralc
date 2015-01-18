@@ -63,16 +63,18 @@ class LandImg(object):
 			roads
 			water
 		'''
-		biome,floraDensity,faunaDensity,waterDensity,roadDensity = landGen.main('map')
+		cityName,biome,floraDensity,faunaDensity,waterDensity,roadDensity = landGen.main('map')
 		self.im = Image.new('RGB',(512,512),'limegreen')
 		self.im = self.drawBiome(biome)
 		
 		self.im = self.drawWater(waterDensity)
 		self.im = self.drawTerrain(biome)
-		self.im = self.drawCity()
+		self.im = self.drawFlora(biome)
+		self.im = self.drawCity(cityName)
 		self.im = self.drawCamps()
 		self.im = self.drawVillage()
 		
+		print biome
 		self.showImg()
 		
 		
@@ -80,14 +82,14 @@ class LandImg(object):
 		draw = ImageDraw.Draw(self.im)
 		biomeColors={
 		'forest':'limegreen','marsh':'olivedrab',
-		'plains':'yellowgreen','hills':'yellowgreen',
+		'plains':'springgreen','hills':'limegreen',
 		'tundra':'lightslategray','desert':'goldenrod'
 		}
 		draw.rectangle((0,0,self.im.size[0],self.im.size[0]), fill=biomeColors[biome])
 		del draw
 		return self.im
 	
-	def drawCity(self):
+	def drawCity(self,cityName):
 		draw = ImageDraw.Draw(self.im)
 		x = random.randrange(10,490)
 		y = random.randrange(10,490)
@@ -96,25 +98,27 @@ class LandImg(object):
 		(x+10,y+5),(x+15,y+5),(x+15,y),(x+20,y),(x+20,y+5),(x+20,y+15),
 		(x-5,y+15),(x-5,y)) , fill='grey', outline='lightgrey')
 		
-		draw.text((x-4,y+4),"City")
+		draw.text((x-4,y+12),str(cityName))
 		
 		del draw
 		return self.im
 		
 	def drawVillage(self):
 		draw = ImageDraw.Draw(self.im)
-		x = random.randrange(10,490)
-		y = random.randrange(10,490)
-		draw.polygon(((x,y),(x-10,y-10),(x+10,y-10)), fill='olive', outline='orchid')
-		
-		draw.text((x-4,y+2),"Villiage")
+		density = random.randint(1,3)
+		for c in xrange(0,density):
+			x = random.randrange(10,490)
+			y = random.randrange(10,490)
+			draw.polygon(((x,y),(x-10,y-10),(x+10,y-10)), fill='olive', outline='orchid')
+			draw.rectangle((x+10,y,x-20,y+10), fill='darkolivegreen', outline='lawngreen')
+			draw.text((x-4,y+2),"Villiage"+str(c+1))
 		
 		del draw
 		return self.im
 		
 	def drawCamps(self):
 		draw = ImageDraw.Draw(self.im)
-		density = 3
+		density = random.randint(1,3)
 		for c in xrange(0,density):
 			x = random.randrange(10,490)
 			y = random.randrange(10,490)
@@ -133,23 +137,16 @@ class LandImg(object):
 		
 		def hills():
 			draw = ImageDraw.Draw(self.im)
-		
-		def forestTrees():
-			density = 1000
-			draw = ImageDraw.Draw(self.im)
-			#trees
-			for c in xrange(0,density+3):
-				x = random.randrange(0,512)
-				y = random.randrange(0,512)
-				draw.ellipse((x, y, x+10, y+10), fill = 'darkgreen', outline ='green')
-				#some mild humor
-				#draw.text((x-4,y+4),"Tree"+str(c))
+			density = random.randint(1,3)
+			for c in xrange(0,density*100):
+				x = random.randint(0,500)
+				y = random.randint(0,500)
+				draw.arc((x,y,x+20,y+20),220,340)
 			del draw
 		
-		d ={
-		'forest':forestTrees
-		}
-		d['forest']()
+		if biome == 'hills':
+			hills()
+		
 		return self.im
 		
 		
@@ -178,8 +175,29 @@ class LandImg(object):
 		del draw
 		return self.im
 
-	def drawFlora(self):
-		pass
+	def drawFlora(self,biome):
+		def trees(density):
+			density = density*225
+			draw = ImageDraw.Draw(self.im)
+			#trees
+			for c in xrange(0,int(density)+3):
+				x = random.randrange(0,512)
+				y = random.randrange(0,512)
+				draw.ellipse((x, y, x+10, y+10), fill = 'darkgreen', outline ='green')
+				#some mild humor
+				#draw.text((x-4,y+4),"Tree"+str(c))
+			del draw
+		
+		d ={
+		'forest':random.randint(2,4),
+		'plains':0.7,
+		'hills':0.5,
+		'tundra':0.2,
+		'marsh':1,
+		'desert':0.1
+		}
+		trees(d[biome])
+		return self.im
 
 	def saveImg(self):
 		self.im.save('landMap', "PNG")
