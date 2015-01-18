@@ -22,6 +22,57 @@
 #  
 #  
 
+'''
+Indended to take data from landGen, bldgGen, townGen, and create pngs
+from their data, to be piped to an interface for easier descriptors for
+DMs.
+
+Requirements:
+	Accept data from:
+		landGen:
+			biome
+			terrain
+			fauna
+			roads
+			water
+		bldgGen:
+			rooms
+			levels
+			inhabitants
+			purpose
+		townGen:
+			streets => names
+			bldgs/street
+'''
+
+class LandImg(object):
+	'''
+	All data needed to create a new image representing a land-generated
+	area.
+	'''
+	
+	def __init__(self):
+		pass
+		
+class BldgImg(object):
+	'''
+	All data needed to create a new image representing a Bldg-generated
+	area.
+	'''
+	
+	def __init__(self):
+		pass
+		
+class TownImg(object):
+	'''
+	All data needed to create a new image representing a Town-generated
+	area.
+	'''
+	
+	def __init__(self):
+		pass
+		
+	
 
 
 def main():
