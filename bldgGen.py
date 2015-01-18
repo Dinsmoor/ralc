@@ -99,9 +99,9 @@ class Building(object):
 	def getBldgMake(self):
 		descDict = {
 		#techlevel:roofing[0],walls[1],floor[2]
-		'primitive':(('thatch','straw'),('stick','mud'),('dirt','straw')),
-		'average':(('wooden','shingle'),('boarded','log','stone'),('wooden','stone')),
-		'advanced':(('sheet metal','shingle'),('concrete','stone','metal'),('wooden','metal','tile'))
+		1:(('thatch','straw'),('stick','mud'),('dirt','straw')),
+		2:(('wooden','shingle'),('boarded','log','stone'),('wooden','stone')),
+		3:(('sheet metal','shingle'),('concrete','stone','metal'),('wooden','metal','tile'))
 		}
 		materialsTup = descDict[techLevel]
 
@@ -113,7 +113,7 @@ class Building(object):
 		use in ralc main.
 		'''
 		print '''
-Techlevel is %s.
+Techlevel is %d.
 		''' % techLevel
 		print '''
 The %s has %s rooms and %d floors.

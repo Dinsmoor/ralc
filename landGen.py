@@ -118,27 +118,10 @@ def getTerrainDesert():
 # data is important, will need to influence techlevel,
 # as it's hard to get teachnology if you don't have much
 # food resources
-def getFauna():
-	print
-
-def getRoads():
-	pass
-
-# see comment on getFauna
-def getWater():
-	pass
 
 
-# needs to be readone, and settlement names be added to
-# an external file for easy editing (see charGen; getSpells)
-# but a slightly different approach may be needed due to the
-# probability problem... but in reality it would be best to just
-# add logic for whether or not there will be a civilization, due to
-# what's written below not making any logical sense in the long run.
-#
-# but, for activity sake, it would be better for there to be ALWAYS
-# a city, but have it to where how advanced it was mattered much more than
-# anything else in logic. Most of this file needs to be redone.
+	
+
 def getCiv():
 	global techLevel
 	techLevelPoss 			= (('primitive', 2.0),('average',5.0),('advanced',0.5))
@@ -179,7 +162,6 @@ def getCiv():
 #
 def main(infoReq):
 	biome = getBiome()
-	techLevel, civMainDisposition, civOuterDisposition, civSettlement, civIsLargeSettlement = getCiv()
 	if biome == 'forest':
 		typeFin, treesFin, undergrowthFin = getTerrainForest()
 	elif biome == 'plains':
@@ -192,8 +174,20 @@ def main(infoReq):
 		typeFin, undergrowthFin = getTerrainMountain()
 	elif biome == 'desert':
 		typeFin, undergrowthFin = getTerrainDesert()
+		
+	# 0 is pre-stone age, 3 is dark age
+	techLevel 		= random.randint(0,3)
+	# 0 is sparse, 5 is very dense
+	floraDensity	= random.randint(0,5)
+	faunaDensity	= random.randint(0,5)
+	waterDensity	= random.randint(0,5)
+	roadDensity		= random.randint(0,5)
+	
+	
 	if infoReq == "bldg":
 		return biome, techLevel
+	elif infoReq == 'map':
+		return floraDensity,faunaDensity,waterDensity,roadDensity
 	else:
 		print "Wrong Designator"
 	print civSettlement

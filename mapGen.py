@@ -45,6 +45,8 @@ Requirements:
 			bldgs/street
 '''
 
+import Image, ImageDraw, sys, landGen
+
 class LandImg(object):
 	'''
 	All data needed to create a new image representing a land-generated
@@ -52,7 +54,45 @@ class LandImg(object):
 	'''
 	
 	def __init__(self):
+		'''
+		Need:
+			biome
+			terrain
+			fauna
+			flora
+			roads
+			water
+		'''
+		self.floraDensity,self.faunaDensity,self.waterDensity,self.roadDensity = landGen.main('map')
+		self.im = Image.new('RGB',(512,512),'white')
+		self.im = self.drawBiome()
+		self.showImg()
+		
+
+	def drawBiome(self):
+		draw = ImageDraw.Draw(self.im)
+		draw.line((0, 0) + self.im.size, fill=128)
+		draw.line((200, 0) + self.im.size, fill=128)
+
+		#draw.line((0, self.im.size[1], self.im.size[0], 0), fill=128)
+		return self.im
+		
+		
+		
+	def drawTerrain(self):
 		pass
+	
+	def drawWater(self):
+		pass
+	
+	def drawFlora(self):
+		pass
+		
+	def saveImg(self):
+		self.im.save('landMap', "PNG")
+		
+	def showImg(self):
+		self.im.show()
 		
 class BldgImg(object):
 	'''
@@ -72,8 +112,9 @@ class TownImg(object):
 	def __init__(self):
 		pass
 		
-	
 
+
+landImg = LandImg()
 
 def main():
 	
