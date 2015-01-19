@@ -23,6 +23,8 @@
 #
 
 '''
+Need: python-imaging, python-imaging-tk
+
 Indended to take data from landGen, bldgGen, townGen, and create pngs
 from their data, to be piped to an interface for easier descriptors for
 DMs.
@@ -45,7 +47,7 @@ Requirements:
 			bldgs/street
 '''
 
-import Image, ImageDraw, sys, landGen, random
+import Image, ImageDraw, ImageTk, sys, landGen, random
 
 class LandImg(object):
 	'''
@@ -74,8 +76,7 @@ class LandImg(object):
 		self.im = self.drawCamps()
 		self.im = self.drawVillage()
 		
-		print biome
-		self.showImg()
+		#self.showImg()
 		
 		
 	def drawBiome(self,biome):
@@ -227,11 +228,14 @@ class TownImg(object):
 
 
 
-landImg = LandImg()
+#landImg = LandImg()
 
-def main():
-
-	return 0
+def main(opt):
+	if opt == 'tk':
+		return LandImg()
+	else:
+		landImg = LandImg()
+		return 0
 
 if __name__ == '__main__':
 	main()

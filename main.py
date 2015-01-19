@@ -21,7 +21,8 @@
 #  MA 02110-1301, USA.
 #  
 #  
-
+otherlist=('name3','name4')
+testlist=('name','name2',otherlist)
 
 pcdata={
 	'name0':'billy',
@@ -32,13 +33,13 @@ bldgdata={
 	'inhabitants':pcdata
 	}
 testdata={
-	'bldg':bldgdata['name'],
+	'bldg':testlist,
 	'bldg1':bldgdata['inhabitants']
 	}
 
 import Tkinter as tk
-import ttk
-
+import ttk, mapGen
+im = mapGen.main('tk')
 class Application(tk.Frame):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
@@ -69,8 +70,11 @@ class Application(tk.Frame):
 	def addDataToTree(self, parent):
 		self.tree.column('#0')
 		self.tree.heading('#0',text='ID')
-		for itm in testdata:
+		for itm in testdata:				
 			self.tree.insert(parent, 'end', text=itm)
+	
+	def loadPhoto(self):
+		photo = PhotoImage
 
 
 def main():
