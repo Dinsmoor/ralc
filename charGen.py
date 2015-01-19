@@ -383,7 +383,17 @@ def getBackground():
 	This should grab data from files, and use them just like getName().
 	Should be easy with examples, and importing from the book.
 	'''
-	pass
+	background = 'Alcolyte'
+	try:
+		bgData = getFromFile_LoL('data/char/'background.lower()+'Background'))
+		trait = random.choice(bg[0])
+		ideal = random.choice(bg[1])
+		bond = random.choice(bg[2])
+		flaw = random.choice(bg[3])
+		
+		return trait, ideal, bond, flaw
+	except:
+		return None
 
 def getProficiencies(pcRace, pcSubrace):
 	plist = []
