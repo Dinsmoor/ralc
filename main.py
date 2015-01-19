@@ -23,41 +23,60 @@
 #  
 
 
-import wx
+pcdata={
+	'name0':'billy',
+	'name1':'mandy'
+	}
+bldgdata={
+	'name':'bldg0',
+	'inhabitants':pcdata
+	}
+testdata={
+	'bldg':bldgdata['name'],
+	'bldg1':bldgdata['inhabitants']
+	}
 
-class Example(wx.Frame):
-  
-    def __init__(self, *args, **kwargs):
-        super(Example, self).__init__(*args, **kwargs) 
-            
-        self.InitUI()
-        
-    def InitUI(self):    
+import Tkinter as tk
+import ttk
 
-        menubar = wx.MenuBar()
-        fileMenu = wx.Menu()
-        editMenu = wx.Menu()
-        fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
-        menubar.Append(fileMenu, '&File')
-        menubar.Append(editMenu, '&Edit')
-        self.SetMenuBar(menubar)
-        
-        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
+class Application(tk.Frame):
+	def __init__(self, master=None):
+		tk.Frame.__init__(self, master)
+		self.grid()
+		self.createWidgets()
+		
+		self.tree = ttk.Treeview(self)
+		ysb = ttk.Scrollbar(self, orient='vertical', command=self.tree.yview)
+		xsb = ttk.Scrollbar(self, orient='horizontal', command=self.tree.xview)
+		self.tree.configure(yscroll=ysb.set, xscroll=xsb.set)
+		self.tree.heading('#0', text='Name', anchor='w')
+		
+		root_node = self.tree.insert('', 'end', text='Name', open=True)
+		
+		self.addDataToTree(root_node)
+		
+		self.tree.grid(row=0, column=0)
+		ysb.grid(row=0, column=1, sticky='ns')
+		xsb.grid(row=1, column=0, sticky='ew')
+		self.grid()
+	
+	def createWidgets(self):
+		self.quitButton = tk.Button(self, text="Quit",
+			command=self.quit)
+			
+		self.quitButton.grid()
+		
+	def addDataToTree(self, parent):
+		self.tree.column('#0')
+		self.tree.heading('#0',text='ID')
+		for itm in testdata:
+			self.tree.insert(parent, 'end', text=itm)
 
-        self.SetSize((300, 200))
-        self.SetTitle('Simple menu')
-        self.Centre()
-        self.Show(True)
-        
-    def OnQuit(self, e):
-        self.Close()
 
 def main():
-    
-    ex = wx.App()
-    Example(None)
-    ex.MainLoop()    
-
+	app = Application()
+	app.master.title('RALC v0.1')
+	app.mainloop()
 
 if __name__ == '__main__':
     main()
