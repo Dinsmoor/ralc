@@ -196,7 +196,9 @@ class LandImg(object):
 		'marsh':1,
 		'desert':0.1
 		}
+		
 		trees(d[biome])
+		
 		return self.im
 
 	def saveImg(self):
