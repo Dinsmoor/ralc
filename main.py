@@ -22,7 +22,7 @@
 #  
 #  
 otherlist=('name3','name4')
-testlist=('name','name2',otherlist)
+testlist=('name','name2','name3','name4','name5','name6',otherlist)
 
 pcdata={
 	'name0':'billy',
@@ -32,53 +32,77 @@ bldgdata={
 	'name':'bldg0',
 	'inhabitants':pcdata
 	}
-testdata={
-	'bldg':testlist,
-	'bldg1':bldgdata['inhabitants']
-	}
+testdata=testlist
+#testdata={
+#	'bldg':testlist,
+#	'bldg1':bldgdata['inhabitants']
+#	}
 
 import Tkinter as tk
-import ttk, mapGen, ImageTk
-#im = mapGen.main('tk')
+import ttk, mapGen, ImageTk, Image
+
+
 class Application(tk.Frame):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
 		self.grid()
+		self.im,self.cityName = mapGen.main('tk')
+		self.makeMenuBar()
 		self.createWidgets()
-		self.loadPhoto()
 		
-		self.tree = ttk.Treeview(self)
-		ysb = ttk.Scrollbar(self, orient='vertical', command=self.tree.yview)
-		xsb = ttk.Scrollbar(self, orient='horizontal', command=self.tree.xview)
-		self.tree.configure(yscroll=ysb.set, xscroll=xsb.set)
-		self.tree.heading('#0', text='Name', anchor='w')
 		
-		root_node = self.tree.insert('', 'end', text='Name', open=True)
-		
-		self.addDataToTree(root_node)
-		
-		self.tree.grid(row=0, column=0)
-		ysb.grid(row=0, column=1, sticky='ns')
-		xsb.grid(row=1, column=0, sticky='ew')
+
 		self.grid()
 	
+	def makeMenuBar(self):
+		self.menubar = tk.Menu(self)
+		self.menubar.add_command(label="Quit!", command=self.quit)
+		self.menubar.add_cascade(label="File", menu=self.menubar)
+	
 	def createWidgets(self):
-		self.quitButton = tk.Button(self, text="Quit",
+		def makeQuitButton():
+			self.quitButton = tk.Button(self, text="Quit",
 			command=self.quit)
+			self.quitButton.grid(sticky='n', column=2, row=1, padx=10)
+		def makeShowButton():
+			# needs to try to load image for whatever is highlighted in
+			# the treeview
+			self.showButton = tk.Button(self, text="Show",
+			command=loadPhoto)
+			self.showButton.grid(sticky='n', column=2, row=0, padx=10,pady=40)
+		def makeTreeView():
+			self.tree = ttk.Treeview(self, height=25, selectmode='browse')
+			ysb = ttk.Scrollbar(self, orient='vertical', command=self.tree.yview)
+			xsb = ttk.Scrollbar(self, orient='horizontal', command=self.tree.xview)
 			
-		self.quitButton.grid()
+			self.tree.heading('#0', text='Name', anchor='w')
+			
+			root_node = self.tree.insert('', 'end', text=self.cityName, open=True)
+			
+			self.addDataToTree(root_node)
+			self.tree.grid(row=0, column=0)
+			ysb.grid(row=0, column=1, sticky='ns')
+			xsb.grid(row=1, column=0, sticky='ew')
+			
+			#self.tree.bind('<<TreeviewSelect>>', self.loadPhoto(''))
+		def loadPhoto():
+			# grabs image from mapGen, makes it Tk-compatible, puts it in
+			# the grid.
+			#print event
+			self.img = ImageTk.PhotoImage(self.im)
+			self.label = tk.Label(image = self.img)
+			self.label.grid(sticky='E', column=3, row=0)
+		
+		makeTreeView()
+		makeQuitButton()
+		makeShowButton()
 		
 	def addDataToTree(self, parent):
-		self.tree.column('#0')
-		self.tree.heading('#0',text='ID')
 		for itm in testdata:				
 			self.tree.insert(parent, 'end', text=itm)
 	
-	def loadPhoto(self):
-		im = mapGen.main('tk')
-		photo = ImageTk.PhotoImage(im)
-		
-
+	
+	
 
 def main():
 	app = Application()
