@@ -1,0 +1,15 @@
+# See sampleConfig for comments usage data
+
+# Configuration file for the "Alcolyte" background
+
+# personality Traits		bg[0]
+Trait 1, trait 2, Trait 3, Trait 4
+
+# Ideals			bg[1]
+ideal 1, ideal 2, ideal 3
+
+# Bonds				bg[2]
+bond 1, bond2, bond 3
+
+# Flaws				bg[3]
+flaw 1, flaw 2, flaw 3, flaw 4
