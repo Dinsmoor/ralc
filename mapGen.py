@@ -66,6 +66,8 @@ class LandImg(object):
 			water
 		'''
 		cityName,biome,floraDensity,faunaDensity,waterDensity,roadDensity = landGen.main('map')
+		self.cityName = cityName
+		
 		self.im = Image.new('RGB',(512,512),'limegreen')
 		self.im = self.drawBiome(biome)
 		
@@ -76,6 +78,7 @@ class LandImg(object):
 		self.im = self.drawCamps()
 		self.im = self.drawVillage()
 		
+		self.saveImg()
 		#self.showImg()
 		
 		
@@ -94,13 +97,10 @@ class LandImg(object):
 		draw = ImageDraw.Draw(self.im)
 		x = random.randrange(10,490)
 		y = random.randrange(10,490)
-		
 		draw.polygon(((x,y),(x,y+5),(x+5,y+5),(x+5,y),(x+10,y),
 		(x+10,y+5),(x+15,y+5),(x+15,y),(x+20,y),(x+20,y+5),(x+20,y+15),
 		(x-5,y+15),(x-5,y)) , fill='grey', outline='lightgrey')
-		
 		draw.text((x-4,y+12),str(cityName))
-		
 		del draw
 		return self.im
 		
@@ -113,7 +113,6 @@ class LandImg(object):
 			draw.polygon(((x,y),(x-10,y-10),(x+10,y-10)), fill='olive', outline='orchid')
 			draw.rectangle((x+10,y,x-20,y+10), fill='darkolivegreen', outline='lawngreen')
 			draw.text((x-4,y+2),"Villiage"+str(c+1))
-		
 		del draw
 		return self.im
 		
@@ -124,18 +123,11 @@ class LandImg(object):
 			x = random.randrange(10,490)
 			y = random.randrange(10,490)
 			draw.polygon(((x,y),(x+5,y+5),(x-5,y+5)), fill='crimson', outline='red')
-			
 			draw.text((x-4,y+4),"Camp"+str(c+1))
-		
 		del draw
 		return self.im
 		
-
-
-
-
 	def drawTerrain(self,biome):
-		
 		def hills():
 			draw = ImageDraw.Draw(self.im)
 			density = random.randint(1,3)
@@ -144,10 +136,8 @@ class LandImg(object):
 				y = random.randint(0,500)
 				draw.arc((x,y,x+20,y+20),220,340)
 			del draw
-		
 		if biome == 'hills':
 			hills()
-		
 		return self.im
 		
 		
@@ -203,10 +193,11 @@ class LandImg(object):
 		return self.im
 
 	def saveImg(self):
-		self.im.save('landMap', "PNG")
+		self.im.save('landMap', "GIF")
 
 	def showImg(self):
 		self.im.show()
+	
 
 class BldgImg(object):
 	'''
@@ -232,7 +223,8 @@ class TownImg(object):
 
 def main(opt):
 	if opt == 'tk':
-		return LandImg()
+		landImg = LandImg()
+		return landImg.im, landImg.cityName
 	else:
 		landImg = LandImg()
 		return 0
