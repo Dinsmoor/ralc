@@ -38,13 +38,14 @@ testdata={
 	}
 
 import Tkinter as tk
-import ttk, mapGen
-im = mapGen.main('tk')
+import ttk, mapGen, ImageTk
+#im = mapGen.main('tk')
 class Application(tk.Frame):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
 		self.grid()
 		self.createWidgets()
+		self.loadPhoto()
 		
 		self.tree = ttk.Treeview(self)
 		ysb = ttk.Scrollbar(self, orient='vertical', command=self.tree.yview)
@@ -74,7 +75,9 @@ class Application(tk.Frame):
 			self.tree.insert(parent, 'end', text=itm)
 	
 	def loadPhoto(self):
-		photo = PhotoImage
+		im = mapGen.main('tk')
+		photo = ImageTk.PhotoImage(im)
+		
 
 
 def main():
