@@ -40,20 +40,26 @@ class AppData(object):
 	
 	def saveAll(self):
 		def saveImg():
-			s = cStringIO.StringIO()
+			'''
+			#binary string
+			rs = cStringIO.StringIO()
+			#needs ascii sting
 			imgStr = base64.b64encode()
-			#img.close
 			savef = open('save/img', 'w')
 			savef.write(imgStr)
-			#pickle.dump(s,savef)
+			pickle.dump(s,savef)
 			savef.close
+			'''
+			with open(self.im, "rb") as f:
+				data = f.read()
+				print data.encode("base64")
 		
 		def saveNames():
 			savef = open('save/name', 'w')
 			pickle.dump((self.cityName),savef)
 			savef.close
 		
-		#saveImg()
+		saveImg()
 		print 'AppData.saveAll.Image Saved'
 		saveNames()
 		print 'AppData.saveAll.Names Saved'
@@ -62,8 +68,8 @@ class AppData(object):
 	def loadAll(self):
 		def loadImg():
 			savef = open('save/img', 'r')
-			img = open('landMap', "r")
 			self.impickle.load(f)
+			savef.close
 			
 		def loadNames():
 			savef = open('save/name', 'r')
