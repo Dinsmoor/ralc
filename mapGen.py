@@ -78,7 +78,7 @@ class LandImg(object):
 		self.im = self.drawCamps()
 		self.im = self.drawVillage()
 		
-		self.saveImg()
+		#self.saveImg()
 		#self.showImg()
 		
 		

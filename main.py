@@ -31,7 +31,6 @@ import base64, cStringIO
 	
 class AppData(object):
 	def __init__(self):
-		self.filename = 'savefile'
 		self.newData()
 	
 	
@@ -41,37 +40,38 @@ class AppData(object):
 	
 	def saveAll(self):
 		def saveImg():
-			img= open('landMap', "r")
-			imgStr = base64.b64encode(img.read())
-			img.close
+			s = cStringIO.StringIO()
+			imgStr = base64.b64encode()
+			#img.close
 			savef = open('save/img', 'w')
-			pickle.dump(imgStr,savef)
+			savef.write(imgStr)
+			#pickle.dump(s,savef)
 			savef.close
 		
 		def saveNames():
 			savef = open('save/name', 'w')
-			nameD = {
-				'city':self.cityName
-				}
-			pickle.dump((nameD),savef)
+			pickle.dump((self.cityName),savef)
 			savef.close
 		
-		saveImg()
+		#saveImg()
 		print 'AppData.saveAll.Image Saved'
-
+		saveNames()
+		print 'AppData.saveAll.Names Saved'
 		
 			
 	def loadAll(self):
-		f = open(self.filename, 'r')
-		print "AppData.loadAll.File Opened"
-		pickle.load(f)
-		print "AppData.loadAll.File Loaded"
-		self.im = base64.b64decode(self.imgStr)
-		
-		f.close
+		def loadImg():
+			savef = open('save/img', 'r')
+			img = open('landMap', "r")
+			self.impickle.load(f)
+			
+		def loadNames():
+			savef = open('save/name', 'r')
+			pickle.load((self.cityName),savef)
+			savef.close
 	
 	def loadPhoto(self):
-		self.img = ImageTk.PhotoImage(self.im)
+		return ImageTk.PhotoImage(self.im)
 
 		
 
@@ -80,8 +80,8 @@ class UI(tk.Frame,AppData):
 		tk.Frame.__init__(self, master)
 		self.makeMenuBar()
 		self.createWidgets()
-		#self.getPhoto()
 		self.grid()
+		self.getPhoto()
 		print "UI.__init__.Done"
 	
 	def makeMenuBar(self):
@@ -150,8 +150,8 @@ class UI(tk.Frame,AppData):
 		self.getPhoto()
 	
 	def getPhoto(self):
-		dat.loadPhoto()
-		self.label = tk.Label(image = dat.img)
+		self.img = dat.loadPhoto()
+		self.label = tk.Label(image = self.img)
 		self.label.grid(sticky='E', column=3, row=0)
 	
 	def addDataToTree(self, parent):
