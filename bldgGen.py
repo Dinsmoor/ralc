@@ -52,8 +52,7 @@ class Building(object):
 	'''
 	Building needs walls, height, max inhabitatants, purpose
 	'''
-	def __init__(self, bldgID,levels,rooms):
-		self.bldgID = bldgID
+	def __init__(self,levels,rooms):
 		self.btype = self.getPurpose()
 		self.levels = levels #self.getLevels()
 		self.make = self.getBldgMake()
@@ -135,7 +134,7 @@ def makeBuilding(num,levels,rooms):
 	'''
 	c = 0
 	for x in xrange(0,num):
-		a = Building(c,levels,rooms)
+		a = Building(levels,rooms)
 		#a.getAll(levels,rooms)
 		a.giveDesc()
 		c +=1
