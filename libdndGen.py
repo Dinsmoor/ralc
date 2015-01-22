@@ -22,7 +22,7 @@
 #
 #
 
-import random
+
 
 def getFromFile_LoL(fi):
 	fi = open(fi)
@@ -30,7 +30,7 @@ def getFromFile_LoL(fi):
 	li = [i.strip().split(',') for i in fi.readlines() if not i.startswith("#")]
 	# ignore blank lines
 	li = [x for x in li if x != ['']]
-	li = [[st.strip() for st in l] for l in li] 
+	li = [[st.strip() for st in l] for l in li]
 	fi.close()
 	return li
 
@@ -63,6 +63,7 @@ def mini(l):
 		if m == v:
 			return i
 def wChoice(wCh):
+	import random
 	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
 	totalChoice = sum(w for c, w in wCh)
 	random_uniform = random.uniform(0, totalChoice)
@@ -81,5 +82,29 @@ def neatDicPrint(d):
 	for key,val in d.iteritems():
 		print "\t%s\t%s"%(key, val)
 
+def gridDistance(points):
+	import math
+	p0, p1 = points
+	return int(math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2))
 
+def getCityName():
+	import random
+	cityname = random.choice(getFromFile_T('data/cities'))
+	for s in cityname:
+		return s
+def getVillageName():
+	import random
+	cityname = random.choice(getFromFile_T('data/villages'))
+	for s in cityname:
+		return s
+def getCampName():
+	import random
+	cityname = random.choice(getFromFile_T('data/camps'))
+	for s in cityname:
+		return s
+def getBldgName():
+	import random
+	cityname = random.choice(getFromFile_T('data/bldgs'))
+	for s in cityname:
+		return s
 #neatDicPrint(getFromFile_Dic('data/equipment/simpleMeleeWeapons'))
