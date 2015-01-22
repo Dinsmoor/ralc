@@ -19,6 +19,15 @@ PURPOSE
 	configurable, portable, and modular in nature. It is, and will remain
 	cross-platform free software.
 
+=
+DEPENDANCIES
+=
+	python-imaging
+	python-imaging-tk
+	pyhton-matplotlib
+	python-numpy
+
+
 =============
 SPECIFICATION
 =============
