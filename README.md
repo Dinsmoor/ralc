@@ -59,19 +59,19 @@ TIMELINE
 '''
 This is the timeline of development:
 '''
-0.1.0a- First release, must ouput basic character and area information.
+DONE- First release, must ouput basic character and area information.
 		Design the flow of information, and requirements.
 		Planning/Framework stage.
 
-0.2.0a- Proper spell slot assignment, Biography/Background, Skills, and
+INDEV- Proper spell slot assignment, Biography/Background, Skills, and
 		equipment assignment for charGen. Add no-class class. Create
 		currency system, valuable items must have cost.
 
-0.3.0a- areaGen will be rewritten, will output useful statistics about the
+DONE- areaGen will be rewritten, will output useful statistics about the
 		environment, for later use with townGen, but in the meantime produce
 		basic descriptions of an area.
 
-0.4.0a- A GUI will be written to interface with charGen and areaGen, and
+DONE- A GUI will be written to interface with charGen and areaGen, and
 		display their data as a proof-of-concept and a base for future
 		development.
 
@@ -80,12 +80,12 @@ This is the timeline of development:
 0.6.0a- Write questGen: to generate dynamic quests, based on output from
 		areaGen.
 
-0.7.0a- Build program to populate buildings with characters from charGen,
+INDEV- Build program to populate buildings with characters from charGen,
 		and task with jobs such as guard, city official, merchant, thug,
 		inkeeper,and the like. Tag others with dynamic quests provided
 		from questGen.
 
-0.8.0a- Create VERY simple interface to control/display inputs/outputs.
+INDEV- Create VERY simple interface to control/display inputs/outputs.
 		Use tree-like navigation to categorize each building, inhabitants,
 		quests, POI, etc.
 
@@ -96,7 +96,7 @@ BEYOND SCOPE
 ============
 ??? Create dynamic interaction with characters
 
-??? Create image map of area from output, will reflect POI, Quests, Etc.
+INDEV- Create image map of area from output, will reflect POI, Quests, Etc.
 
 ??? Use Panda3d engine to make 3d representation of generated area; may
 	use Panda3d for simplicity, cross-platform, freedom, and native Python
