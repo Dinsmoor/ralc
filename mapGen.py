@@ -69,18 +69,23 @@ class LandImg(object):
 		biome = self.getBiome()
 		self.cityName = getCityName()
 
+		# names to be passed to main, filled when drawn
+		self.villageNames = []
+		self.campNames = []
+
+		# set base img size
 		self.imgx = 600
 		self.imgy = self.imgx
-
+		# initilize the image
 		self.im = Image.new('RGB',(self.imgx,self.imgy),'limegreen')
 		self.draw = ImageDraw.Draw(self.im)
 
-
+		# start drawing on top of the image
 		self.drawBiome(biome)
-		self.drawWater()
+		self.drawWater(biome)
 		self.drawTerrain(biome)
 		self.drawFlora(biome)
-		self.drawCity(self.cityName)
+		self.drawCity()
 		self.drawCamps()
 		self.drawVillage()
 		#self.drawKey()
@@ -94,91 +99,114 @@ class LandImg(object):
 		return wChoice(biomeLeanVal)
 
 	def drawBiome(self,biome):
+		# These colors are very up for debate. Default HTML colors are ugly
 		biomeColors={
 		'forest':'limegreen','marsh':'olivedrab',
 		'plains':'springgreen','hills':'limegreen',
 		'tundra':'lightslategray','desert':'goldenrod'
 		}
-		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]), fill=biomeColors[biome])
+		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
+			fill=biomeColors[biome])
 
 
-	def drawCity(self,cityName):
-		x = random.randrange(10,490)
-		y = random.randrange(10,490)
+	def drawCity(self):
+		x = random.randrange(10,self.imgx-50)
+		y = random.randrange(10,self.imgy-50)
 		self.cityShape = ((x,y),(x,y+5),(x+5,y+5),(x+5,y),(x+10,y),
 		(x+10,y+5),(x+15,y+5),(x+15,y),(x+20,y),(x+20,y+5),(x+20,y+15),
 		(x-5,y+15),(x-5,y))
 		self.draw.polygon(self.cityShape, fill='grey', outline='lightgrey')
-		self.draw.text((x-4,y+12),str(cityName))
+		self.draw.text((x-4,y+12),str(self.cityName))
 		self.cityCoord = (x,y)
 
 
 	def drawVillage(self):
 		density = random.randint(1,3)
 		for c in xrange(0,density):
-			x = random.randrange(10,490)
-			y = random.randrange(10,490)
+			villageName = getVillageName()
+			self.villageNames.append(villageName)
+			x = random.randrange(10,self.imgx-50)
+			y = random.randrange(10,self.imgy-50)
 			self.villageShape = ((x,y),(x-10,y-10),(x+10,y-10))
 			self.villageCoord = (x,y)
 			roadLength = self.drawRoad() / 10 # to be used for km
 			self.draw.polygon(self.villageShape, fill='olive',
 				outline='orchid')
-			self.draw.rectangle((x+10,y,x-20,y+10), fill='darkolivegreen',
-				outline='lawngreen')
-			self.draw.text((x-4,y+2),'%s'%getVillageName())
+			#self.draw.rectangle((x+10,y,x-20,y+10), fill='darkolivegreen',
+			#	outline='lawngreen')
+			self.draw.text((x-4,y+2),'%s'%villageName)
 			self.draw.text((x-4,y+8),'to %s: %dkm'%(self.cityName, roadLength))
 
 
 
 	def drawCamps(self):
-
 		density = random.randint(1,3)
 		for c in xrange(0,density):
-			x = random.randrange(10,490)
-			y = random.randrange(10,490)
+			campName = getCampName()
+			self.campNames.append(campName)
+			x = random.randrange(10,self.imgx-50)
+			y = random.randrange(10,self.imgy-50)
 			self.campShape = (x,y),(x+5,y+5),(x-5,y+5)
 			self.draw.polygon((self.campShape),
 				fill='crimson', outline='red')
-			self.draw.text((x-4,y+4),"Camp %s"%getCampName())
+			self.draw.text((x-4,y+4),"Camp %s"%campName)
 
 
 	def drawTerrain(self,biome):
 		def hills():
-
 			density = random.randint(1,3)
 			for c in xrange(0,density*100):
-				x = random.randint(0,500)
-				y = random.randint(0,500)
-				self.draw.arc((x,y,x+20,y+20),220,340)
+				x = random.randint(0,self.imgx)
+				y = random.randint(0,self.imgy)
+				self.draw.arc((x,y,x+20,y+20),220,340, fill='gray')
 
 		if biome == 'hills':
 			hills()
 
 
 
-	def drawWater(self):
-		density = random.randint(0,5)
-		streamCount = density + (density+2)
-		for c in xrange(0,streamCount):
-			if random.choice((True,False)) == True:
-				x = random.randrange(0,self.imgx)
-				y = 0
-			else:
-				x = 0
-				y = random.randrange(0,self.imgy)
-			for null in xrange(0,8000):
-				if random.choice((True,False)) == True:
-					if random.randint(0,9) > random.randint(0,9):
-						x -= 1
-					else:
-						x += 1
+	def drawWater(self, biome):
+		def river(densityFactor):
+			density = random.randint(0,5)
+			streamCount = int(density + (density*densityFactor))
+			for c in xrange(0,streamCount):
+				# determines whether to start on x or y axis
+				if random.choice((True,False)):
+					x = random.randrange(0,self.imgx)
+					y = 0
 				else:
-					if random.randint(0,9) > random.randint(0,9):
-						y -= 1
+					x = 0
+					y = random.randrange(0,self.imgy)
+				for null in xrange(0,10000):
+					# decides which direction to wander
+					if random.choice((True,False)):
+						if random.randint(0,9) > random.randint(0,9):
+							x -= 1
+						else:
+							x += 1
+						if (x >= self.imgx):
+							break
 					else:
-						y += 1
-				self.draw.point((x,y), fill='navy')
+						if random.randint(0,9) > random.randint(0,9):
+							y -= 1
+						else:
+							y += 1
+						if (y >= self.imgy):
+							break
+					self.draw.point((x,y), fill='navy')
+		def lake():
+			# just have it be a shallow-looking pond, I suppose
+			self.draw.ellipse()
 
+		d ={
+		'forest':0.7,
+		'plains':0.6,
+		'hills':0.7,
+		'tundra':0.3,
+		'marsh':1,
+		'desert':0.1
+		}
+		river(d[biome])
 
 	def drawFlora(self,biome):
 		def trees(density):
@@ -188,7 +216,7 @@ class LandImg(object):
 			for c in xrange(0,int(density)):
 				x = random.randrange(0,self.imgx)
 				y = random.randrange(0,self.imgy)
-				self.draw.ellipse((x, y, x+10, y+10), fill = 'darkgreen',
+				self.draw.ellipse((x, y, x+8, y+8), fill = 'darkgreen',
 					outline ='green')
 				#some mild humor
 				#draw.text((x-4,y+4),"Tree"+str(c))
@@ -213,6 +241,7 @@ class LandImg(object):
 		return roadLength
 
 	def drawKey(self):
+		# draw extra icon with label underneath
 		self.draw.rectangle((5,5,10,10), fill='black')
 		#self.draw.polygon(, fill='white')
 
@@ -223,15 +252,6 @@ class LandImg(object):
 		self.im.show()
 
 
-class BldgImg(object):
-	'''
-	All data needed to create a new image representing a Bldg-generated
-	area.
-	'''
-
-	def __init__(self):
-		pass
-
 class TownImg(object):
 	'''
 	All data needed to create a new image representing a Town-generated
@@ -241,14 +261,20 @@ class TownImg(object):
 	def __init__(self):
 		pass
 
+class BldgImg(object):
+	'''
+	All data needed to create a new image representing a Bldg-generated
+	area.
+	'''
 
-
-#landImg = LandImg()
+	def __init__(self):
+		pass
 
 def main(opt):
 	if opt == 'tk':
 		landImg = LandImg()
-		return landImg.im, landImg.cityName
+		return (landImg.im, landImg.cityName,
+			landImg.villageNames ,landImg.campNames)
 	else:
 		landImg = LandImg()
 		return 0
