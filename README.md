@@ -8,8 +8,9 @@ Doc	 V: 0.1.4a
 =====
 INTRO
 =====
-	R.A.L.C stands for Randomized Adventure Lore Creator, it is the 
-	combined effort of
+	R.A.L.C is an acronymn for Randomized Adventure Lore Creator, it is the 
+	combined effort of freedom-loving DND nerds to be collectively
+	lazier by means of effort.
 
 =======
 PURPOSE
@@ -22,6 +23,8 @@ PURPOSE
 =
 DEPENDANCIES
 =
+	python2.7
+	python-tk
 	python-imaging
 	python-imaging-tk
 	pyhton-matplotlib
@@ -29,7 +32,7 @@ DEPENDANCIES
 
 
 =============
-SPECIFICATION
+SPECIFICATIONS
 =============
 MUST:
 -----
@@ -68,6 +71,7 @@ TIMELINE
 '''
 This is the timeline of development:
 '''
+
 DONE- First release, must ouput basic character and area information.
 		Design the flow of information, and requirements.
 		Planning/Framework stage.
