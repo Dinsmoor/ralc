@@ -47,7 +47,7 @@ Requirements:
 			bldgs/street
 '''
 
-import Image, ImageDraw, ImageTk, sys, landGen, random
+import Image, ImageDraw, ImageTk, sys, random
 from libdndGen import *
 
 class LandImg(object):
