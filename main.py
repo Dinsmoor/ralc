@@ -32,9 +32,9 @@ class AppData(object):
 	def __init__(self):
 		self.newData()
 
-
 	def newData(self):
-		self.im,self.cityName = mapGen.main('tk')
+		(self.im, self.cityName, self.villageNames,
+			self.campNames) = mapGen.main('tk')
 		print "AppData.newData.Retrieved Data"
 
 	def saveAll(self):
@@ -72,22 +72,23 @@ class AppData(object):
 	def loadPhoto(self):
 		return ImageTk.PhotoImage(self.im)
 
+	def getTreeData(self):
+		return (self.villageNames + self.campNames)
+
 
 
 class UI(tk.Frame,AppData):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
-		self.makeMenuBar()
+		#self.master = master
+		#self.win = tk.Toplevel(self.master)
+		self.master.title('RALC v0.1')
 		self.createWidgets()
 		self.grid()
 		self.getPhoto()
 		print "UI.__init__.Done"
 
-	def makeMenuBar(self):
-		self.menubar = tk.Menu(self)
-		self.menubar.add_command(label="Quit!", command=self.quit)
-		self.menubar.add_cascade(label="File", menu=self.menubar)
-		print 'UI.makeMenuBar.Done'
+
 
 	def createWidgets(self):
 		def makeQuitButton():
@@ -110,6 +111,23 @@ class UI(tk.Frame,AppData):
 			command=self.newState)
 			self.showButton.grid(sticky='n', column=2, row=0, padx=10,pady=120)
 
+		def makeMenuBar():
+			self.option_add('*tearOff', False)
+			self.menubar = tk.Menu(self.master)
+			self.filemenu = tk.Menu(self.menubar)
+			self.editmenu = tk.Menu(self.menubar)
+
+			self.menubar.add_cascade(label="File", menu=self.filemenu)
+			self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+			self.filemenu.add_command(label="New", command=self.newState)
+			self.filemenu.add_command(label="Save", command=dat.saveAll)
+			self.filemenu.add_command(label="Load", command=self.loadState)
+			self.filemenu.add_command(label="Exit", command=self.quit)
+
+			self.tk.call(self.master, "config", "-menu", self.menubar)
+
+			print 'UI.makeMenuBar.Done'
+
 		def makeTreeView():
 			self.tree = ttk.Treeview(self, height=28,
 				selectmode='browse')
@@ -127,11 +145,12 @@ class UI(tk.Frame,AppData):
 
 		makeTreeView()
 		print 'UI.createWidgets.makeTreeView.Done'
-		makeQuitButton()
-		makeSaveButton()
-		makeLoadButton()
-		makeNewButton()
-		print 'UI.createWidgets.make*Button.Done'
+		#makeQuitButton()
+		#makeSaveButton()
+		#makeLoadButton()
+		#makeNewButton()
+		makeMenuBar()
+		print 'UI.createWidgets.makeMenuBar.Done'
 
 
 
@@ -153,14 +172,23 @@ class UI(tk.Frame,AppData):
 		self.label.grid(sticky='E', column=3, row=0)
 		print 'UI.getPhoto.Done'
 
-	def addDataToTree(self, parent):
-		for itm in testdata:
-			self.tree.insert(parent, 'end', text=itm)
+	def fillTree(self, parent):
+		treeData = dat.getTreeData()
+		#td = [(city1, streets),(villiage1...)]
+		for settlement in treeData:
+			#st = [(street1, bldgs),(street2, bld...)]
+			self.tree.insert(parent, 'end', text=settlement)
+			for street in settlement:
+				self.tree.insert(parent, 'end', text=street)
+				for bldg in street:
+					self.tree.insert(parent, 'end', text=bldg)
+					for npc in bldg:
+						self.tree.insert(parent, 'end', text=npc)
 
 
 dat = AppData()
 ui = UI()
 
-ui.master.title('RALC v0.1')
+
 ui.mainloop()
 
