@@ -61,24 +61,37 @@ class Building(object):
 			self.bldgDat['Floor']) = self.getBldgMake()
 		self.bldgDat['Rooms'] = []
 		self.bldgDat['Rooms'].append(self.getRooms(2))
+		#self.testdef(self.bldgDat['Rooms'])
 
+	def testdef(self, data):
+		for li in data:
+			for di in li:
+				neatDicPrint(di)
 
 	def getPurpose(self):
 		bldgtypes = ('Shack','Residence','General Store',
-					'Armorer','Courtyard',
+					'Armorer','Livestock Area',
 					'Weapon Smith', 'Tavern', 'Inn')
 		return random.choice(bldgtypes)
 
 	def getRooms(self, rooms):
-		roomDat = {}
-		roomTypes = ('Entry','Kitchen','Living Area','Dining Area',
+		d = {
+			'Shack':('Entry','Kitchen','Common Area'),
+			'Residence':('Entry','Kitchen','Living Area','Dining Area',
+				'Common Area', 'Sleeping Quarters'),
+			'General Store':('Entry','Store Room'),
+			'Armorer':('Entry','Forge'),
+			'Livestock Area':('Entry','Barn','Slaughter Room'),
+			'Weapon Smith':('Entry','Forge'),
+			'Tavern':('Entry','Kitchen','Dining Area'),
+			'Inn':('Entry','Kitchen',
 				'Common Area', 'Sleeping Quarters')
-		count = 0
-		for room in xrange(0,rooms):
-			roomDat['roomID'] = count
-			roomDat['Type'] = random.choice(roomTypes)
-			roomDat['Actors'] = self.getInhabitants(2)
-			count += 1
+			}
+
+		roomTypes = d[self.bldgDat['Purpose']]
+
+		roomDat = [{'Type':random.choice(roomTypes),
+			'Actors':self.getInhabitants(2)} for k in xrange(0,rooms)]
 		return roomDat
 
 	def getInhabitants(self, popul):
@@ -103,9 +116,6 @@ class Building(object):
 			random.choice(materialsTup[1]),
 			random.choice(materialsTup[2]))
 
-class Room(Building):
-	def __init__(self):
-		pass
 
 def main(opt, techLevel, biome):
 	'''
@@ -115,7 +125,6 @@ def main(opt, techLevel, biome):
 
 	if opt == 'town':
 		bldg = Building(techLevel, biome)
-		room = Room()
 		return bldg.bldgDat
 	else:
 		bldg = Building(1,'forest')
