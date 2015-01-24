@@ -24,7 +24,8 @@
 testlist=('name','name2','name3','name4','name5','name6')
 try:
 	import Tkinter as tk
-	import ttk, mapGen, ImageTk, Image
+	import ttk, mapGen
+	from PIL import Image, ImageTk
 	import cPickle as pickle
 except ImportError:
 	print "You are missing essential Libraries. See README.md"

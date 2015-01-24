@@ -47,7 +47,8 @@ Requirements:
 			bldgs/street
 '''
 try:
-	import Image, ImageDraw, ImageTk, random
+	import random
+	from PIL import Image, ImageDraw, ImageTk
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
@@ -60,13 +61,7 @@ class LandImg(object):
 
 	def __init__(self):
 		'''
-		Need:
-			biome
-			terrain
-			fauna
-			flora
-			roads
-			water
+		Collects needed data to draw on top of a canvas. Order matters!
 		'''
 		biome = self.getBiome()
 		self.cityName = getCityName()
@@ -91,7 +86,6 @@ class LandImg(object):
 		self.drawCamps()
 		self.drawVillage()
 		#self.drawKey()
-
 		#self.saveImg()
 		#self.showImg()
 	def getBiome(self):
@@ -110,7 +104,6 @@ class LandImg(object):
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
 			fill=biomeColors[biome])
 
-
 	def drawCity(self):
 		x = random.randrange(10,self.imgx-50)
 		y = random.randrange(10,self.imgy-50)
@@ -120,7 +113,6 @@ class LandImg(object):
 		self.draw.polygon(self.cityShape, fill='grey', outline='lightgrey')
 		self.draw.text((x-4,y+12),str(self.cityName))
 		self.cityCoord = (x,y)
-
 
 	def drawVillage(self):
 		density = random.randint(1,3)
@@ -139,8 +131,6 @@ class LandImg(object):
 			self.draw.text((x-4,y+2),'%s'%villageName)
 			self.draw.text((x-4,y+8),'to %s: %dkm'%(self.cityName, roadLength))
 
-
-
 	def drawCamps(self):
 		density = random.randint(1,3)
 		for c in xrange(0,density):
@@ -153,7 +143,6 @@ class LandImg(object):
 				fill='crimson', outline='red')
 			self.draw.text((x-4,y+4),"Camp %s"%campName)
 
-
 	def drawTerrain(self,biome):
 		def hills():
 			density = random.randint(1,3)
@@ -164,8 +153,6 @@ class LandImg(object):
 
 		if biome == 'hills':
 			hills()
-
-
 
 	def drawWater(self, biome):
 		def river(densityFactor):
@@ -254,31 +241,75 @@ class LandImg(object):
 		self.im.show()
 
 
-class TownImg(object):
+class TownImg(LandImg):
 	'''
 	All data needed to create a new image representing a Town-generated
 	area.
 	'''
 
 	def __init__(self):
+		#get cityname from LandImg
+		self.cityName = landImg.cityName
+		self.imgx = 600
+		self.imgy = self.imgx
+		# initilize the image
+		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
+		self.draw = ImageDraw.Draw(self.im)
+
+	def drawWalls(self):
 		pass
 
-class BldgImg(object):
+	def drawGates(self):
+		pass
+
+	def drawStreets(self):
+		pass
+
+	def drawLots(self):
+		pass
+
+	def saveImg(self):
+		self.im.save('landMap', "PNG")
+
+	def showImg(self):
+		self.im.show()
+
+class BldgImg(TownImg):
 	'''
 	All data needed to create a new image representing a Bldg-generated
 	area.
 	'''
 
 	def __init__(self):
-		pass
+		#get cityname from LandImg
+		self.cityName = landImg.cityName
+		self.imgx = 600
+		self.imgy = self.imgx
+		# initilize the image
+		self.im = Image.new('RGB',(self.imgx,self.imgy),'maroon')
+		self.draw = ImageDraw.Draw(self.im)
+
+
+	def saveImg(self):
+		self.im.save('landMap', "PNG")
+
+	def showImg(self):
+		self.im.show()
 
 def main(opt):
+	global landImg, townImg, bldgImg
 	if opt == 'tk':
 		landImg = LandImg()
+		townImg = TownImg()
+		bldgImg = BldgImg()
 		return (landImg.im, landImg.cityName,
 			landImg.villageNames ,landImg.campNames)
 	else:
 		landImg = LandImg()
+		townImg = TownImg()
+		bldgImg = BldgImg()
+		landImg.showImg()
+
 		return 0
 
 if __name__ == '__main__':
