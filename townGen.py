@@ -32,8 +32,16 @@ class Settlement(object):
 		self.techLevel = techLevel
 		self.biome = biome
 		self.citySize = self.getCitySize()
-		s = self.getStreets()
-		print s
+		self.s = self.getStreets()
+		#neatDicPrint(self.s)
+
+
+	def testdef(self, data):
+		for li in data:
+			neatListPrint(li)
+			#neatDicPrint(li)
+			#for li in di:
+			#	neatListPrint(li)
 
 	def getBldgData(self):
 		return bldgGen.main('town',self.techLevel, self.biome)
@@ -54,6 +62,7 @@ class Settlement(object):
 		streets = {}
 		for val in xrange(0,3):#self.citySize):
 			streets[getStreetName()] = self.fillStreet()
+		#neatDicPrint(streets)
 		return streets
 
 
@@ -68,7 +77,7 @@ class Settlement(object):
 def main(opt, techLevel, biome):
 	if opt == 'map':
 		town = Settlement(techLevel, biome)
-		return town
+		return town.s
 	else:
 		return Settlement(1,'forest')
 	return 0
