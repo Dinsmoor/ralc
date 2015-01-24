@@ -94,17 +94,22 @@ def getCityName():
 		return s
 def getVillageName():
 	import random
-	cityname = random.choice(getFromFile_T('data/villages'))
-	for s in cityname:
+	villageName = random.choice(getFromFile_T('data/villages'))
+	for s in villageName:
 		return s
 def getCampName():
 	import random
-	cityname = random.choice(getFromFile_T('data/camps'))
-	for s in cityname:
+	campName = random.choice(getFromFile_T('data/camps'))
+	for s in campName:
 		return s
 def getBldgName():
 	import random
-	cityname = random.choice(getFromFile_T('data/bldgs'))
-	for s in cityname:
+	bldgName = random.choice(getFromFile_T('data/bldgs'))
+	for s in bldgName:
+		return s
+def getStreetName():
+	import random
+	streetName = random.choice(getFromFile_T('data/bldgs'))
+	for s in streetName:
 		return s
 #neatDicPrint(getFromFile_Dic('data/equipment/simpleMeleeWeapons'))
