@@ -109,7 +109,6 @@ def getBldgName():
 		return s
 def getStreetName():
 	import random
-	streetName = random.choice(getFromFile_T('data/bldgs'))
+	streetName = random.choice(getFromFile_T('data/streets'))
 	for s in streetName:
 		return s
-#neatDicPrint(getFromFile_Dic('data/equipment/simpleMeleeWeapons'))
