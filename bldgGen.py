@@ -29,10 +29,8 @@ floors, materials, utilities, type of building(tavern, shop), how many
 residents.
 '''
 
-import landGen
 from libdndGen import *
-import charGen
-biome, techLevel = landGen.main("bldg")
+import charGen, random
 
 '''
 Building need:
@@ -48,108 +46,82 @@ Building need:
 
 '''
 
+
+biome = 'forest'
+
 class Building(object):
 	'''
 	Building needs walls, height, max inhabitatants, purpose
 	'''
-	def __init__(self,levels,rooms):
-		self.btype = self.getPurpose()
-		self.levels = levels #self.getLevels()
-		self.make = self.getBldgMake()
-		self.roomDat = self.getRooms(rooms)
+	def __init__(self,techLevel, biome):
+		self.bldgDat = {}
+		self.bldgDat['Purpose'] = self.getPurpose()
+		self.bldgDat['Floors'] = 1
+		(self.bldgDat['Roof'],self.bldgDat['Walls'],
+			self.bldgDat['Floor']) = self.getBldgMake()
+		self.bldgDat['Rooms'] = []
+		self.bldgDat['Rooms'].append(self.getRooms(2))
 
-	def getInhabitants(self, popul):
-		peopleDat = {}
-		for inhabitant in xrange(0,popul):
-
-			personType = random.choice(('Commoner', 'Merchant', 'Storekeeper', 'Peasant', 'Noble'))
-			peopleDat[personType+str(inhabitant)] = charGen.main()
-			#neatDicPrint(peopleDat[peopleID])
-		return peopleDat
-
-	def getRooms(self, rooms):
-		'''
-		Should represent rooms as multiple dicts, but with spontaniously created vars
-		Need: Size, Furnishings, inhabitants
-		'''
-		roomDat = {}
-		roomDat['rooms'] = rooms
-		count = 0
-		for roomnum in xrange(0,roomDat['rooms']):
-			popul = random.randint(1,3)
-			roomNames = ('Entry','Kitchen','Living Area')
-			roomDat['roomID'+str(count)] = random.choice(roomNames)+str(roomnum)
-			#roomDat['roomID'] = Room(roomID, rooms, popul)
-			roomDat['roomID'+str(count)+'Inhabitants'] = self.getInhabitants(popul)
-			count +=1
-
-		return roomDat
 
 	def getPurpose(self):
-		'''
-		In the future, will be determined by what civGen needs, but used
-		here for debugging purposes. Same with getLevels.
-		'''
-		bldgtypes = ('Shack','Residence','General Store','Armorer','Courtyard',
-	'Weapon Smith', 'Tavern', 'Inn')
+		bldgtypes = ('Shack','Residence','General Store',
+					'Armorer','Courtyard',
+					'Weapon Smith', 'Tavern', 'Inn')
 		return random.choice(bldgtypes)
 
+	def getRooms(self, rooms):
+		roomDat = {}
+		roomTypes = ('Entry','Kitchen','Living Area','Dining Area',
+				'Common Area', 'Sleeping Quarters')
+		count = 0
+		for room in xrange(0,rooms):
+			roomDat+str(count)+['roomID'] = count
+			roomDat+str(count)+['Type'] = random.choice(roomTypes)
+			roomDat+str(count)+['Actors'] = self.getInhabitants(2)
+			count += 1
+		return roomDat
+
+	def getInhabitants(self, popul):
+		inhabitantList = []
+		for inhabitant in xrange(0,popul):
+			personType = random.choice(('Commoner', 'Merchant',
+							'Storekeeper', 'Peasant', 'Noble'))
+			inhabitantList.append(charGen.main())
+		return inhabitantList
 
 	def getBldgMake(self):
-		descDict = {
+		d = {
 		#techlevel:roofing[0],walls[1],floor[2]
 		1:(('thatch','straw'),('stick','mud'),('dirt','straw')),
-		2:(('wooden','shingle'),('boarded','log','stone'),('wooden','stone')),
-		3:(('sheet metal','shingle'),('concrete','stone','metal'),('wooden','metal','tile'))
+		2:(('wooden','shingle'),('boarded','log','stone'),
+			('wooden','stone')),
+		3:(('sheet metal','shingle'),('concrete','stone','metal'),
+			('wooden','metal','tile'))
 		}
-		materialsTup = descDict[techLevel]
+		materialsTup = d[1]
+		return (random.choice(materialsTup[0]),
+			random.choice(materialsTup[1]),
+			random.choice(materialsTup[2]))
 
-		return (random.choice(materialsTup[0]),random.choice(materialsTup[1]),random.choice(materialsTup[2]))
+class Room(Building):
+	def __init__(self):
+		pass
 
-	def giveDesc(self):
-		'''
-		Currently a debugging/dumping area to dump data prior to actual
-		use in ralc main.
-		'''
-		print '''
-Techlevel is %d.
-		''' % techLevel
-		print '''
-The %s has %s rooms and %d floors.
-
-The roof is made of %s, walls %s, and floor %s.''' % (self.btype,
-		self.roomDat['rooms'],self.levels,
-
-		self.make[0],self.make[1],self.make[2])
-		#print self.roomDat
-		neatDicPrint(self.roomDat)
-		#print self.bldgID
-
-def makeBuilding(num,levels,rooms):
-	'''
-	# of bldgs, size
-	Handles the rules from civGen that each building needs to obey and
-	conform to. This will be size, levels, stored as a string to have
-	values determined for here.
-	'''
-	c = 0
-	for x in xrange(0,num):
-		a = Building(levels,rooms)
-		#a.getAll(levels,rooms)
-		a.giveDesc()
-		c +=1
-
-
-
-def main():
+def main(opt, techLevel, biome):
 	'''
 	This function is only kept until this program is capable of running
 	indepentantly and will be removed after the program being debugged.
 	'''
-	makeBuilding(1,1,2)
-	#1 building to make, each with 1 floor, each floor with 1 room
-	return 0
+
+	if opt == 'town':
+		bldg = Building(techLevel, biome)
+		room = Room()
+		return bldg.bldgDat
+	else:
+		bldg = Building(1,'forest')
+		neatDicPrint(bldg.bldgDat)
+		return 0
 
 if __name__ == '__main__':
-	main()
+	main(None,None,None)
 
