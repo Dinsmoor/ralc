@@ -46,9 +46,11 @@ Requirements:
 			streets => names
 			bldgs/street
 '''
-
-import Image, ImageDraw, ImageTk, sys, random
-from libdndGen import *
+try:
+	import Image, ImageDraw, ImageTk, random
+	from libdndGen import *
+except ImportError:
+	print "You are missing essential Libraries. See README.md"
 
 class LandImg(object):
 	'''

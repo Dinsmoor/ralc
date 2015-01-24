@@ -22,11 +22,12 @@
 #
 #
 testlist=('name','name2','name3','name4','name5','name6')
-
-import Tkinter as tk
-import ttk, mapGen, ImageTk, Image
-import cPickle as pickle
-
+try:
+	import Tkinter as tk
+	import ttk, mapGen, ImageTk, Image
+	import cPickle as pickle
+except ImportError:
+	print "You are missing essential Libraries. See README.md"
 
 class AppData(object):
 	def __init__(self):
@@ -43,7 +44,8 @@ class AppData(object):
 
 		def saveNames():
 			savef = open('save/name', 'w')
-			pickle.dump((self.cityName),savef)
+			pickle.dump((self.cityName, self.villageNames,
+				self.campNames),savef)
 			savef.close
 
 		saveImg()
@@ -59,7 +61,8 @@ class AppData(object):
 
 		def loadNames():
 			savef = open('save/name', 'r')
-			self.cityName = pickle.load(savef)
+			(self.cityName, self.villageNames,
+				self.campNames) = pickle.load(savef)
 			savef.close
 
 		loadImg()
