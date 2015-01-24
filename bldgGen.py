@@ -75,9 +75,9 @@ class Building(object):
 				'Common Area', 'Sleeping Quarters')
 		count = 0
 		for room in xrange(0,rooms):
-			roomDat+str(count)+['roomID'] = count
-			roomDat+str(count)+['Type'] = random.choice(roomTypes)
-			roomDat+str(count)+['Actors'] = self.getInhabitants(2)
+			roomDat['roomID'] = count
+			roomDat['Type'] = random.choice(roomTypes)
+			roomDat['Actors'] = self.getInhabitants(2)
 			count += 1
 		return roomDat
 
