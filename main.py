@@ -36,6 +36,9 @@ class AppData(object):
 	def newData(self):
 		(self.im, self.cityName, self.villageNames,
 			self.campNames) = mapGen.main('tk')
+		#mapGen just needs to make maps. Leave getting
+		#names and shit to AppData, then tell mapGen what
+		#names you want to use as lists.
 		print "AppData.newData.Retrieved Data"
 
 	def saveAll(self):
