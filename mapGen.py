@@ -53,6 +53,41 @@ try:
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 
+def make_bezier(xys):
+	# xys should be a sequence of 2-tuples (Bezier control points)
+	n = len(xys)
+	combinations = pascal_row(n-1)
+	def bezier(ts):
+		# This uses the generalized formula for bezier curves
+		# http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Generalization
+		result = []
+		for t in ts:
+			tpowers = (t**i for i in range(n))
+			upowers = reversed([(1-t)**i for i in range(n)])
+			coefs = [c*a*b for c, a, b in zip(combinations, tpowers, upowers)]
+			result.append(
+				tuple(sum([coef*p for coef, p in zip(coefs, ps)]) for ps in zip(*xys)))
+		return result
+	return bezier
+
+def pascal_row(n):
+	# This returns the nth row of Pascal's Triangle
+	result = [1]
+	x, numerator = 1, n
+	for denominator in range(1, n//2+1):
+		# print(numerator,denominator,x)
+		x *= numerator
+		x /= denominator
+		result.append(x)
+		numerator -= 1
+	if n&1 == 0:
+		# n is even
+		result.extend(reversed(result[:-1]))
+	else:
+		result.extend(reversed(result))
+	return result
+
+
 class LandImg(object):
 	'''
 	All data needed to create a new image representing a land-generated
@@ -74,7 +109,7 @@ class LandImg(object):
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
-		self.im = Image.new('RGB',(self.imgx,self.imgy),'limegreen')
+		self.im = Image.new('RGBA',(self.imgx,self.imgy),'limegreen')
 		self.draw = ImageDraw.Draw(self.im)
 
 		# start drawing on top of the image
@@ -85,6 +120,7 @@ class LandImg(object):
 		self.drawCity()
 		self.drawCamps()
 		self.drawVillage()
+
 		#self.drawKey()
 		#self.saveImg()
 		#self.showImg()
@@ -97,8 +133,8 @@ class LandImg(object):
 	def drawBiome(self,biome):
 		# These colors are very up for debate. Default HTML colors are ugly
 		biomeColors={
-		'forest':'limegreen','marsh':'olivedrab',
-		'plains':'springgreen','hills':'limegreen',
+		'forest':'olivedrab','marsh':'olivedrab',
+		'plains':'olivedrab','hills':'limegreen',
 		'tundra':'lightslategray','desert':'goldenrod'
 		}
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
@@ -107,11 +143,9 @@ class LandImg(object):
 	def drawCity(self):
 		x = random.randrange(10,self.imgx-50)
 		y = random.randrange(10,self.imgy-50)
-		self.cityShape = ((x,y),(x,y+5),(x+5,y+5),(x+5,y),(x+10,y),
-		(x+10,y+5),(x+15,y+5),(x+15,y),(x+20,y),(x+20,y+5),(x+20,y+15),
-		(x-5,y+15),(x-5,y))
-		self.draw.polygon(self.cityShape, fill='grey', outline='lightgrey')
-		self.draw.text((x-4,y+12),str(self.cityName))
+		pasteIm = Image.open('data/sprites/city.png')
+		self.im.paste(pasteIm, (x,y), pasteIm)
+		self.draw.text((x-10,y+18),str(self.cityName))
 		self.cityCoord = (x,y)
 
 	def drawVillage(self):
@@ -119,17 +153,15 @@ class LandImg(object):
 		for c in xrange(0,density):
 			villageName = getVillageName()
 			self.villageNames.append(villageName)
+
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			self.villageShape = ((x,y),(x-10,y-10),(x+10,y-10))
-			self.villageCoord = (x,y)
-			roadLength = self.drawRoad() / 10 # to be used for km
-			self.draw.polygon(self.villageShape, fill='olive',
-				outline='orchid')
-			#self.draw.rectangle((x+10,y,x-20,y+10), fill='darkolivegreen',
-			#	outline='lawngreen')
-			self.draw.text((x-4,y+2),'%s'%villageName)
-			self.draw.text((x-4,y+8),'to %s: %dkm'%(self.cityName, roadLength))
+			pasteIm = Image.open('data/sprites/village.png')
+			self.im.paste(pasteIm, (x,y), pasteIm)
+
+			self.draw.text((x-10,y+18),'%s'%villageName)
+			roadLength = gridDistance((self.cityCoord,(x,y))) / 10 # to be used for km
+			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def drawCamps(self):
 		density = random.randint(1,3)
@@ -138,10 +170,11 @@ class LandImg(object):
 			self.campNames.append(campName)
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			self.campShape = (x,y),(x+5,y+5),(x-5,y+5)
-			self.draw.polygon((self.campShape),
-				fill='crimson', outline='red')
-			self.draw.text((x-4,y+4),"Camp %s"%campName)
+			pasteIm = Image.open('data/sprites/camp.png')
+			self.im.paste(pasteIm, (x,y), pasteIm)
+			self.draw.text((x-10,y+18),"Camp %s"%campName)
+			roadLength = gridDistance((self.cityCoord,(x,y))) / 10 # to be used for km
+			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def drawTerrain(self,biome):
 		def hills():
@@ -183,6 +216,7 @@ class LandImg(object):
 						if (y >= self.imgy):
 							break
 					self.draw.point((x,y), fill='navy')
+
 		def lake():
 			# just have it be a shallow-looking pond, I suppose
 			self.draw.ellipse()
@@ -198,10 +232,17 @@ class LandImg(object):
 		river(d[biome])
 
 	def drawFlora(self,biome):
-		def trees(density):
+		def trees(density,artList):
 			density = density*225
+			#using tree sprites
+			for t in xrange(0,int(density)):
+				pasteIm = Image.open('data/sprites/'+random.choice(artList)+'.png')
+				x = random.randrange(0,self.imgx)
+				y = random.randrange(0,self.imgy)
+				self.im.paste(pasteIm, (x,y), pasteIm)
 
-			#trees
+			#old-style trees
+			'''
 			for c in xrange(0,int(density)):
 				x = random.randrange(0,self.imgx)
 				y = random.randrange(0,self.imgy)
@@ -209,24 +250,24 @@ class LandImg(object):
 					outline ='green')
 				#some mild humor
 				#draw.text((x-4,y+4),"Tree"+str(c))
-
+			'''
 
 		# Tree ensity Modifiers
 		d ={
-		'forest':random.randint(2,4),
-		'plains':0.7,
-		'hills':0.5,
-		'tundra':0.2,
-		'marsh':1,
-		'desert':0.1
+		'forest':[random.randint(2,4),('tree1','tree2')],
+		'plains':[0.7,	('bush1','desert1')],
+		'hills':[0.5,	('bush1','desert1')],
+		'tundra':[0.2,	('bush1','desert1')],
+		'marsh':[1,		('marsh1','tree2')],
+		'desert':[0.1,	('desert1','desert2')]
 		}
 
-		trees(d[biome])
+		trees(d[biome][0],d[biome][1])
 
-	def drawRoad(self):
+	def drawRoad(self,targetCoord):
 		# draws line from each villiage to city
 		# self.draw.line((self.cityCoord,self.villageCoord), fill='gray')
-		roadLength = gridDistance((self.cityCoord,self.villageCoord))
+		roadLength = gridDistance((self.cityCoord,targetCoord))
 		return roadLength
 
 	def drawKey(self):
