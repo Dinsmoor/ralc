@@ -377,23 +377,47 @@ def getSkills(pcRace, pcClass):
 	skills = {}
 	if pcRace == "Dwarf":
 		pass
-
-def getBackground():
-	'''
-	This should grab data from files, and use them just like getName().
-	Should be easy with examples, and importing from the book.
-	'''
-	background = 'Alcolyte'
-	try:
-		bgData = getFromFile_LoL('data/char/'background.lower()+'Background'))
-		trait = random.choice(bg[0])
-		ideal = random.choice(bg[1])
-		bond = random.choice(bg[2])
-		flaw = random.choice(bg[3])
+'''
+def getBackground(pcClass):
+	if pcClass == "Cleric":
+		charBackground = (('Acolyte', 25), ('Charlatan', 10), ('Criminal', 5), ('Entertainer', 10), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Druid":
+		charBackground = (('Acolyte', 20), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Ranger":
+		charBackground = (('Acolyte', 5), ('Charlatan', 20), ('Criminal', 15), ('Entertainer', 15), ('Folk Hero', 20), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Paladin":
+		charBackground =  (('Acolyte', 30), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 10), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Warlock":
+		charBackground = (('Acolyte', 15), ('Charlatan', 5), ('Criminal', 20), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Wizard":
+		charBackground = (('Acolyte', 15), ('Charlatan', 5), ('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Barbarian":
+		charBackground = (('Acolyte', 5), ('Charlatan', 5), ('Criminal', 15), ('Entertainer', 10), ('Folk Hero', 10), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Fighter":
+		charBackground = (('Acolyte', 5), ('Charlatan', 15), ('Criminal', 25), ('Entertainer', 20), ('Folk Hero', 30), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Rouge":
+		charBackground = (('Acolyte', 5), ('Charlatan', 40), ('Criminal', 25), ('Entertainer', 20), ('Folk Hero', 20), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Monk":
+		charBackground = (('Acolyte', 30), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Bard":
+		charBackground = (('Acolyte', 5), ('Charlatan', 40), ('Criminal', 15), ('Entertainer', 20), ('Folk Hero', 40), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	elif pcClass == "Sorcerer":
+		charBackground = (('Acolyte', 15), ('Charlatan', 20), ('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
+	
+	try: 
+		background = wChoice(charBackground) 
+		bgData = getFromFile_LoL('data/char/'+background.lower()+'Background')
+		trait = random.choice(bgData[0])
+		ideal = random.choice(bgData[1])
+		bond = random.choice(bgData[2])
+		flaw = random.choice(bgData[3])
+		#background specialty = random.choice(bgData[4]) 
 		
 		return trait, ideal, bond, flaw
-	except:
-		return None
+	except: 
+		print "its not working" 
+'''		return None
+
 
 def getProficiencies(pcRace, pcSubrace):
 	plist = []
@@ -529,8 +553,7 @@ def main():
 
 	stats = {}
 	pc = {}
-
-	pc['Level'] = pcLevel
+	pc['Level'] 				= pcLevel
 	pc['Class']					= getStats()
 
 	if newClass is not None:
@@ -600,8 +623,16 @@ def main():
 			except: break
 	else:
 		print "No Spells"
-
 	'''
+	
+	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class']) 
+	print"""Background
+	Personality Trait: %s
+	Idea: %s
+	Bond: %s
+	Flaw: %s
+	"""%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
+
 	#pc['Weapons'] = getEquipment(pc['Class'])
 	#if weapons is not None:
 	#	c = 0
