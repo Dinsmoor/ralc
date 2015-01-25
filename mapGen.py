@@ -23,7 +23,7 @@
 #
 
 '''
-Need: python-imaging, python-imaging-tk, pyhton-matplotlib, python-numpy
+Need: python-pil, python-pil.imagetk, pyhton-matplotlib, python-numpy
 
 Indended to take data from landGen, bldgGen, townGen, and create pngs
 from their data, to be piped to an interface for easier descriptors for

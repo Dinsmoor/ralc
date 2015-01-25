@@ -8,7 +8,7 @@ Doc	 V: 0.1.4a
 =====
 INTRO
 =====
-	R.A.L.C is an acronymn for Randomized Adventure Lore Creator, it is the 
+	R.A.L.C is an acronymn for Randomized Adventure Lore Creator, it is the
 	combined effort of freedom-loving DND nerds to be collectively
 	lazier by means of effort.
 
@@ -25,8 +25,8 @@ DEPENDANCIES
 =
 	python2.7
 	python-tk
-	python-imaging
-	python-imaging-tk
+	python-pil
+	python-pil.imagetk
 	pyhton-matplotlib
 	python-numpy
 
@@ -102,7 +102,7 @@ INDEV- Create VERY simple interface to control/display inputs/outputs.
 		Use tree-like navigation to categorize each building, inhabitants,
 		quests, POI, etc.
 
-0.9.0a- 
+0.9.0a-
 
 ============
 BEYOND SCOPE
