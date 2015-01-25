@@ -191,7 +191,8 @@ class LandImg(object):
 				self.draw.arc((x,y,x+20,y+20),220,340, fill='gray')
 
 		if biome == 'hills':
-			hills()
+			pass
+			#hills()
 
 	def drawWater(self, biome):
 		def river(densityFactor):
@@ -355,7 +356,7 @@ def main(opt):
 		landImg = LandImg()
 		townImg = TownImg()
 		bldgImg = BldgImg()
-		landImg.showImg()
+		#landImg.showImg()
 
 		return 0
 
