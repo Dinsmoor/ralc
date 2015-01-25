@@ -131,14 +131,20 @@ class LandImg(object):
 		return wChoice(biomeLeanVal)
 
 	def drawBiome(self,biome):
+		pasteIm = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
+		self.im.paste(pasteIm, (0,0), pasteIm)
+
+		'''
+		# old method for bullshit
 		# These colors are very up for debate. Default HTML colors are ugly
 		biomeColors={
 		'forest':'olivedrab','marsh':'olivedrab',
-		'plains':'olivedrab','hills':'limegreen',
+		'plains':'olivedrab','hills':'olivedrab',
 		'tundra':'lightslategray','desert':'goldenrod'
 		}
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
 			fill=biomeColors[biome])
+		'''
 
 	def drawCity(self):
 		x = random.randrange(10,self.imgx-50)
@@ -160,7 +166,7 @@ class LandImg(object):
 			self.im.paste(pasteIm, (x,y), pasteIm)
 
 			self.draw.text((x-10,y+18),'%s'%villageName)
-			roadLength = gridDistance((self.cityCoord,(x,y))) / 10 # to be used for km
+			roadLength = int(gridDistance((self.cityCoord,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def drawCamps(self):
@@ -173,7 +179,7 @@ class LandImg(object):
 			pasteIm = Image.open('data/sprites/camp.png')
 			self.im.paste(pasteIm, (x,y), pasteIm)
 			self.draw.text((x-10,y+18),"Camp %s"%campName)
-			roadLength = gridDistance((self.cityCoord,(x,y))) / 10 # to be used for km
+			roadLength = int(gridDistance((self.cityCoord,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def drawTerrain(self,biome):
@@ -255,11 +261,11 @@ class LandImg(object):
 		# Tree ensity Modifiers
 		d ={
 		'forest':[random.randint(2,4),('tree1','tree2')],
-		'plains':[0.7,	('bush1','desert1')],
-		'hills':[0.5,	('bush1','desert1')],
-		'tundra':[0.2,	('bush1','desert1')],
-		'marsh':[1,		('marsh1','tree2')],
-		'desert':[0.1,	('desert1','desert2')]
+		'plains':[0.7,	('tree3','desertF1')],
+		'hills':[0.5,	('tree3','desertF1')],
+		'tundra':[0.2,	('tree3','desertF1')],
+		'marsh':[1,		('marshF1','tree2')],
+		'desert':[0.1,	('desertF1','desertF2')]
 		}
 
 		trees(d[biome][0],d[biome][1])
