@@ -95,10 +95,10 @@ def getStats():
 	functions, but works fine, really. Could be moved to main(), but that
 	would just make main() more bloated, no need.
 	'''
-	global stats
-	stats['STR'] = getStatRoll();stats['DEX'] = getStatRoll();stats['CON'] = getStatRoll()
-	stats['INT'] = getStatRoll();stats['WIS'] = getStatRoll();stats['CHR'] = getStatRoll()
-	statTup = (stats['STR'], stats['DEX'], stats['CON'], stats['INT'], stats['WIS'], stats['CHR'])
+	global pc
+	pc['STR'] = getStatRoll();pc['DEX'] = getStatRoll();pc['CON'] = getStatRoll()
+	pc['INT'] = getStatRoll();pc['WIS'] = getStatRoll();pc['CHR'] = getStatRoll()
+	statTup = (pc['STR'], pc['DEX'], pc['CON'], pc['INT'], pc['WIS'], pc['CHR'])
 
 	try:
 		if statTup[0] == max(statTup):
@@ -142,34 +142,34 @@ def getRaceBonus(pcRace):
 	Also, it may be better to make subrace in a different function, or even
 	in getRace() itself, since this is messy.
 	'''
-	global stats
+	global pc
 	if pcRace == "Dwarf":
 		subraces 	= ('Mountain','Hill')
-		stats['CON'] +=2
+		pc['CON'] +=2
 	elif pcRace == "Elf":
 		subraces	= ('High','Wood','Dark')
-		stats['DEX'] += 2
+		pc['DEX'] += 2
 	elif pcRace == "Halfling":
 		subraces= ('Lightfoot','Stout')
-		stats['DEX'] += 2
+		pc['DEX'] += 2
 	elif pcRace == "Human":
 		subraces = ('Calishite','Chondathan','Shou','Damaran',
 		'Tethyrian','Illuskan','Turami','Mulan','Rashemi')
-		stats['STR'] += 1; stats['DEX'] += 1; stats['CON'] +=1
-		stats['INT'] +=1; stats['WIS'] +=1; stats['CHR'] += 1
+		pc['STR'] += 1; pc['DEX'] += 1; pc['CON'] +=1
+		pc['INT'] +=1; pc['WIS'] +=1; pc['CHR'] += 1
 	elif pcRace == "Dragonborn":
 		subraces = ('Black','Blue','Brass','Bronze','Copper',
 		'Gold','Green','Red','White','Silver')
-		stats['STR'] +=2; stats['CHR'] +=1
+		pc['STR'] +=2; pc['CHR'] +=1
 	elif pcRace == "Gnome":
 		subraces = ('Forest','Rock')
-		stats['DEX'] +=1
+		pc['DEX'] +=1
 	elif pcRace == 'Half-Elf':
-		stats['CHR'] +=2
+		pc['CHR'] +=2
 	elif pcRace == 'Half-Orc':
-		stats['STR'] +=2; stats['CON'] +=1
+		pc['STR'] +=2; pc['CON'] +=1
 	elif pcRace == 'Tiefling':
-		stats['INT'] +=1; stats['CHR'] +=2
+		pc['INT'] +=1; pc['CHR'] +=2
 	try:
 		pcSubrace = random.choice(subraces)
 		getSubraceBonus(pcSubrace)
@@ -178,25 +178,25 @@ def getRaceBonus(pcRace):
 	return pcSubrace
 
 def getSubraceBonus(pcSubrace):
-	global stats
+	global pc
 	if pcSubrace == 'Hill':
-			stats['WIS'] += 1
+			pc['WIS'] += 1
 	elif pcSubrace == "Mountain":
-			stats['STR'] += 2
+			pc['STR'] += 2
 	elif pcSubrace == "High":
-			stats['INT'] += 1
+			pc['INT'] += 1
 	elif pcSubrace == "Wood":
-			stats['WIS'] += 1
+			pc['WIS'] += 1
 	elif pcSubrace == "Dark":
-			stats['CHR'] += 1
+			pc['CHR'] += 1
 	elif pcSubrace == 'Lightfoot':
-			stats['CHR'] += 1
+			pc['CHR'] += 1
 	elif pcSubrace == 'Stout':
-			stats['CON'] += 1
+			pc['CON'] += 1
 	elif pcSubrace == 'Forest':
-			stats['DEX'] += 1
+			pc['DEX'] += 1
 	elif pcSubrace == 'Rock':
-			stats['CON'] += 1
+			pc['CON'] += 1
 
 def getHitPoints(pcClass, conMod, pcLevel, pcSubrace):
 	'''
@@ -216,13 +216,13 @@ def getHitPoints(pcClass, conMod, pcLevel, pcSubrace):
 		if pcSubrace == 'Hill':
 			hpBonus = 1
 
-		hitPoints = hitDie[pcClass] + stats['conMod'] + hpBonus
+		hitPoints = hitDie[pcClass] + pc['conMod'] + hpBonus
 
 		if pcLevel == 1:
 			return hitPoints
 
 		for x in xrange(1,pcLevel):
-			hitPoints = hitPoints + random.randint(1,hitDie[pcClass]) + stats['conMod'] + hpBonus
+			hitPoints = hitPoints + random.randint(1,hitDie[pcClass]) + pc['conMod'] + hpBonus
 		return hitPoints
 	except:
 		return 1
@@ -317,7 +317,7 @@ def getName(pcRace, pcGender):
 	race name in a paticular syntax, then imports all sorts of different names
 	based opon their index in a list of lists.
 	'''
-	global stats
+	global pc
 	try:
 		names = getFromFile_LoL('data/char/'+(pcRace.lower()+'Names'))
 		pcNameLast = random.choice(names[2])
@@ -326,7 +326,7 @@ def getName(pcRace, pcGender):
 		else:
 			pcNameFirst = random.choice(names[1])
 		# if we want special exceptions
-		if pcNameFirst == "Helga": pcNameLast = "SMASH";stats['STR'] += 10
+		if pcNameFirst == "Helga": pcNameLast = "SMASH";pc['STR'] += 10
 		pcName = pcNameFirst + ' '+  pcNameLast
 	except:
 		pcName = "Error- No cfg file for %s" %pcRace
@@ -413,11 +413,15 @@ def getBackground(pcClass):
 		flaw = random.choice(bgData[3])
 		#background specialty = random.choice(bgData[4]) 
 		
+
+
+	
+
 		return trait, ideal, bond, flaw
 	except: 
 		print "its not working" 
-'''		return None
-
+		return None
+'''
 
 def getProficiencies(pcRace, pcSubrace):
 	plist = []
@@ -549,9 +553,9 @@ def main():
 	"Hey, get this data and print it, yo" and then this prog will be all
 	like.. "yea.. lemme get right on dat."'''
 	parseMe()
-	global stats
+	global pc
 
-	stats = {}
+
 	pc = {}
 	pc['Level'] 				= pcLevel
 	pc['Class']					= getStats()
@@ -566,9 +570,9 @@ def main():
 			pc['Race'] = newRace.title()
 	pc['Subrace'] = getRaceBonus(pc['Race'])
 
-	stats['strMod'] = getStatModifiers(stats['STR']);stats['dexMod']	= getStatModifiers(stats['DEX'])
-	stats['conMod'] = getStatModifiers(stats['CON']);stats['intMod']	= getStatModifiers(stats['INT'])
-	stats['wisMod'] = getStatModifiers(stats['WIS']);stats['chrMod']	= getStatModifiers(stats['CHR'])
+	pc['strMod'] = getStatModifiers(pc['STR']);pc['dexMod']	= getStatModifiers(pc['DEX'])
+	pc['conMod'] = getStatModifiers(pc['CON']);pc['intMod']	= getStatModifiers(pc['INT'])
+	pc['wisMod'] = getStatModifiers(pc['WIS']);pc['chrMod']	= getStatModifiers(pc['CHR'])
 
 	pc['Alignment'] 			= getAlignment(pc['Race'])
 	pc['Name']					= getName(pc['Race'], pc['Gender'])
@@ -591,7 +595,7 @@ def main():
 		 ", ".join([str(x) for x in pc['Lang']] )) #to get rid of ugly formatting
 
 	'''
-	pc['HitPoints']				= getHitPoints(pc['Class'], stats['conMod'], pcLevel, pc['Subrace'])
+	pc['HitPoints']				= getHitPoints(pc['Class'], pc['conMod'], pcLevel, pc['Subrace'])
 	pc['Speed']					= getSpeed(pc['Race'], pc['Subrace'])
 
 	'''
@@ -606,8 +610,8 @@ def main():
 	INT	%d (%d)
 	WIS	%d (%d)
 	CHR	%d (%d)
-"""%(pc['Level'], pc['HitPoints'], pc['Speed'], stats['STR'], stats['strMod'], stats['DEX'], stats['dexMod'], stats['CON'],
-	stats['conMod'], stats['INT'], stats['intMod'], stats['WIS'], stats['wisMod'], stats['CHR'], stats['chrMod'])
+"""%(pc['Level'], pc['HitPoints'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
+	pc['conMod'], pc['INT'], pc['intMod'], pc['WIS'], pc['wisMod'], pc['CHR'], pc['chrMod'])
 
 	'''
 	pc['Spells'] = getSpells(pc['Class'], pc['Level'])
@@ -624,7 +628,7 @@ def main():
 	else:
 		print "No Spells"
 	'''
-	
+	'''
 	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class']) 
 	print"""Background
 	Personality Trait: %s
@@ -632,7 +636,7 @@ def main():
 	Bond: %s
 	Flaw: %s
 	"""%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
-
+'''
 	#pc['Weapons'] = getEquipment(pc['Class'])
 	#if weapons is not None:
 	#	c = 0
