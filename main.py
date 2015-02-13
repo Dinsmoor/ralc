@@ -21,7 +21,6 @@
 #  MA 02110-1301, USA.
 #
 #
-testlist=('name','name2','name3','name4','name5','name6')
 try:
 	import Tkinter as tk
 	import ttk, mapGen
@@ -32,54 +31,54 @@ except ImportError:
 
 class AppData(object):
 	def __init__(self):
-		self.newData()
+		self.new_data()
 
-	def newData(self):
+	def new_data(self):
 		(self.im, self.cityName, self.villageNames,
 			self.campNames) = mapGen.main('tk')
 		#mapGen just needs to make maps. Leave getting
 		#names and shit to AppData, then tell mapGen what
 		#names you want to use as lists.
-		print "AppData.newData.Retrieved Data"
+		print "AppData.new_data.Retrieved Data"
 
-	def saveAll(self):
-		def saveImg():
+	def save_all(self):
+		def save_image():
 			self.im.save('save/img','PNG')
 
-		def saveNames():
+		def save_names():
 			savef = open('save/name', 'w')
 			pickle.dump((self.cityName, self.villageNames,
 				self.campNames),savef)
 			savef.close
 
-		saveImg()
-		print 'AppData.saveAll.Image Saved'
-		saveNames()
-		print 'AppData.saveAll.Names Saved'
+		save_image()
+		print 'AppData.save_all.Image Saved'
+		save_names()
+		print 'AppData.save_all.Names Saved'
 
 
-	def loadAll(self):
-		def loadImg():
+	def load_all(self):
+		def load_image():
 			self.im = Image.open('save/img')
 
 
-		def loadNames():
+		def load_names():
 			savef = open('save/name', 'r')
 			(self.cityName, self.villageNames,
 				self.campNames) = pickle.load(savef)
 			savef.close
 
-		loadImg()
-		print 'AppData.loadAll.Loaded Image From Disk'
-		loadNames()
-		print 'AppData.loadAll.Loaded Names From Disk'
-		ui.createWidgets()
-		print 'AppData.loadAll.Refreshed Widgets'
+		load_image()
+		print 'AppData.load_all.Loaded Image From Disk'
+		load_names()
+		print 'AppData.load_all.Loaded Names From Disk'
+		ui.create_widgets()
+		print 'AppData.load_all.Refreshed Widgets'
 
-	def loadPhoto(self):
+	def load_photo(self):
 		return ImageTk.PhotoImage(self.im)
 
-	def getTreeData(self):
+	def get_tree_data(self):
 		return (self.villageNames + self.campNames)
 
 
@@ -90,35 +89,15 @@ class UI(tk.Frame,AppData):
 		#self.master = master
 		#self.win = tk.Toplevel(self.master)
 		self.master.title('RALC v0.1')
-		self.createWidgets()
+		self.create_widgets()
 		self.grid()
-		self.getPhoto()
+		self.get_photo()
 		print "UI.__init__.Done"
 
 
 
-	def createWidgets(self):
-		def makeQuitButton():
-			self.quitButton = tk.Button(self, text="Quit",
-			command=self.quit)
-			self.quitButton.grid(sticky='n', column=2, row=0, padx=10)
-
-		def makeSaveButton():
-			self.showButton = tk.Button(self, text="Save",
-			command=dat.saveAll)
-			self.showButton.grid(sticky='n', column=2, row=0, padx=10,pady=40)
-
-		def makeLoadButton():
-			self.showButton = tk.Button(self, text="Load",
-			command=self.loadState)
-			self.showButton.grid(sticky='n', column=2, row=0, padx=10,pady=80)
-
-		def makeNewButton():
-			self.showButton = tk.Button(self, text="New",
-			command=self.newState)
-			self.showButton.grid(sticky='n', column=2, row=0, padx=10,pady=120)
-
-		def makeMenuBar():
+	def create_widgets(self):
+		def make_menu_bar():
 			self.option_add('*tearOff', False)
 			self.menubar = tk.Menu(self.master)
 			self.filemenu = tk.Menu(self.menubar)
@@ -126,16 +105,16 @@ class UI(tk.Frame,AppData):
 
 			self.menubar.add_cascade(label="File", menu=self.filemenu)
 			self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-			self.filemenu.add_command(label="New", command=self.newState)
-			self.filemenu.add_command(label="Save", command=dat.saveAll)
-			self.filemenu.add_command(label="Load", command=self.loadState)
+			self.filemenu.add_command(label="New", command=self.new_state)
+			self.filemenu.add_command(label="Save", command=dat.save_all)
+			self.filemenu.add_command(label="Load", command=self.load_state)
 			self.filemenu.add_command(label="Exit", command=self.quit)
 
 			self.tk.call(self.master, "config", "-menu", self.menubar)
 
-			print 'UI.makeMenuBar.Done'
+			print 'UI.make_menu_bar.Done'
 
-		def makeTreeView():
+		def make_tree_view():
 			self.tree = ttk.Treeview(self, height=28,
 				selectmode='browse')
 			ysb = ttk.Scrollbar(self, orient='vertical',
@@ -148,39 +127,39 @@ class UI(tk.Frame,AppData):
 			self.tree.grid(row=0, column=0)
 
 			self.tree.insert('', 'end', text=dat.cityName, open=True)
+			
+			
 
 
-		makeTreeView()
-		print 'UI.createWidgets.makeTreeView.Done'
-		#makeQuitButton()
-		#makeSaveButton()
-		#makeLoadButton()
-		#makeNewButton()
-		makeMenuBar()
-		print 'UI.createWidgets.makeMenuBar.Done'
+		make_tree_view()
+		print 'UI.create_widgets.make_tree_view.Done'
+		make_menu_bar()
+		self.fill_tree('')
+		print 'UI.create_widgets.make_menu_bar.Done'
 
 
 
-	def loadState(self):
-		dat.loadAll()
-		self.createWidgets()
-		self.getPhoto()
-		print 'UI.loadState.Done'
+	def load_state(self):
+		dat.load_all()
+		self.create_widgets()
+		self.get_photo()
+		print 'UI.load_state.Done'
 
-	def newState(self):
-		dat.newData()
-		self.createWidgets()
-		self.getPhoto()
-		print 'UI.newState.Done'
+	def new_state(self):
+		dat.new_data()
+		self.create_widgets()
+		self.get_photo()
+		print 'UI.new_state.Done'
 
-	def getPhoto(self):
-		self.img = dat.loadPhoto()
+	def get_photo(self):
+		self.img = dat.load_photo()
 		self.label = tk.Label(image = self.img)
 		self.label.grid(sticky='E', column=3, row=0)
-		print 'UI.getPhoto.Done'
+		print 'UI.get_photo.Done'
 
-	def fillTree(self, parent):
-		treeData = dat.getTreeData()
+	def fill_tree(self, parent):
+		treeData = dat.get_tree_data()
+		print treeData
 		#td = [(city1, streets),(villiage1...)]
 		for settlement in treeData:
 			#st = [(street1, bldgs),(street2, bld...)]

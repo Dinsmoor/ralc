@@ -60,7 +60,7 @@ class Settlement(object):
 
 	def getStreets(self):
 		streets = {}
-		for val in xrange(0,3):#self.citySize):
+		for val in xrange(0,self.citySize):
 			streets[getStreetName()] = self.fillStreet()
 		#neatDicPrint(streets)
 		return streets

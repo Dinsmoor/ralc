@@ -47,48 +47,14 @@ Requirements:
 			bldgs/street
 '''
 try:
-	import random
+	import random, townGen
 	from PIL import Image, ImageDraw, ImageTk
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 
-def make_bezier(xys):
-	# xys should be a sequence of 2-tuples (Bezier control points)
-	n = len(xys)
-	combinations = pascal_row(n-1)
-	def bezier(ts):
-		# This uses the generalized formula for bezier curves
-		# http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Generalization
-		result = []
-		for t in ts:
-			tpowers = (t**i for i in range(n))
-			upowers = reversed([(1-t)**i for i in range(n)])
-			coefs = [c*a*b for c, a, b in zip(combinations, tpowers, upowers)]
-			result.append(
-				tuple(sum([coef*p for coef, p in zip(coefs, ps)]) for ps in zip(*xys)))
-		return result
-	return bezier
 
-def pascal_row(n):
-	# This returns the nth row of Pascal's Triangle
-	result = [1]
-	x, numerator = 1, n
-	for denominator in range(1, n//2+1):
-		# print(numerator,denominator,x)
-		x *= numerator
-		x /= denominator
-		result.append(x)
-		numerator -= 1
-	if n&1 == 0:
-		# n is even
-		result.extend(reversed(result[:-1]))
-	else:
-		result.extend(reversed(result))
-	return result
-
-
-class LandImg(object):
+class Land_Image(object):
 	'''
 	All data needed to create a new image representing a land-generated
 	area.
@@ -98,12 +64,13 @@ class LandImg(object):
 		'''
 		Collects needed data to draw on top of a canvas. Order matters!
 		'''
-		biome = self.getBiome()
-		self.cityName = getCityName()
+		biome = self.get_biome()
+		self.biome = biome
+		self.camp_name = getCityName()
 
 		# names to be passed to main, filled when drawn
-		self.villageNames = []
-		self.campNames = []
+		self.village_names = []
+		self.camp_names = []
 
 		# set base img size
 		self.imgx = 600
@@ -113,26 +80,26 @@ class LandImg(object):
 		self.draw = ImageDraw.Draw(self.im)
 
 		# start drawing on top of the image
-		self.drawBiome(biome)
-		self.drawWater(biome)
-		self.drawTerrain(biome)
-		self.drawFlora(biome)
-		self.drawCity()
-		self.drawCamps()
-		self.drawVillage()
+		self.draw_biome(biome)
+		self.draw_water(biome)
+		self.draw_terrain(biome)
+		self.draw_flora(biome)
+		self.draw_city()
+		self.draw_camps()
+		self.draw_village()
 
 		#self.drawKey()
-		#self.saveImg()
-		#self.showImg()
-	def getBiome(self):
+		#self.save_image()
+		#self.show_image()
+	def get_biome(self):
 		biomeLeanVal = (('marsh' ,1.0),('plains'  ,5.0),
 						('hills' ,1.5),('tundra',1.0),
 						('desert',2.0),('forest'  ,3.0))
 		return wChoice(biomeLeanVal)
 
-	def drawBiome(self,biome):
-		pasteIm = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
-		self.im.paste(pasteIm, (0,0), pasteIm)
+	def draw_biome(self,biome):
+		image_to_paste = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
+		self.im.paste(image_to_paste, (0,0), image_to_paste)
 
 		'''
 		# old method for bullshit
@@ -146,43 +113,43 @@ class LandImg(object):
 			fill=biomeColors[biome])
 		'''
 
-	def drawCity(self):
+	def draw_city(self):
 		x = random.randrange(10,self.imgx-50)
 		y = random.randrange(10,self.imgy-50)
-		pasteIm = Image.open('data/sprites/city.png')
-		self.im.paste(pasteIm, (x,y), pasteIm)
-		self.draw.text((x-10,y+18),str(self.cityName))
-		self.cityCoord = (x,y)
+		image_to_paste = Image.open('data/sprites/city.png')
+		self.im.paste(image_to_paste, (x,y), image_to_paste)
+		self.draw.text((x-10,y+18),str(self.camp_name))
+		self.city_location = (x,y)
 
-	def drawVillage(self):
+	def draw_village(self):
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			villageName = getVillageName()
-			self.villageNames.append(villageName)
+			self.village_names.append(villageName)
 
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			pasteIm = Image.open('data/sprites/village.png')
-			self.im.paste(pasteIm, (x,y), pasteIm)
+			image_to_paste = Image.open('data/sprites/village.png')
+			self.im.paste(image_to_paste, (x,y), image_to_paste)
 
 			self.draw.text((x-10,y+18),'%s'%villageName)
-			roadLength = int(gridDistance((self.cityCoord,(x,y))) / 15) # to be used for km
+			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
-	def drawCamps(self):
+	def draw_camps(self):
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			campName = getCampName()
-			self.campNames.append(campName)
+			self.camp_names.append(campName)
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			pasteIm = Image.open('data/sprites/camp.png')
-			self.im.paste(pasteIm, (x,y), pasteIm)
+			image_to_paste = Image.open('data/sprites/camp.png')
+			self.im.paste(image_to_paste, (x,y), image_to_paste)
 			self.draw.text((x-10,y+18),"Camp %s"%campName)
-			roadLength = int(gridDistance((self.cityCoord,(x,y))) / 15) # to be used for km
+			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
-	def drawTerrain(self,biome):
+	def draw_terrain(self,biome):
 		def hills():
 			density = random.randint(1,3)
 			for c in xrange(0,density*100):
@@ -194,7 +161,7 @@ class LandImg(object):
 			pass
 			#hills()
 
-	def drawWater(self, biome):
+	def draw_water(self, biome):
 		def river(densityFactor):
 			density = random.randint(0,5)
 			streamCount = int(density + (density*densityFactor))
@@ -238,15 +205,15 @@ class LandImg(object):
 		}
 		river(d[biome])
 
-	def drawFlora(self,biome):
+	def draw_flora(self,biome):
 		def trees(density,artList):
 			density = density*225
 			#using tree sprites
 			for t in xrange(0,int(density)):
-				pasteIm = Image.open('data/sprites/'+random.choice(artList)+'.png')
+				image_to_paste = Image.open('data/sprites/'+random.choice(artList)+'.png')
 				x = random.randrange(0,self.imgx)
 				y = random.randrange(0,self.imgy)
-				self.im.paste(pasteIm, (x,y), pasteIm)
+				self.im.paste(image_to_paste, (x,y), image_to_paste)
 
 			#old-style trees
 			'''
@@ -271,38 +238,38 @@ class LandImg(object):
 
 		trees(d[biome][0],d[biome][1])
 
-	def drawRoad(self,targetCoord):
+	def draw_road(self,targetCoord):
 		# draws line from each villiage to city
-		# self.draw.line((self.cityCoord,self.villageCoord), fill='gray')
-		roadLength = gridDistance((self.cityCoord,targetCoord))
+		# self.draw.line((self.city_location,self.villageCoord), fill='gray')
+		roadLength = gridDistance((self.city_location,targetCoord))
 		return roadLength
 
-	def drawKey(self):
-		# draw extra icon with label underneath
-		self.draw.rectangle((5,5,10,10), fill='black')
-		#self.draw.polygon(, fill='white')
-
-	def saveImg(self):
+	def save_image(self):
 		self.im.save('landMap', "PNG")
 
-	def showImg(self):
+	def show_image(self):
 		self.im.show()
 
 
-class TownImg(LandImg):
+class Town_Image(Land_Image):
 	'''
 	All data needed to create a new image representing a Town-generated
 	area.
 	'''
 
 	def __init__(self):
-		#get cityname from LandImg
-		self.cityName = landImg.cityName
+		#get cityname from Land_Image
+		self.camp_name = landImg.camp_name
+		self.streets = townGen.main('map',1,landImg.biome)
+		#print self.streets
+
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
 		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
 		self.draw = ImageDraw.Draw(self.im)
+
+		self.drawStreets()
 
 	def drawWalls(self):
 		pass
@@ -311,26 +278,46 @@ class TownImg(LandImg):
 		pass
 
 	def drawStreets(self):
-		pass
+		total_streets = len(self.streets)
+		street_interval = self.imgx / total_streets
+
+		x_axis_assigned = random.randint(1, total_streets -1)
+		y_axis_assigned = total_streets - x_axis_assigned
+
+		print "Total Streets: %d"%len(self.streets)
+		print "Street Interval: %d" %street_interval
+
+		x = 0 - (street_interval / 2)
+		y = x
+
+		x_interval = self.imgx / x_axis_assigned
+		y_interval = self.imgy / y_axis_assigned
+
+		for street in xrange(x_axis_assigned):
+			x += x_interval
+			self.draw.line((x,20,x,580), fill='gray')
+		for street in xrange(y_axis_assigned):
+			y += y_interval
+			self.draw.line((20,y,580,y), fill='gray')
 
 	def drawLots(self):
 		pass
 
-	def saveImg(self):
+	def save_image(self):
 		self.im.save('landMap', "PNG")
 
-	def showImg(self):
+	def show_image(self):
 		self.im.show()
 
-class BldgImg(TownImg):
+class Building_Image(Town_Image):
 	'''
 	All data needed to create a new image representing a Bldg-generated
 	area.
 	'''
 
 	def __init__(self):
-		#get cityname from LandImg
-		self.cityName = landImg.cityName
+		#get cityname from Land_Image
+		self.camp_name = landImg.camp_name
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
@@ -338,25 +325,25 @@ class BldgImg(TownImg):
 		self.draw = ImageDraw.Draw(self.im)
 
 
-	def saveImg(self):
+	def save_image(self):
 		self.im.save('landMap', "PNG")
 
-	def showImg(self):
+	def show_image(self):
 		self.im.show()
 
 def main(opt):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
-		landImg = LandImg()
-		townImg = TownImg()
-		bldgImg = BldgImg()
-		return (landImg.im, landImg.cityName,
-			landImg.villageNames ,landImg.campNames)
+		landImg = Land_Image()
+		#townImg = Town_Image()
+		#bldgImg = Building_Image()
+		return (landImg.im, landImg.camp_name,
+			landImg.village_names ,landImg.camp_names)
 	else:
-		landImg = LandImg()
-		townImg = TownImg()
-		bldgImg = BldgImg()
-		#landImg.showImg()
+		landImg = Land_Image()
+		townImg = Town_Image()
+		bldgImg = Building_Image()
+		landImg.show_image()
 
 		return 0
 
