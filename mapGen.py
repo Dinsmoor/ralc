@@ -272,7 +272,7 @@ class Town_Image(Land_Image):
 		#get cityname from Land_Image
 		self.camp_name = landImg.camp_name
 		self.streets = townGen.main('map',1,landImg.biome)
-		#print self.streets
+		
 
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -281,22 +281,31 @@ class Town_Image(Land_Image):
 		self.draw = ImageDraw.Draw(self.im)
 
 		self.drawStreets()
-		self.drawGate()
+		self.drawWalls()
 
-	def drawWalls(self):
+	def drawBldgs(self):
 		pass
 
-	def drawGate(self):
+	def drawWalls(self):
 		
-		image_to_paste = Image.open('data/sprites/cityWalls.png')
-		self.im.paste(image_to_paste, (0,0), image_to_paste)
+		img_city_walls = Image.open('data/sprites/cityWalls.png')
+		self.im.paste(img_city_walls, (0,0), img_city_walls)
 
 	def drawStreets(self):
+		img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
 		total_streets = len(self.streets)
 		street_interval = self.imgx / total_streets
 
 		x_axis_assigned = random.randint(1, total_streets -1)
 		y_axis_assigned = total_streets - x_axis_assigned
+		bldg_interval = 6
+		
+		# for debugging
+		print 'Streets:'
+		#print self.streets
+		for street, bldgs in self.streets.iteritems():
+			print street
+			print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
 
 		print "Total Streets: %d"%len(self.streets)
 		print "Street Interval: %d" %street_interval
@@ -309,10 +318,17 @@ class Town_Image(Land_Image):
 
 		for street in xrange(x_axis_assigned):
 			x += x_interval
-			self.draw.line((x,20,x,580), fill='gray')
+			self.draw.line((x,20,x,580), fill='#9A8857', width=3)
+			for bldg in xrange(1,6):
+				bldg_y = self.imgy / bldg
+				self.im.paste(img_bldgSimple, (x+10,bldg_y), img_bldgSimple)
+			
 		for street in xrange(y_axis_assigned):
 			y += y_interval
-			self.draw.line((20,y,580,y), fill='gray')
+			self.draw.line((20,y,580,y), fill='#9A8857', width=3)
+			for bldg in xrange(1,6):
+				bldg_x = self.imgx / bldg
+				self.im.paste(img_bldgSimple, (bldg_x,y+10), img_bldgSimple)
 
 	def drawLots(self):
 		pass
