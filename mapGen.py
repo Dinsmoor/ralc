@@ -98,7 +98,7 @@ class Land_Image(object):
 		return wChoice(biomeLeanVal)
 
 	def draw_biome(self,biome):
-		
+
 		'''
 		# new method for drawing biome, but my images are ugly D;
 		image_to_paste = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
@@ -115,7 +115,7 @@ class Land_Image(object):
 			fill=biomeColors[biome])
 
 	def draw_city(self):
-		
+
 		x = random.randrange(10,self.imgx-50)
 		y = random.randrange(10,self.imgy-50)
 		image_to_paste = Image.open('data/sprites/city.png')
@@ -124,7 +124,7 @@ class Land_Image(object):
 		self.city_location = (x,y)
 
 	def draw_village(self):
-		
+
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			villageName = getVillageName()
@@ -140,7 +140,7 @@ class Land_Image(object):
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def draw_camps(self):
-		
+
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			campName = getCampName()
@@ -154,7 +154,7 @@ class Land_Image(object):
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def draw_terrain(self,biome):
-		
+
 		def hills():
 			density = random.randint(1,3)
 			for c in xrange(0,density*100):
@@ -167,9 +167,9 @@ class Land_Image(object):
 			#hills()
 
 	def draw_water(self, biome):
-		
+
 		def river(densityFactor):
-			
+
 			density = random.randint(0,5)
 			streamCount = int(density + (density*densityFactor))
 			for c in xrange(0,streamCount):
@@ -199,7 +199,7 @@ class Land_Image(object):
 					self.draw.point((x,y), fill='navy')
 
 		def lake():
-			
+
 			# just have it be a shallow-looking pond, I suppose
 			self.draw.ellipse()
 
@@ -214,9 +214,9 @@ class Land_Image(object):
 		river(d[biome])
 
 	def draw_flora(self,biome):
-		
+
 		def trees(density,artList):
-			
+
 			density = density*225
 			#using tree sprites
 			for t in xrange(0,int(density)):
@@ -249,7 +249,7 @@ class Land_Image(object):
 		trees(d[biome][0],d[biome][1])
 
 	def draw_road(self,targetCoord):
-		
+
 		# draws line from each villiage to city
 		# self.draw.line((self.city_location,self.villageCoord), fill='gray')
 		roadLength = gridDistance((self.city_location,targetCoord))
@@ -272,7 +272,7 @@ class Town_Image(Land_Image):
 		#get cityname from Land_Image
 		self.camp_name = landImg.camp_name
 		self.streets = townGen.main('map',1,landImg.biome)
-		
+
 
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -287,7 +287,7 @@ class Town_Image(Land_Image):
 		pass
 
 	def drawWalls(self):
-		
+
 		img_city_walls = Image.open('data/sprites/cityWalls.png')
 		self.im.paste(img_city_walls, (0,0), img_city_walls)
 
@@ -299,13 +299,13 @@ class Town_Image(Land_Image):
 		x_axis_assigned = random.randint(1, total_streets -1)
 		y_axis_assigned = total_streets - x_axis_assigned
 		bldg_interval = 6
-		
+
 		# for debugging
-		print 'Streets:'
+		#print 'Streets:'
 		#print self.streets
-		for street, bldgs in self.streets.iteritems():
-			print street
-			print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
+		#for street, bldgs in self.streets.iteritems():
+		#	print street
+		#	print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
 
 		print "Total Streets: %d"%len(self.streets)
 		print "Street Interval: %d" %street_interval
@@ -322,7 +322,7 @@ class Town_Image(Land_Image):
 			for bldg in xrange(1,6):
 				bldg_y = self.imgy / bldg
 				self.im.paste(img_bldgSimple, (x+10,bldg_y), img_bldgSimple)
-			
+
 		for street in xrange(y_axis_assigned):
 			y += y_interval
 			self.draw.line((20,y,580,y), fill='#9A8857', width=3)
@@ -365,10 +365,11 @@ def main(opt):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
 		landImg = Land_Image()
-		#townImg = Town_Image()
-		#bldgImg = Building_Image()
+		townImg = Town_Image()
+		bldgImg = Building_Image()
 		return (landImg.im, landImg.camp_name,
-			landImg.village_names ,landImg.camp_names)
+			landImg.village_names ,landImg.camp_names,
+			townImg.streets)
 	else:
 		landImg = Land_Image()
 		townImg = Town_Image()
