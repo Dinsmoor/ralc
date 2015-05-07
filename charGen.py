@@ -651,7 +651,7 @@ def main():
 	#		elif c == 4:
 	#			print "\nMARTIAL RANGED:"
 	#		neatDicPrint(li)
-	return pc['Name']#{pc['Name'],pc['Class']}
+	return pc#['Name']#{pc['Name'],pc['Class']}
 
 if __name__ == '__main__':
 #	parseMe()
