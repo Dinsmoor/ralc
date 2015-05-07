@@ -79,8 +79,9 @@ def main(opt, techLevel, biome):
 		town = Settlement(techLevel, biome)
 		return town.s
 	else:
-		return Settlement(1,'forest')
-	return 0
+		town = Settlement(1,'forest')
+		neatDicPrint(town.s)
+		return 0
 
 if __name__ == '__main__':
 	main(None,None,None)
