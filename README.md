@@ -27,8 +27,6 @@ DEPENDANCIES
 	python-tk
 	python-pil
 	python-pil.imagetk
-	pyhton-matplotlib
-	python-numpy
 
 
 =============
