@@ -98,22 +98,24 @@ class Land_Image(object):
 		return wChoice(biomeLeanVal)
 
 	def draw_biome(self,biome):
+		
+		'''
+		# new method for drawing biome, but my images are ugly D;
 		image_to_paste = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
 		self.im.paste(image_to_paste, (0,0), image_to_paste)
 
 		'''
-		# old method for bullshit
 		# These colors are very up for debate. Default HTML colors are ugly
 		biomeColors={
-		'forest':'olivedrab','marsh':'olivedrab',
-		'plains':'olivedrab','hills':'olivedrab',
-		'tundra':'lightslategray','desert':'goldenrod'
+		'forest':'#088A08','marsh':'#4B8A08',
+		'plains':'#D0FA58','hills':'#D8F781',
+		'tundra':'#D8D8D8','desert':'#F7D358'
 		}
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
 			fill=biomeColors[biome])
-		'''
 
 	def draw_city(self):
+		
 		x = random.randrange(10,self.imgx-50)
 		y = random.randrange(10,self.imgy-50)
 		image_to_paste = Image.open('data/sprites/city.png')
@@ -122,6 +124,7 @@ class Land_Image(object):
 		self.city_location = (x,y)
 
 	def draw_village(self):
+		
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			villageName = getVillageName()
@@ -137,6 +140,7 @@ class Land_Image(object):
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def draw_camps(self):
+		
 		density = random.randint(1,3)
 		for c in xrange(0,density):
 			campName = getCampName()
@@ -150,6 +154,7 @@ class Land_Image(object):
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
 
 	def draw_terrain(self,biome):
+		
 		def hills():
 			density = random.randint(1,3)
 			for c in xrange(0,density*100):
@@ -162,7 +167,9 @@ class Land_Image(object):
 			#hills()
 
 	def draw_water(self, biome):
+		
 		def river(densityFactor):
+			
 			density = random.randint(0,5)
 			streamCount = int(density + (density*densityFactor))
 			for c in xrange(0,streamCount):
@@ -192,6 +199,7 @@ class Land_Image(object):
 					self.draw.point((x,y), fill='navy')
 
 		def lake():
+			
 			# just have it be a shallow-looking pond, I suppose
 			self.draw.ellipse()
 
@@ -206,7 +214,9 @@ class Land_Image(object):
 		river(d[biome])
 
 	def draw_flora(self,biome):
+		
 		def trees(density,artList):
+			
 			density = density*225
 			#using tree sprites
 			for t in xrange(0,int(density)):
@@ -239,6 +249,7 @@ class Land_Image(object):
 		trees(d[biome][0],d[biome][1])
 
 	def draw_road(self,targetCoord):
+		
 		# draws line from each villiage to city
 		# self.draw.line((self.city_location,self.villageCoord), fill='gray')
 		roadLength = gridDistance((self.city_location,targetCoord))
@@ -270,12 +281,15 @@ class Town_Image(Land_Image):
 		self.draw = ImageDraw.Draw(self.im)
 
 		self.drawStreets()
+		self.drawGate()
 
 	def drawWalls(self):
 		pass
 
-	def drawGates(self):
-		pass
+	def drawGate(self):
+		
+		image_to_paste = Image.open('data/sprites/cityWalls.png')
+		self.im.paste(image_to_paste, (0,0), image_to_paste)
 
 	def drawStreets(self):
 		total_streets = len(self.streets)
@@ -343,7 +357,7 @@ def main(opt):
 		landImg = Land_Image()
 		townImg = Town_Image()
 		bldgImg = Building_Image()
-		landImg.show_image()
+		townImg.show_image()
 
 		return 0
 
