@@ -48,7 +48,7 @@ class AppData(object):
 		def save_names():
 			savef = open('save/name', 'w')
 			pickle.dump((self.cityName, self.villageNames,
-				self.campNames),savef)
+				self.campNames, self.streets),savef)
 			savef.close
 
 		save_image()
@@ -65,7 +65,7 @@ class AppData(object):
 		def load_names():
 			savef = open('save/name', 'r')
 			(self.cityName, self.villageNames,
-				self.campNames) = pickle.load(savef)
+				self.campNames, self.streets) = pickle.load(savef)
 			savef.close
 
 		load_image()
@@ -87,9 +87,7 @@ class UI(tk.Frame,AppData):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self)
 		self.frame = tk.Frame(self)
-		#self.master = master
-		#self.win = tk.Toplevel(self.master)
-		self.master.title('RALC v0.3')
+		self.master.title('RALC v0.6')
 		self.create_widgets()
 		self.grid()
 		self.get_photo()
@@ -128,8 +126,8 @@ class UI(tk.Frame,AppData):
 			ysb.grid(row=0, column=1, sticky='ns')
 			xsb.grid(row=1, column=0, sticky='ew')
 			self.tree.heading('#0', text='Name', anchor='w')
-			self.tree.heading('pop', text='Population', anchor='w')
-			self.tree.column('pop', stretch=0, width=80)
+			self.tree.heading('pop', text='Info', anchor='w')
+			self.tree.column('pop', stretch=0)
 			self.tree.grid(row=0, column=0, sticky='NSEW')
 
 			#self.tree.bind("<<TreeviewOpen>>", self.update_tree)
@@ -172,18 +170,29 @@ class UI(tk.Frame,AppData):
 		city_icon = ImageTk.PhotoImage(Image.open("data/sprites/city.png"))
 
 		city_parent = self.tree.insert('', 'end', text=dat.cityName,
-				open=False, image=city_icon)
-
-		for street, bldgs in settlement_streets.iteritems():
+				image=city_icon)
+		
+		# townGen info
+		for street, bldg_li in settlement_streets.iteritems():
 			street_parent = self.tree.insert(city_parent,
 					'end', text=street)
-			for bldg in bldgs:
+			# bldgGen info
+			for bldg in bldg_li:
 				bldg_parent = self.tree.insert(street_parent,
-						'end', text=bldg['Purpose'])
-				for room, roomdat in bldg.iteritems():
-
+						'end', text=bldg['Purpose'])						
+				for rooms, inhab in bldg.iteritems():
 					room_parent = self.tree.insert(bldg_parent,
-						'end', text=roomdat["Actors"])#[0][0]['Actors'])
+						'end', text=rooms, value=inhab)
+					#print inhab
+					# trouble lies here!!
+					try:
+						for actor in inhab:
+							print actor['Actor']
+							for key, value in traits:
+								actor_parent = self.tree.insert(room_parent,
+								'end', text=key, value=value)
+					except Exception: 
+						continue
 
 		for settlement in tree_locations:
 			self.tree.insert('', 'end', text=settlement)
@@ -192,8 +201,11 @@ class UI(tk.Frame,AppData):
 		pass
 
 	def callback(self, event):
-		print "Callback:", event
-		print "Selection", self.tree.selection()
+		pass
+		print self.tree.selection()
+		print self.tree.focus()
+		#print "Callback:", event
+		#print "Selection", self.tree.selection()
 
 dat = AppData()
 ui = UI()

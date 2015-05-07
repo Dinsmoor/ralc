@@ -68,7 +68,7 @@ class Settlement(object):
 
 
 	def fillStreet(self):
-		lotCount = 2
+		lotCount = random.randint(1,4)
 		bldgList = []
 		for lot in xrange(0,lotCount):
 			bldgList.append(self.getBldgData())

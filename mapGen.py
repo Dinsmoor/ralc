@@ -307,8 +307,8 @@ class Town_Image(Land_Image):
 		#	print street
 		#	print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
 
-		print "Total Streets: %d"%len(self.streets)
-		print "Street Interval: %d" %street_interval
+		#print "Total Streets: %d"%len(self.streets)
+		#print "Street Interval: %d" %street_interval
 
 		x = 0 - (street_interval / 2)
 		y = x
@@ -321,14 +321,14 @@ class Town_Image(Land_Image):
 			self.draw.line((x,20,x,580), fill='#9A8857', width=3)
 			for bldg in xrange(1,6):
 				bldg_y = self.imgy / bldg
-				self.im.paste(img_bldgSimple, (x+10,bldg_y), img_bldgSimple)
+				self.im.paste(img_bldgSimple, (x-10,bldg_y), img_bldgSimple)
 
 		for street in xrange(y_axis_assigned):
 			y += y_interval
 			self.draw.line((20,y,580,y), fill='#9A8857', width=3)
 			for bldg in xrange(1,6):
 				bldg_x = self.imgx / bldg
-				self.im.paste(img_bldgSimple, (bldg_x,y+10), img_bldgSimple)
+				self.im.paste(img_bldgSimple, (bldg_x,y-10), img_bldgSimple)
 
 	def drawLots(self):
 		pass

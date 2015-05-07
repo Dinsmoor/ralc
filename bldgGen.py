@@ -56,11 +56,9 @@ class Building(object):
 	def __init__(self,techLevel, biome):
 		self.bldgDat = {}
 		self.bldgDat['Purpose'] = self.getPurpose()
-		self.bldgDat['Floors'] = 1
-		(self.bldgDat['Roof'],self.bldgDat['Walls'],
-			self.bldgDat['Floor']) = self.getBldgMake()
-		self.bldgDat['Rooms'] = []
-		self.bldgDat['Rooms'].append(self.getRooms(2))
+		self.bldgDat['Floors'] = random.randint(1,2)
+		self.bldgDat['Rooms'] = {}
+		self.bldgDat['Rooms'] = (self.getRooms(random.randint(1,3)))
 		#self.testdef(self.bldgDat['Rooms'])
 
 	def testdef(self, data):
@@ -90,32 +88,19 @@ class Building(object):
 
 		roomTypes = d[self.bldgDat['Purpose']]
 
-		roomDat = [{'Type':random.choice(roomTypes),
-			'Actors':self.getInhabitants(2)} for k in xrange(0,rooms)]
+		roomDat = [{#'Type':random.choice(roomTypes),
+			'Actors':self.getInhabitants(random.randint(0,3))} for k in xrange(0,rooms)]
 		return roomDat
 
 	def getInhabitants(self, popul):
-		inhabitantList = []
+		inhabitants = {}
 		for inhabitant in xrange(0,popul):
 			personType = random.choice(('Commoner', 'Merchant',
 							'Storekeeper', 'Peasant', 'Noble'))
-			inhabitantList.append(charGen.main())
-		return inhabitantList
-
-	def getBldgMake(self):
-		d = {
-		#techlevel:roofing[0],walls[1],floor[2]
-		1:(('thatch','straw'),('stick','mud'),('dirt','straw')),
-		2:(('wooden','shingle'),('boarded','log','stone'),
-			('wooden','stone')),
-		3:(('sheet metal','shingle'),('concrete','stone','metal'),
-			('wooden','metal','tile'))
-		}
-		materialsTup = d[1]
-		return (random.choice(materialsTup[0]),
-			random.choice(materialsTup[1]),
-			random.choice(materialsTup[2]))
-
+			person = charGen.main()
+			key_name = person['Name']
+			inhabitants[key_name] = person
+		return inhabitants
 
 def main(opt, techLevel, biome):
 	'''
@@ -128,8 +113,8 @@ def main(opt, techLevel, biome):
 		return bldg.bldgDat
 	else:
 		bldg = Building(1,'forest')
-		print bldg.bldgDat['Rooms']
-		#neatDicPrint(bldg.bldgDat)
+		#print bldg.bldgDat
+		neatDicPrint(bldg.bldgDat)
 		return 0
 
 if __name__ == '__main__':
