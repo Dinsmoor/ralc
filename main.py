@@ -35,7 +35,7 @@ class AppData(object):
 
 	def new_data(self):
 		(self.im, self.cityName, self.villageNames,
-			self.campNames) = mapGen.main('tk')
+			self.campNames, self.streets) = mapGen.main('tk')
 		#mapGen just needs to make maps. Leave getting
 		#names and shit to AppData, then tell mapGen what
 		#names you want to use as lists.
@@ -79,19 +79,23 @@ class AppData(object):
 		return ImageTk.PhotoImage(self.im)
 
 	def get_tree_data(self):
-		return (self.villageNames + self.campNames)
+		return (self.villageNames + self.campNames, self.streets)
 
 
 
 class UI(tk.Frame,AppData):
 	def __init__(self, master=None):
-		tk.Frame.__init__(self, master)
+		tk.Frame.__init__(self)
+		self.frame = tk.Frame(self)
 		#self.master = master
 		#self.win = tk.Toplevel(self.master)
-		self.master.title('RALC v0.1')
+		self.master.title('RALC v0.3')
 		self.create_widgets()
 		self.grid()
 		self.get_photo()
+
+		self.grid()
+
 		print "UI.__init__.Done"
 
 
@@ -116,7 +120,7 @@ class UI(tk.Frame,AppData):
 
 		def make_tree_view():
 			self.tree = ttk.Treeview(self, height=28,
-				selectmode='browse')
+				selectmode='browse', columns=('pop'))
 			ysb = ttk.Scrollbar(self, orient='vertical',
 				command=self.tree.yview)
 			xsb = ttk.Scrollbar(self, orient='horizontal',
@@ -124,11 +128,15 @@ class UI(tk.Frame,AppData):
 			ysb.grid(row=0, column=1, sticky='ns')
 			xsb.grid(row=1, column=0, sticky='ew')
 			self.tree.heading('#0', text='Name', anchor='w')
-			self.tree.grid(row=0, column=0)
+			self.tree.heading('pop', text='Population', anchor='w')
+			self.tree.column('pop', stretch=0, width=80)
+			self.tree.grid(row=0, column=0, sticky='NSEW')
 
-			self.tree.insert('', 'end', text=dat.cityName, open=True)
-			
-			
+			#self.tree.bind("<<TreeviewOpen>>", self.update_tree)
+			self.tree.bind("<<TreeviewSelect>>", self.callback)
+			#self.tree.insert('', 'end', text=dat.cityName, open=True)
+
+
 
 
 		make_tree_view()
@@ -158,19 +166,34 @@ class UI(tk.Frame,AppData):
 		print 'UI.get_photo.Done'
 
 	def fill_tree(self, parent):
-		treeData = dat.get_tree_data()
-		print treeData
-		#td = [(city1, streets),(villiage1...)]
-		for settlement in treeData:
-			#st = [(street1, bldgs),(street2, bld...)]
-			self.tree.insert(parent, 'end', text=settlement)
-			for street in settlement:
-				self.tree.insert(parent, 'end', text=street)
-				for bldg in street:
-					self.tree.insert(parent, 'end', text=bldg)
-					for npc in bldg:
-						self.tree.insert(parent, 'end', text=npc)
+		tree_locations, settlement_streets = dat.get_tree_data()
+		#for street, bldgs in self.streets.iteritems():
+		#	print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
+		city_icon = ImageTk.PhotoImage(Image.open("data/sprites/city.png"))
 
+		city_parent = self.tree.insert('', 'end', text=dat.cityName,
+				open=False, image=city_icon)
+
+		for street, bldgs in settlement_streets.iteritems():
+			street_parent = self.tree.insert(city_parent,
+					'end', text=street)
+			for bldg in bldgs:
+				bldg_parent = self.tree.insert(street_parent,
+						'end', text=bldg['Purpose'])
+				for room, roomdat in bldg.iteritems():
+
+					room_parent = self.tree.insert(bldg_parent,
+						'end', text=roomdat["Actors"])#[0][0]['Actors'])
+
+		for settlement in tree_locations:
+			self.tree.insert('', 'end', text=settlement)
+
+	def update_tree(self, item):
+		pass
+
+	def callback(self, event):
+		print "Callback:", event
+		print "Selection", self.tree.selection()
 
 dat = AppData()
 ui = UI()
