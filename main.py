@@ -187,10 +187,13 @@ class UI(tk.Frame,AppData):
 					# trouble lies here!!
 					try:
 						for actor in inhab:
-							print actor['Actor']
+							#print inhab
+							#print len(actor)
 							for key, value in traits:
 								actor_parent = self.tree.insert(room_parent,
 								'end', text=key, value=value)
+								for i, v in key:
+									print i, v
 					except Exception: 
 						continue
 

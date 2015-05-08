@@ -88,7 +88,7 @@ class Building(object):
 
 		roomTypes = d[self.bldgDat['Purpose']]
 
-		roomDat = [{#'Type':random.choice(roomTypes),
+		roomDat = [{'Type':random.choice(roomTypes),
 			'Actors':self.getInhabitants(random.randint(0,3))} for k in xrange(0,rooms)]
 		return roomDat
 
