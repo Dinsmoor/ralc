@@ -1,0 +1,49 @@
+#Formatting:
+#Name,attack roll, damage type, weapon class, weapon type
+# Martial Melee
+Great Axe,1d12,slashing,martial,melee
+Battle Axe,1d8,slashing,martial,melee
+Flail,1d8,bludgeoning,martial,melee
+Glaive,1d10,slashing,martial,melee
+Halberd,1d10,slashing,martial,melee
+Lance,1d12,piercing,martial,melee
+Long Sword,1d8,slashing,martial,melee
+Maul,1d6,bludgeoning,martial,melee
+Morningstar,1d8,piercing,martial,melee
+Pike,1d10,piercing,martial,melee
+Rapier,1d8,piercing,martial,melee
+Scimitar,1d6,slashing,martial,melee
+Short Sword,1d6,piercing,martial,melee
+Trident,1d6,piercing,martial,melee
+Warpick,1d8,piercing,martial,melee
+War Hammer,1d8,bludgeoning,martial,melee
+Whip,1d4,slashing,martial,melee
+
+# Martial Ranged
+
+Blowgun,1d1,piercing,martial,ranged
+Hand Crossbow,1d6,piercing,martial,ranged
+Heavy Crossbow,1d10,piercing,martial,ranged
+Long Bow,1d8,piercing,martial,ranged
+Net,0d0,trap,martial,ranged
+
+# Simple Melee
+
+Club,1d4,bludgeoning,simple,melee
+Dagger,1d4,piercing,simple,melee
+Great Club,1d8,blugeoning,simple,melee
+Handaxe,1d6,slashing,simple,melee
+Javelin,1d6,piercing,simple,melee
+Light Hammer,1d4,bludgeoning,simple,melee
+Mace,1d6,bludgeoning,simple,melee
+Quarterstaff,1d6,bludgeoning,simple,melee
+Sickle,1d4,slashing,simple,melee
+Spear,1d6,piercing,simple,melee
+Unarmed Strike,1d1,bludgeoning,simple,melee
+
+# simple ranged
+
+Light Crossbow,1d8,piercing,simple,ranged
+Dart,1d4,piercing,simple,ranged
+Short Bow,1d6,piercing,simple,ranged
+Sling,1d4,bludgeoning,simple,ranged
