@@ -3,7 +3,7 @@
 #
 #  bldgGen.py
 #
-#  Copyright 2014 Tyler Dinsmoor <d@d-netbook>
+#  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -23,37 +23,30 @@
 # gets information provided from landGen to decide building construction
 # passes info to townGen, which then makes a lot of buildings
 
-'''
-Needs to return a working desc of a building, how many rooms, how many
-floors, materials, utilities, type of building(tavern, shop), how many
-residents.
-'''
-
-from libdndGen import *
-import charGen, random
-
-biome = 'forest'
-
-
-
+try:
+	import random
+	import charGen
+	from libdndGen import *
+except ImportError:
+	print "You are missing essential Libraries. See README.md"
 
 class Building(object):
 	'''
-	Building needs walls, height, max inhabitatants, purpose
+	Facilitates the population of itself, passes data to townGen
 	'''
 	def __init__(self, biome):
 		self.bldgDat = {}
 		self.bldgDat['Rooms'] = {}
-		self.bldgDat['Purpose'] = self.getPurpose()
-		self.bldgDat['Rooms'] = self.getRooms(random.randint(1,3))
+		self.bldgDat['Purpose'] = self.get_purpose()
+		self.bldgDat['Rooms'] = self.get_rooms(random.randint(1,3))
 
-	def getPurpose(self):
+	def get_purpose(self):
 		bldgtypes = ('Shack','Residence','General Store',
 					'Armorer','Livestock Area',
 					'Weapon Smith', 'Tavern', 'Inn')
 		return random.choice(bldgtypes)
 
-	def getRooms(self, rooms):
+	def get_rooms(self, rooms):
 		#trouble here
 		d = {
 			'Shack':['Entry','Kitchen','Common Area'],
@@ -74,16 +67,13 @@ class Building(object):
 		
 		room_type = random.choice(roomTypes)
 		
-		room_actors = []
-		for k in xrange(0,rooms):
-			room_actors.append(self.getInhabitants(random.randint(1,3)))
-		roomDat = {
-			'Actors':room_actors,
-			'Type':room_type
-			} 
+		roomDat = [{
+			'Actors':self.get_inhabitants(random.randint(1,3)),
+			'Type':random.choice(roomTypes)
+			}for k in xrange(0,rooms)]
 		return roomDat
 
-	def getInhabitants(self, popul):
+	def get_inhabitants(self, popul):
 		inhabitants = {}
 		for inhabitant in xrange(0,popul):
 			#personType = random.choice(('Commoner', 'Merchant',
