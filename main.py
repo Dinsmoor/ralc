@@ -26,6 +26,7 @@ try:
 	import ttk, mapGen
 	from PIL import Image, ImageTk
 	import cPickle as pickle
+	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 
@@ -127,8 +128,7 @@ class UI(tk.Frame,AppData):
 			self.tree.column('#0', width=300, anchor='w')
 			self.tree.grid(row=0, column=0, sticky='NSEW')
 
-			#self.tree.bind("<<TreeviewOpen>>", self.update_tree)
-			#self.tree.bind("<<TreeviewSelect>>", self.callback)
+			self.tree.bind("<<TreeviewSelect>>", self.update_details)
 			print "UI.make_tree_view.Done"
 
 		def make_details_pane():
@@ -146,9 +146,8 @@ class UI(tk.Frame,AppData):
 		make_tree_view()
 		print 'UI.create_widgets.make_tree_view.Done'
 		make_menu_bar()
-		#make_details_pane()
+		make_details_pane()
 		self.fill_tree()
-		#self.update_details('Test Text.')
 		print 'UI.create_widgets.make_menu_bar.Done'
 
 
@@ -174,9 +173,12 @@ class UI(tk.Frame,AppData):
 	def fill_tree(self):
 		tree_locations, settlement_streets = dat.get_tree_data()
 
+		self.actor_coor={}
+
 		# top level
 		city_parent = self.tree.insert('', 'end', text=dat.cityName)
-
+		
+		
 		for street, bldg_li in settlement_streets.iteritems():
 			# add streets
 			street_parent = self.tree.insert(city_parent,
@@ -195,7 +197,7 @@ class UI(tk.Frame,AppData):
 							if key == 'Type':
 								# add the rooms themselves
 								room_parent = self.tree.insert(rooms_parent,
-									'end', text=value)#, value=value)
+									'end', text=value)
 							if key == 'Actors':
 								# add the name of the actors
 								actor_parent = self.tree.insert(room_parent,
@@ -204,23 +206,38 @@ class UI(tk.Frame,AppData):
 									for actor_name, actor_info in actordict.iteritems():
 										#The data of the actor
 										actor = self.tree.insert(actor_parent,
-										'end', text=actor_name)
+										'end', text=actor_name, value=actor_info,
+										tags=actor_name)
+										self.actor_coor[actor] = actor_info
+										
+										
 
 
 		for settlement in tree_locations:
 			self.tree.insert('', 'end', text=settlement)
-
+		
+		
 		print "UI.fill_tree.Done"
 
-	def update_details(self, text):
-		print "UI.update_details.Fetching.."
-		self.details.config(state='normal')
-		self.details.delete(1.0, 'end')
-		self.details.insert('end',text)
-		self.details.config(state='disabled')
+	def update_details(self, event):
+		try:
+			self.details.config(state='normal')
+			self.details.delete(1.0, 'end')
+			self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
+			self.details.config(state='disabled')
+			print "UI.update_details.Done."
+		except KeyError:
+			print "Selected item: %s has no values"%self.tree.focus()
+			self.details.config(state='normal')
+			self.details.delete(1.0, 'end')
+			self.details.insert('end',"Selected item has no values.")
+			self.details.config(state='disabled')
 
 	def callback(self, event):
-		print self.tree.focus()
+		try:
+			neatDicPrint(self.actor_coor[self.tree.focus()])
+		except KeyError:
+			print "Item has no values"
 
 dat = AppData()
 ui = UI()

@@ -581,8 +581,9 @@ def main():
 	pc['Lang']					= getLanguages(pc['Race'])
 	pc['Height'], pc['Weight']	= getHeightAndWeight(pc['Race'],pc['Subrace'])
 
-	'''
-	print"""BIO:
+	
+	bio = """
+BIO:
 	Name:	%s
 	Gender:	%s
 	Race:   %s (%s)
@@ -590,16 +591,18 @@ def main():
 	Age:	%d		Height:	%dcm
 	Align:	%s	Weight:	%dkg
 	Lang:	%s
+
 	""" %(pc['Name'], pc['Gender'], pc['Race'],
 		pc['Subrace'], pc['Class'], pc['Age'], pc['Height'], pc['Alignment'], pc['Weight'],
 		 ", ".join([str(x) for x in pc['Lang']] )) #to get rid of ugly formatting
 
-	'''
+	
 	pc['HitPoints']				= getHitPoints(pc['Class'], pc['conMod'], pcLevel, pc['Subrace'])
 	pc['Speed']					= getSpeed(pc['Race'], pc['Subrace'])
-
-	'''
-	print"""STATS:
+	
+	
+	stats = """
+STATS:
 	Level:	%d
 	HP:	%d
 	Speed:	%d
@@ -610,10 +613,11 @@ def main():
 	INT	%d (%d)
 	WIS	%d (%d)
 	CHR	%d (%d)
+	
 """%(pc['Level'], pc['HitPoints'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
 	pc['conMod'], pc['INT'], pc['intMod'], pc['WIS'], pc['wisMod'], pc['CHR'], pc['chrMod'])
 
-	'''
+	
 	pc['Spells'] = getSpells(pc['Class'], pc['Level'])
 
 	'''
@@ -651,7 +655,8 @@ def main():
 	#		elif c == 4:
 	#			print "\nMARTIAL RANGED:"
 	#		neatDicPrint(li)
-	return {'Name':pc['Name'],'Class':pc['Class']}
+	pc['Info'] = bio+stats
+	return {'Name':pc['Name'],'Info':pc['Info']}
 
 if __name__ == '__main__':
 #	parseMe()
