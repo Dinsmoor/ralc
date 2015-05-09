@@ -3,7 +3,7 @@
 #
 #  main.py
 #
-#  Copyright 2014 Tyler Dinsmoor <d@D-LM>
+#  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -192,18 +192,18 @@ class UI(tk.Frame,AppData):
 					if rooms != 'Purpose':
 						rooms_parent = self.tree.insert(bldg_parent,
 						'end', text=rooms)
-					if type(roomsdata) == dict:
-						for key, value in roomsdata.iteritems():
-							if key == 'Type':
-								# add the rooms themselves
-								room_parent = self.tree.insert(rooms_parent,
-									'end', text=value)
-							if key == 'Actors':
-								# add the name of the actors
-								actor_parent = self.tree.insert(room_parent,
-								'end', text=key)
-								for actordict in value:
-									for actor_name, actor_info in actordict.iteritems():
+					if type(roomsdata) == list:
+						for room in roomsdata:
+							for key, value in room.iteritems():
+								if key == 'Type':
+									# add the rooms themselves
+									room_parent = self.tree.insert(rooms_parent,
+										'end', text=value)
+								else:
+									# add the name of the actors
+									actor_parent = self.tree.insert(room_parent,
+									'end', text=key)
+									for actor_name, actor_info in value.iteritems():
 										#The data of the actor
 										actor = self.tree.insert(actor_parent,
 										'end', text=actor_name, value=actor_info,

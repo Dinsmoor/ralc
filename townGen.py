@@ -3,7 +3,7 @@
 #
 #  townGen.py
 #
-#  Copyright 2014 Tyler Dinsmoor <d@d-netbook>
+#  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -23,9 +23,12 @@
 #  responsible for making buildings, and doing logic for deciding how
 #  many buildings there will be, will pass info to civGen, and then
 #  use that data for populatng city
-
-import random, bldgGen
-from libdndGen import *
+try:
+	import random
+	import bldgGen
+	from libdndGen import *
+except ImportError:
+	print "You are missing essential Libraries. See README.md"
 
 class Settlement(object):
 	def __init__(self, biome):

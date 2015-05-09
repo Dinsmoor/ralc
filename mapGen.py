@@ -3,7 +3,7 @@
 #
 #  mapGen.py
 #
-#  Copyright 2015 Tyler Dinsmoor <d@D-LM>
+#  Copyright 2015 Tyler Dinsmoor <pappad@airmail.cc>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

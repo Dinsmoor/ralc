@@ -3,7 +3,7 @@
 #
 #  charGen.py
 #
-#  Copyright 2014 Tyler Dinsmoor <d@D-LM>
+#  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,20 +36,17 @@ TODO:
 	Make sure we use math(example being getStatModifiers())!
 	Allow direct overrides, instead of a argparse via cmd.
 '''
+try:
+	import random
+	import argparse
+	from libdndGen import *
+except ImportError:
+	print "You are missing essential Libraries. See README.md"
 
-import random, argparse
-from libdndGen import *
-'''
-^ Need random for randint for a lot of proc.. argparse for overrides.
-libdndGen has some stuff for weighted choice and reading data from files,
-as well as finding max/min interger in a list by index, neat list/dict printing.
-'''
+
 racesTup = ('Human','Elf','Dwarf','Halfling','Half-Elf','Half-Orc','Dragonborn','Gnome')
 classesTup = ('Cleric','Druid','Ranger','Paladin','Warlock','Wizard','Barbarian','Fighter','Rouge','Monk','Bard','Sorcerer')
-'''
-^ used for making sure overrides are valid. May not need these later as
-call is no longer done manually, but by gui. Keep for now.
-'''
+
 def parseMe():
 	'''
 	Allows overriding by -l,-c,-r as a temp method of controlling what comes out.
