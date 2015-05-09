@@ -25,8 +25,8 @@ DEPENDANCIES
 =
 	python2.7
 	python-tk
-	python-pil
-	python-pil.imagetk
+	python-imaging
+	python-imaging-tk
 
 
 =============
