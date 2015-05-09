@@ -24,6 +24,7 @@
 try:
 	import Tkinter as tk
 	import ttk, mapGen
+	import collections as col
 	from PIL import Image, ImageTk
 	import cPickle as pickle
 	from libdndGen import *
@@ -33,10 +34,12 @@ except ImportError:
 class AppData(object):
 	def __init__(self):
 		self.new_data()
+		self.loading_compensation = False
 
 	def new_data(self):
 		(self.im, self.cityName, self.villageNames,
 			self.campNames, self.streets) = mapGen.main('tk')
+		self.other_locations = (self.villageNames + self.campNames)
 		#mapGen just needs to make maps. Leave getting
 		#names and shit to AppData, then tell mapGen what
 		#names you want to use as lists.
@@ -48,8 +51,8 @@ class AppData(object):
 
 		def save_names():
 			savef = open('save/name', 'w')
-			pickle.dump((self.cityName, self.villageNames,
-				self.campNames, self.streets),savef)
+			pickle.dump((self.cityName, self.other_locations,
+				self.streets),savef)
 			savef.close
 
 		save_image()
@@ -65,22 +68,24 @@ class AppData(object):
 
 		def load_names():
 			savef = open('save/name', 'r')
-			(self.cityName, self.villageNames,
-				self.campNames, self.streets) = pickle.load(savef)
+			(self.cityName, self.other_locations,
+				self.streets) = pickle.load(savef)
 			savef.close
 
 		load_image()
 		print 'AppData.load_all.Loaded Image From Disk'
 		load_names()
 		print 'AppData.load_all.Loaded Names From Disk'
+		self.loading_compensation = True
 		ui.create_widgets()
+		self.loading_compensation = False
 		print 'AppData.load_all.Refreshed Widgets'
 
 	def load_photo(self):
 		return ImageTk.PhotoImage(self.im)
 
 	def get_tree_data(self):
-		return (self.villageNames + self.campNames, self.streets)
+		return self.other_locations, self.streets
 
 
 
@@ -172,7 +177,6 @@ class UI(tk.Frame,AppData):
 
 	def fill_tree(self):
 		tree_locations, settlement_streets = dat.get_tree_data()
-
 		self.actor_coor={}
 
 		# top level
@@ -193,8 +197,14 @@ class UI(tk.Frame,AppData):
 						rooms_parent = self.tree.insert(bldg_parent,
 						'end', text=rooms)
 					if type(roomsdata) == list:
-						for room in roomsdata:
-							for key, value in room.iteritems():
+						for room in roomsdata: # list
+							
+							# ensure that the room type gets parsed first
+							room = col.OrderedDict(room)
+							tempvalue = room.pop('Actors')
+							room['Actors'] = tempvalue
+							
+							for key, value in room.iteritems(): # dict
 								if key == 'Type':
 									# add the rooms themselves
 									room_parent = self.tree.insert(rooms_parent,
