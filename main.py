@@ -227,7 +227,7 @@ class UI(tk.Frame,AppData):
 			self.details.config(state='disabled')
 			print "UI.update_details.Done."
 		except KeyError:
-			print "Selected item: %s has no values"%self.tree.focus()
+			#print "Selected item: %s has no values"%self.tree.focus()
 			self.details.config(state='normal')
 			self.details.delete(1.0, 'end')
 			self.details.insert('end',"Selected item has no values.")
