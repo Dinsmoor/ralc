@@ -32,39 +32,20 @@ residents.
 from libdndGen import *
 import charGen, random
 
-'''
-Building need:
-	Rooms
-	Inhabitants
-	Descriptions:
-		interior
-		exterior
-		affluence
-	floors
-	purpose
-	efficency
-
-'''
-
-
 biome = 'forest'
+
+
+
 
 class Building(object):
 	'''
 	Building needs walls, height, max inhabitatants, purpose
 	'''
-	def __init__(self,techLevel, biome):
+	def __init__(self, biome):
 		self.bldgDat = {}
-		self.bldgDat['Purpose'] = self.getPurpose()
-		self.bldgDat['Floors'] = random.randint(1,2)
 		self.bldgDat['Rooms'] = {}
-		self.bldgDat['Rooms'] = (self.getRooms(random.randint(1,3)))
-		#self.testdef(self.bldgDat['Rooms'])
-
-	def testdef(self, data):
-		for li in data:
-			for di in li:
-				neatDicPrint(di)
+		self.bldgDat['Purpose'] = self.getPurpose()
+		self.bldgDat['Rooms'] = self.getRooms(random.randint(1,3))
 
 	def getPurpose(self):
 		bldgtypes = ('Shack','Residence','General Store',
@@ -73,50 +54,58 @@ class Building(object):
 		return random.choice(bldgtypes)
 
 	def getRooms(self, rooms):
+		#trouble here
 		d = {
-			'Shack':('Entry','Kitchen','Common Area'),
-			'Residence':('Entry','Kitchen','Living Area','Dining Area',
-				'Common Area', 'Sleeping Quarters'),
-			'General Store':('Entry','Store Room'),
-			'Armorer':('Entry','Forge'),
-			'Livestock Area':('Entry','Barn','Slaughter Room'),
-			'Weapon Smith':('Entry','Forge'),
-			'Tavern':('Entry','Kitchen','Dining Area'),
-			'Inn':('Entry','Kitchen',
-				'Common Area', 'Sleeping Quarters')
+			'Shack':['Entry','Kitchen','Common Area'],
+			'Residence':['Entry','Kitchen','Living Area','Dining Area',
+				'Common Area', 'Sleeping Quarters'],
+			'General Store':['Entry','Store Room', 'Counter'],
+			'Armorer':['Entry','Forge', 'Counter'],
+			'Livestock Area':['Gate','Barn','Slaughter Room'],
+			'Weapon Smith':['Entry','Forge', 'Counter',
+				'Grinding Wheel'],
+			'Tavern':['Entry','Kitchen','Dining Area', 'Harlot Room'],
+			'Inn':['Entry','Kitchen',
+				'Common Area', 'Sleeping Quarters']
 			}
 
-		roomTypes = d[self.bldgDat['Purpose']]
 
-		roomDat = [{'Type':random.choice(roomTypes),
-			'Actors':self.getInhabitants(random.randint(0,3))} for k in xrange(0,rooms)]
+		roomTypes = d[self.bldgDat['Purpose']]
+		
+		room_type = random.choice(roomTypes)
+		
+		room_actors = []
+		for k in xrange(0,rooms):
+			room_actors.append(self.getInhabitants(random.randint(1,3)))
+		roomDat = {
+			'Actors':room_actors,
+			'Type':room_type
+			} 
 		return roomDat
 
 	def getInhabitants(self, popul):
 		inhabitants = {}
 		for inhabitant in xrange(0,popul):
-			personType = random.choice(('Commoner', 'Merchant',
-							'Storekeeper', 'Peasant', 'Noble'))
+			#personType = random.choice(('Commoner', 'Merchant',
+			#				'Storekeeper', 'Peasant', 'Noble'))
 			person = charGen.main()
 			key_name = person['Name']
 			inhabitants[key_name] = person
 		return inhabitants
 
-def main(opt, techLevel, biome):
+def main(opt, biome):
 	'''
-	This function is only kept until this program is capable of running
-	indepentantly and will be removed after the program being debugged.
+	Used to interface with townGen.
 	'''
 
 	if opt == 'town':
-		bldg = Building(techLevel, biome)
+		bldg = Building(biome)
 		return bldg.bldgDat
 	else:
-		bldg = Building(1,'forest')
-		#print bldg.bldgDat
+		bldg = Building('forest')
 		neatDicPrint(bldg.bldgDat)
 		return 0
 
 if __name__ == '__main__':
-	main(None,None,None)
+	main(None,None)
 

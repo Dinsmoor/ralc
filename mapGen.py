@@ -271,7 +271,7 @@ class Town_Image(Land_Image):
 	def __init__(self):
 		#get cityname from Land_Image
 		self.camp_name = landImg.camp_name
-		self.streets = townGen.main('map',1,landImg.biome)
+		self.streets = townGen.main('map',landImg.biome)
 
 
 		self.imgx = 600

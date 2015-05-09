@@ -540,7 +540,7 @@ def getHeightAndWeight(pcRace, pcSubrace):
 		elif pcRace == "Half-Orc":
 			h = (155 + random.randint(5,20))
 			w = (65 * (1 + random.random())*2.2)
-		return h, w
+		return int(h), int(w)
 	except:
 		print "ERROR IN GETH/W"
 		return 0,0
@@ -651,7 +651,7 @@ def main():
 	#		elif c == 4:
 	#			print "\nMARTIAL RANGED:"
 	#		neatDicPrint(li)
-	return pc#['Name']#{pc['Name'],pc['Class']}
+	return {'Name':pc['Name'],'Class':pc['Class']}
 
 if __name__ == '__main__':
 #	parseMe()

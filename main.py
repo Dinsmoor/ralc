@@ -92,8 +92,6 @@ class UI(tk.Frame,AppData):
 		self.grid()
 		self.get_photo()
 
-		self.grid()
-
 		print "UI.__init__.Done"
 
 
@@ -106,7 +104,7 @@ class UI(tk.Frame,AppData):
 			self.editmenu = tk.Menu(self.menubar)
 
 			self.menubar.add_cascade(label="File", menu=self.filemenu)
-			self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+			self.menubar.add_cascade(label="About", menu=self.editmenu)
 			self.filemenu.add_command(label="New", command=self.new_state)
 			self.filemenu.add_command(label="Save", command=dat.save_all)
 			self.filemenu.add_command(label="Load", command=self.load_state)
@@ -117,8 +115,8 @@ class UI(tk.Frame,AppData):
 			print 'UI.make_menu_bar.Done'
 
 		def make_tree_view():
-			self.tree = ttk.Treeview(self, height=28,
-				selectmode='browse', columns=('pop'))
+			self.tree = ttk.Treeview(self, height=25,
+				selectmode='browse')
 			ysb = ttk.Scrollbar(self, orient='vertical',
 				command=self.tree.yview)
 			xsb = ttk.Scrollbar(self, orient='horizontal',
@@ -126,21 +124,31 @@ class UI(tk.Frame,AppData):
 			ysb.grid(row=0, column=1, sticky='ns')
 			xsb.grid(row=1, column=0, sticky='ew')
 			self.tree.heading('#0', text='Name', anchor='w')
-			self.tree.heading('pop', text='Info', anchor='w')
-			self.tree.column('pop', stretch=0)
+			self.tree.column('#0', width=300, anchor='w')
 			self.tree.grid(row=0, column=0, sticky='NSEW')
 
 			#self.tree.bind("<<TreeviewOpen>>", self.update_tree)
-			self.tree.bind("<<TreeviewSelect>>", self.callback)
-			#self.tree.insert('', 'end', text=dat.cityName, open=True)
+			#self.tree.bind("<<TreeviewSelect>>", self.callback)
+			print "UI.make_tree_view.Done"
 
+		def make_details_pane():
+			self.details_frame = ttk.Frame(self, borderwidth=2,
+				relief="sunken", width=200, height=600)
+			self.details = tk.Text(self.details_frame, width=50,
+				height=40, state='disabled')
 
+			self.details_frame.grid(row=0, column=4, sticky='N', pady=5)
+			self.details.grid(row=0, column=0)
+
+			print "UI.make_details_pane.Done"
 
 
 		make_tree_view()
 		print 'UI.create_widgets.make_tree_view.Done'
 		make_menu_bar()
-		self.fill_tree('')
+		#make_details_pane()
+		self.fill_tree()
+		#self.update_details('Test Text.')
 		print 'UI.create_widgets.make_menu_bar.Done'
 
 
@@ -159,60 +167,61 @@ class UI(tk.Frame,AppData):
 
 	def get_photo(self):
 		self.img = dat.load_photo()
-		self.label = tk.Label(image = self.img)
-		self.label.grid(sticky='E', column=3, row=0)
+		self.label = tk.Label(self, image = self.img)
+		self.label.grid(column=3, row=0)
 		print 'UI.get_photo.Done'
 
-	def fill_tree(self, parent):
+	def fill_tree(self):
 		tree_locations, settlement_streets = dat.get_tree_data()
-		#for street, bldgs in self.streets.iteritems():
-		#	print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
-		city_icon = ImageTk.PhotoImage(Image.open("data/sprites/city.png"))
 
-		city_parent = self.tree.insert('', 'end', text=dat.cityName,
-				image=city_icon)
-		
-		# townGen info
+		# top level
+		city_parent = self.tree.insert('', 'end', text=dat.cityName)
+
 		for street, bldg_li in settlement_streets.iteritems():
+			# add streets
 			street_parent = self.tree.insert(city_parent,
 					'end', text=street)
-			# bldgGen info
 			for bldg in bldg_li:
+				# add buildgins
 				bldg_parent = self.tree.insert(street_parent,
-						'end', text=bldg['Purpose'])						
-				for rooms, inhab in bldg.iteritems():
-					room_parent = self.tree.insert(bldg_parent,
-						'end', text=rooms, value=inhab)
-					#print inhab
-					# trouble lies here!!
-					try:
-						for actor in inhab:
-							#print inhab
-							#print len(actor)
-							for key, value in traits:
+					'end', text=bldg['Purpose'])
+				for rooms, roomsdata in bldg.iteritems():
+					# add list of rooms
+					if rooms != 'Purpose':
+						rooms_parent = self.tree.insert(bldg_parent,
+						'end', text=rooms)
+					if type(roomsdata) == dict:
+						for key, value in roomsdata.iteritems():
+							if key == 'Type':
+								# add the rooms themselves
+								room_parent = self.tree.insert(rooms_parent,
+									'end', text=value)#, value=value)
+							if key == 'Actors':
+								# add the name of the actors
 								actor_parent = self.tree.insert(room_parent,
-								'end', text=key, value=value)
-								for i, v in key:
-									print i, v
-					except Exception: 
-						continue
+								'end', text=key)
+								for actordict in value:
+									for actor_name, actor_info in actordict.iteritems():
+										#The data of the actor
+										actor = self.tree.insert(actor_parent,
+										'end', text=actor_name)
+
 
 		for settlement in tree_locations:
 			self.tree.insert('', 'end', text=settlement)
 
-	def update_tree(self, item):
-		pass
+		print "UI.fill_tree.Done"
+
+	def update_details(self, text):
+		print "UI.update_details.Fetching.."
+		self.details.config(state='normal')
+		self.details.delete(1.0, 'end')
+		self.details.insert('end',text)
+		self.details.config(state='disabled')
 
 	def callback(self, event):
-		pass
-		print self.tree.selection()
 		print self.tree.focus()
-		#print "Callback:", event
-		#print "Selection", self.tree.selection()
 
 dat = AppData()
 ui = UI()
-
-
 ui.mainloop()
-

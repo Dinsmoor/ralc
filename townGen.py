@@ -28,8 +28,7 @@ import random, bldgGen
 from libdndGen import *
 
 class Settlement(object):
-	def __init__(self, techLevel, biome):
-		self.techLevel = techLevel
+	def __init__(self, biome):
 		self.biome = biome
 		self.citySize = self.getCitySize()
 		self.s = self.getStreets()
@@ -44,7 +43,7 @@ class Settlement(object):
 			#	neatListPrint(li)
 
 	def getBldgData(self):
-		return bldgGen.main('town',self.techLevel, self.biome)
+		return bldgGen.main('town', self.biome)
 
 	def getCitySize(self):
 		# city size multipliers
@@ -74,15 +73,15 @@ class Settlement(object):
 			bldgList.append(self.getBldgData())
 		return bldgList
 
-def main(opt, techLevel, biome):
+def main(opt, biome):
 	if opt == 'map':
-		town = Settlement(techLevel, biome)
+		town = Settlement(biome)
 		return town.s
 	else:
-		town = Settlement(1,'forest')
+		town = Settlement('forest')
 		neatDicPrint(town.s)
 		return 0
 
 if __name__ == '__main__':
-	main(None,None,None)
+	main(None,None)
 
