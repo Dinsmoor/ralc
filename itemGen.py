@@ -28,7 +28,7 @@ try:
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
-
+"""
 class Item(object):
 
 
@@ -59,7 +59,9 @@ Attributes:
         '''%(self.name,
             self.wep_type,self.hit,self.defend,self.keylevel)
 ##########
-weapon_dict = {}
+"""
+weapon_dict = dict()
+weapon_dict_data = dict()
 
 def import_weapon_file(fi):
 	fi = open(fi)
@@ -75,20 +77,28 @@ def load_weapons():
 	wepdata = import_weapon_file('data/equipment/weapons')
 	#Name,attack roll, damage type, weapon class, weapon type, str req, dex req, int req
 	for wep in wepdata:
-		weapon_dict[wep[0]] = Item(name=wep[0],hit=wep[1],
-				wep_type=wep[2], wep_class=wep[3], dam_type=wep[4])
-	
-
+		weapon_dict_data[wep[0]] = {
+			'Name':wep[0],
+			'Hit Die':wep[1],
+			'Weapon Type':wep[2],
+			'Weapon Class':wep[3],
+			'Damage Type':wep[4],
+			}
+			
+def pick_weapon():
+	load_weapons()
+	for weapon in weapon_dict.iterkeys():
+		weap_to_return = 2
+		return random.choice(weapon)
 
 def main(opt, item):
 	'''
 	Used to interface with townGen.
 	'''
 
-	if opt == 'wep':
-		
-		bldg = Building(biome)
-		return bldg.bldgDat
+	#if opt == 'wep':
+	if 1:
+		return pick_weapon()
 	else:
 		load_weapons()
 		for name, item in weapon_dict.iteritems():

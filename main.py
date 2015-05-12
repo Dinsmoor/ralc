@@ -27,6 +27,7 @@ try:
 	import collections as col
 	from PIL import Image, ImageTk
 	import cPickle as pickle
+	import itemGen
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
@@ -41,10 +42,11 @@ class AppData(object):
 		(self.im, self.cityName, self.villageNames,
 			self.campNames, self.streets) = mapGen.main('tk')
 		self.other_locations = (self.villageNames + self.campNames)
-		#mapGen just needs to make maps. Leave getting
-		#names and shit to AppData, then tell mapGen what
-		#names you want to use as lists.
 		print "AppData.new_data.Retrieved Data"
+	
+	def new_items(self, item_type):
+		if item_type == 'wep':
+			return itemGen.main('wep','')
 
 	def save_all(self):
 		def save_image():
@@ -208,7 +210,7 @@ class UI(tk.Frame,AppData):
 								if key == 'Type':
 									# add the rooms themselves
 									room_parent = self.tree.insert(rooms_parent,
-										'end', text=value)
+										'end', text=value)		
 								else:
 									if room['Actors']:
 										# add the name of the actors
@@ -221,8 +223,10 @@ class UI(tk.Frame,AppData):
 											tags=actor_name)
 											
 											self.actor_coor[actor] = actor_info
-										
-										
+											
+									#item_parent = self.tree.insert(room_parent,
+									#'end', text='Items')
+									#for item, item_info in value
 
 
 		for settlement in tree_locations:

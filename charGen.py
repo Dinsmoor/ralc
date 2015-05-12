@@ -23,19 +23,6 @@
 #  Responsible for generation of characters, their stats, abilites,
 #  and bios. Passes to townGen to populate buildings with people
 
-'''
-Update this each time before the doc is saved and passed to
-another person.
-############################
-r.0006
-############################
-
-TODO:
-	Skill profienceis
-	Backgrounds
-	Make sure we use math(example being getStatModifiers())!
-	Allow direct overrides, instead of a argparse via cmd.
-'''
 try:
 	import random
 	import argparse
@@ -44,8 +31,10 @@ except ImportError:
 	print "You are missing essential Libraries. See README.md"
 
 
-racesTup = ('Human','Elf','Dwarf','Halfling','Half-Elf','Half-Orc','Dragonborn','Gnome')
-classesTup = ('Cleric','Druid','Ranger','Paladin','Warlock','Wizard','Barbarian','Fighter','Rouge','Monk','Bard','Sorcerer')
+racesTup = 	('Human','Elf','Dwarf','Halfling','Half-Elf','Half-Orc',
+			'Dragonborn','Gnome')
+classesTup = ('Cleric','Druid','Ranger','Paladin','Warlock','Wizard',
+			'Barbarian','Fighter','Rouge','Monk','Bard','Sorcerer')
 
 def parseMe():
 	'''
@@ -114,8 +103,6 @@ def getStats():
 	except:
 		print "GETSTATS ERROR: DEFAULTING TO FIGHTER"
 		return 'Fighter'
-
-
 
 def getStatModifiers(st):
     return st / 2  - 5
@@ -358,7 +345,7 @@ def getSpells(pcClass, pcLevel):
 	}
 	curSlots = stdSlots[pcLevel]
 	try:
-		spells = []
+		spells = list()
 		spellLoL = getFromFile_LoL('data/char/'+(pcClass.lower()+'Spells'))
 		for spell in spellLoL:
 			random.shuffle(spell)
@@ -371,7 +358,7 @@ def getSpells(pcClass, pcLevel):
 		return None
 
 def getSkills(pcRace, pcClass):
-	skills = {}
+	skills = dict()
 	if pcRace == "Dwarf":
 		pass
 '''
@@ -421,7 +408,7 @@ def getBackground(pcClass):
 '''
 
 def getProficiencies(pcRace, pcSubrace):
-	plist = []
+	plist = list()
 	if pcRace == "Dwarf":
 		plist.append['Battleaxe','Handaxe','Throwing Hammer',
 		'Warhammer', 'Light Armor', 'Medium Armor']
@@ -429,24 +416,6 @@ def getProficiencies(pcRace, pcSubrace):
 		plist.append['Longsword','Shortsword','Shortbow','Longbow']
 	if pcSubrace == 'Dark':
 		plist.append['Rapier','Shortsword','Hand Crossbow']
-
-	# Temporary until logic per class can be done
-def getEquipment(pcClass):
-	'''
-	I'm not sure whether or not it would be better to have a psuedo-meaningful
-	ecquipment list, or have a real one where the weapons have a tech level,
-	and unless the town they were in had a sufficent tech level, those weapons
-	would not usually exist. Like a primitive villiage would not have much for
-	steelwork and the like.
-	'''
-	try:
-		w1 = getFromFile_Dic('data/equipment/simpleMeleeWeapons')
-		w2 = getFromFile_Dic('data/equipment/simpleRangedWeapons')
-		w3 = getFromFile_Dic('data/equipment/martialMeleeWeapons')
-		w4 = getFromFile_Dic('data/equipment/martialRangedWeapons')
-		return (w1,w2,w3,w4)
-	except:
-		return None
 
 def getLanguages(pcRace):
 	try:
@@ -554,7 +523,7 @@ def main():
 
 
 	pc = {}
-	pc['Level'] 				= pcLevel
+	pc['Level'] 				= random.randint(1,20)
 	pc['Class']					= getStats()
 
 	if newClass is not None:
@@ -616,19 +585,28 @@ STATS:
 
 	
 	pc['Spells'] = getSpells(pc['Class'], pc['Level'])
-
-	'''
-	if pc['Spells'] is not None:
-		print "CANTRIPS:";neatListPrint(pc['Spells'][0])
+	
+	def neatListReturn(li):
+		s = str()
+		for item in li:
+			if item != 'None':
+				s = s + item + '\n'
+			else:
+				return 'None\n'
+		return s
+		
+	spells = str()
+	if pc['Spells']:
+		spells = spells+"CANTRIPS:\n"+neatListReturn(pc['Spells'][0])
 		c = 1
-		for spell in xrange(0,pcLevel):
+		for spell in xrange(0,pc['Level']):
 			try:
-				print 'LEVEL %d:'%c;neatListPrint(pc['Spells'][c])
+				spells = spells+'\nLEVEL %d:\n'%c+(neatListReturn(pc['Spells'][c]))
 				c += 1
 			except: break
 	else:
-		print "No Spells"
-	'''
+		spells = "No Spells"
+	
 	'''
 	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class']) 
 	print"""Background
@@ -637,22 +615,8 @@ STATS:
 	Bond: %s
 	Flaw: %s
 	"""%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
-'''
-	#pc['Weapons'] = getEquipment(pc['Class'])
-	#if weapons is not None:
-	#	c = 0
-	#	for li in weapons:
-	#		c +=1
-	#		if c == 1:
-	#			print "\nSIMPLE MELEE:"
-	#		elif c == 2:
-	#			print "\nSIMPLE RANGED:"
-	#		elif c == 3:
-	#			print "\nMARTIAL MELEE:"
-	#		elif c == 4:
-	#			print "\nMARTIAL RANGED:"
-	#		neatDicPrint(li)
-	pc['Info'] = bio+stats
+	'''
+	pc['Info'] = bio+stats+spells
 	return {'Name':pc['Name'],'Info':pc['Info']}
 
 if __name__ == '__main__':
