@@ -29,6 +29,7 @@ try:
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
+	exit()
 
 class Building(object):
 	'''
@@ -57,28 +58,29 @@ class Building(object):
 			'Livestock Area':['Gate','Barn','Slaughter Room'],
 			'Weapon Smith':['Entry','Forge', 'Counter',
 				'Grinding Wheel'],
-			'Tavern':['Entry','Kitchen','Dining Area', 'Harlot Room'],
+			'Tavern':['Entry','Kitchen','Social Area', 'Harlot Room'],
 			'Inn':['Entry','Kitchen',
 				'Common Area', 'Sleeping Quarters']
 			}
 
 
-		roomTypes = d[self.bldgDat['Purpose']]
-		
-		room_type = random.choice(roomTypes)
-		
-		roomDat = [{
-			'Actors':self.get_inhabitants(random.randint(1,3)),
-			'Type':random.choice(roomTypes)
-			}for k in xrange(0,rooms)]
+		roomTypes = d[self.bldgDat['Purpose']]		
+		roomDat = list()
+		for room in roomTypes:
+			roomDat.append({
+			'Actors':self.get_inhabitants(random.randint(0,3)),
+			'Type':room
+			})
+		# needs to return list
 		return roomDat
 
 	def get_inhabitants(self, popul):
-		inhabitants = {}
+		inhabitants = dict()
 		for inhabitant in xrange(0,popul):
-			#personType = random.choice(('Commoner', 'Merchant',
-			#				'Storekeeper', 'Peasant', 'Noble'))
+			personType = random.choice(('Commoner', 'Merchant',
+							'Warrior', 'Peasant', 'Noble'))
 			person = charGen.main()
+			person['Role'] = personType
 			key_name = person['Name']
 			inhabitants[key_name] = person
 		return inhabitants

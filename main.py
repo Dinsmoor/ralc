@@ -30,6 +30,7 @@ try:
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
+	exit()
 
 class AppData(object):
 	def __init__(self):
@@ -186,7 +187,7 @@ class UI(tk.Frame,AppData):
 		for street, bldg_li in settlement_streets.iteritems():
 			# add streets
 			street_parent = self.tree.insert(city_parent,
-					'end', text=street)
+					'end', text=street, tags=street)
 			for bldg in bldg_li:
 				# add buildgins
 				bldg_parent = self.tree.insert(street_parent,
@@ -198,7 +199,6 @@ class UI(tk.Frame,AppData):
 						'end', text=rooms)
 					if type(roomsdata) == list:
 						for room in roomsdata: # list
-							
 							# ensure that the room type gets parsed first
 							room = col.OrderedDict(room)
 							tempvalue = room.pop('Actors')
@@ -210,15 +210,17 @@ class UI(tk.Frame,AppData):
 									room_parent = self.tree.insert(rooms_parent,
 										'end', text=value)
 								else:
-									# add the name of the actors
-									actor_parent = self.tree.insert(room_parent,
-									'end', text=key)
-									for actor_name, actor_info in value.iteritems():
-										#The data of the actor
-										actor = self.tree.insert(actor_parent,
-										'end', text=actor_name, value=actor_info,
-										tags=actor_name)
-										self.actor_coor[actor] = actor_info
+									if room['Actors']:
+										# add the name of the actors
+										actor_parent = self.tree.insert(room_parent,
+										'end', text=key)
+										for actor_name, actor_info in value.iteritems():
+											#The data of the actor
+											actor = self.tree.insert(actor_parent,
+											'end', text=actor_name, value=actor_info,
+											tags=actor_name)
+											
+											self.actor_coor[actor] = actor_info
 										
 										
 

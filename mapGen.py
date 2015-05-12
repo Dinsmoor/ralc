@@ -52,6 +52,7 @@ try:
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
+	exit()
 
 
 class Land_Image(object):
@@ -299,16 +300,6 @@ class Town_Image(Land_Image):
 		x_axis_assigned = random.randint(1, total_streets -1)
 		y_axis_assigned = total_streets - x_axis_assigned
 		bldg_interval = 6
-
-		# for debugging
-		#print 'Streets:'
-		#print self.streets
-		#for street, bldgs in self.streets.iteritems():
-		#	print street
-		#	print bldgs[0]['Rooms'][0][0]['Actors'][0]['Name']
-
-		#print "Total Streets: %d"%len(self.streets)
-		#print "Street Interval: %d" %street_interval
 
 		x = 0 - (street_interval / 2)
 		y = x

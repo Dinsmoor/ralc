@@ -29,6 +29,7 @@ try:
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
+	exit()
 
 class Settlement(object):
 	def __init__(self, biome):
