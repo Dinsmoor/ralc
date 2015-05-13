@@ -2,25 +2,25 @@
 # -*- coding: utf-8 -*-
 #
 #  itemGen.py
-#  
+#
 #  Copyright 2015 Tyler Dinsmoor <pappad@airmail.cc>
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
-#  
+#
+#
 
 try:
 	import random
@@ -28,40 +28,18 @@ try:
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
-"""
-class Item(object):
 
-
-    def __init__(self,name="Generic Item",
-                str_bonus=0, dex_bonus=0, int_bonus=0,
-                hit=None, wep_type=None, wep_class=None,
-                dam_type=None, defend=0,
-                key_level=0):
-
-        self.name = name
-        self.str_bonus = str_bonus
-        self.dex_bonus = dex_bonus
-        self.int_bonus = int_bonus
-        self.hit = hit
-        self.wep_type = wep_type
-        self.defend = defend
-        self.keylevel = key_level
-
-
-    def describe_item(self):
-        print '''
-Name: %s
-Attributes:
-    TYP: %s
-    HIT: %s
-    DEF: %d
-    KEY: %d
-        '''%(self.name,
-            self.wep_type,self.hit,self.defend,self.keylevel)
-##########
-"""
-weapon_dict = dict()
-weapon_dict_data = dict()
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
 
 def import_weapon_file(fi):
 	fi = open(fi)
@@ -75,34 +53,36 @@ def import_weapon_file(fi):
 
 def load_weapons():
 	wepdata = import_weapon_file('data/equipment/weapons')
+	weapon_list = list()
 	#Name,attack roll, damage type, weapon class, weapon type, str req, dex req, int req
-	for wep in wepdata:
-		weapon_dict_data[wep[0]] = {
+	for wep in wepdata: # every list in this list of lists
+		weapon_list.append([ {
 			'Name':wep[0],
 			'Hit Die':wep[1],
-			'Weapon Type':wep[2],
+			'Damage Type':wep[2],
 			'Weapon Class':wep[3],
-			'Damage Type':wep[4],
-			}
-			
-def pick_weapon():
-	load_weapons()
-	for weapon in weapon_dict.iterkeys():
-		weap_to_return = 2
-		return random.choice(weapon)
+			'Weapon Type':wep[4],
+			}])
+	return weapon_list
+
+def rand_weapon():
+	weapons = load_weapons() #list
+	rnd_wep = random.randint(0,len(weapons)-1)
+	for data in weapons[rnd_wep]:
+		return data
 
 def main(opt, item):
 	'''
 	Used to interface with townGen.
 	'''
 
-	#if opt == 'wep':
-	if 1:
-		return pick_weapon()
+	if opt == 'wep':
+		if item == 'rnd':
+			return rand_weapon()
+		elif item == 'all':
+			return load_weapons()
 	else:
-		load_weapons()
-		for name, item in weapon_dict.iteritems():
-			item.describe_item()
+		print rand_weapon()
 		return 0
 
 if __name__ == '__main__':

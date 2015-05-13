@@ -27,8 +27,19 @@
 #  for harder quests. There are few special quests, and many generic
 #  quests, designed to encourage players to value gold.
 
-from libdndGen import *
 import random
+
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
 
 '''
 Quest Requirements:
@@ -96,6 +107,5 @@ def main():
 	return quest
 
 if __name__ == '__main__':
-	 #main()
-	 neatDicPrint(main())
+	 main()
 

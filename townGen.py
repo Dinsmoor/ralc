@@ -31,55 +31,65 @@ except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
 
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
+def getStreetName():
+	import random
+	streetName = random.choice(getFromFile_T('data/streets'))
+	for s in streetName:
+		return s
+
 class Settlement(object):
 	def __init__(self, biome):
-		self.biome = biome
-		self.citySize = self.getCitySize()
-		self.s = self.getStreets()
-		#neatDicPrint(self.s)
+		citySize = self.getCitySize(biome)
+		self.s = self.getStreets(citySize, biome)
 
+	def getBldgData(self, biome):
+		return bldgGen.main('town', biome)
 
-	def testdef(self, data):
-		for li in data:
-			neatListPrint(li)
-			#neatDicPrint(li)
-			#for li in di:
-			#	neatListPrint(li)
-
-	def getBldgData(self):
-		return bldgGen.main('town', self.biome)
-
-	def getCitySize(self):
+	def getCitySize(self, biome):
 		# city size multipliers
-		d ={
+		size_mult ={
 			'forest':1,
 			'plains':0.7,
 			'hills':0.7,
 			'tundra':0.3,
 			'marsh':0.4,
-			'desert':0.2
+			'desert':0.2,
+			'small':0.1,
 			}
-		return int(d[self.biome] * (random.randint(1,4) + 10))
+			
+		
+		return int(size_mult[biome] * (random.randint(1,4) + 10))
 
-	def getStreets(self):
-		streets = {}
-		for val in xrange(0,self.citySize):
-			streets[getStreetName()] = self.fillStreet()
-		#neatDicPrint(streets)
+	def getStreets(self, citySize, biome):
+		streets = dict()
+		for val in xrange(0,citySize):
+			streets[getStreetName()] = self.fillStreet(biome)
 		return streets
 
-
-
-	def fillStreet(self):
+	def fillStreet(self, biome):
 		lotCount = random.randint(1,4)
 		bldgList = []
 		for lot in xrange(0,lotCount):
-			bldgList.append(self.getBldgData())
+			bldgList.append(self.getBldgData(biome))
 		return bldgList
 
 def main(opt, biome):
 	if opt == 'map':
 		town = Settlement(biome)
+		return town.s
+	if opt == 'small':
+		town = Settlement('small')
 		return town.s
 	else:
 		town = Settlement('forest')

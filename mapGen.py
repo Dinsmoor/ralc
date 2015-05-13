@@ -22,38 +22,55 @@
 #
 #
 
-'''
-Need: python-pil, python-pil.imagetk, pyhton-matplotlib, python-numpy
-
-Indended to take data from landGen, bldgGen, townGen, and create pngs
-from their data, to be piped to an interface for easier descriptors for
-DMs.
-
-Requirements:
-	Accept data from:
-		landGen:
-			biome
-			terrain
-			fauna
-			roads
-			water
-		bldgGen:
-			rooms
-			levels
-			inhabitants
-			purpose
-		townGen:
-			streets => names
-			bldgs/street
-'''
 try:
 	import random, townGen
 	from PIL import Image, ImageDraw, ImageTk
-	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
 
+def getFromFile_T(fi):
+	fi = open(fi)
+	li = [i.strip().split('\n') for i in fi if not i.startswith("#")]
+	li = [x for x in li if x != ['']]
+	tu = tuple(li)
+	fi.close()
+	return tu
+def getCityName():
+	import random
+	cityname = random.choice(getFromFile_T('data/cities'))
+	for s in cityname:
+		return s
+def getVillageName():
+	import random
+	villageName = random.choice(getFromFile_T('data/villages'))
+	for s in villageName:
+		return s
+def getCampName():
+	import random
+	campName = random.choice(getFromFile_T('data/camps'))
+	for s in campName:
+		return s
+def getBldgName():
+	import random
+	bldgName = random.choice(getFromFile_T('data/bldgs'))
+	for s in bldgName:
+		return s
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
+def gridDistance(points):
+	import math
+	p0, p1 = points
+	return int(math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2))
 
 class Land_Image(object):
 	'''
@@ -67,7 +84,7 @@ class Land_Image(object):
 		'''
 		biome = self.get_biome()
 		self.biome = biome
-		self.camp_name = getCityName()
+		self.camp_name = getCampName()
 
 		# names to be passed to main, filled when drawn
 		self.village_names = []
@@ -226,19 +243,9 @@ class Land_Image(object):
 				y = random.randrange(0,self.imgy)
 				self.im.paste(image_to_paste, (x,y), image_to_paste)
 
-			#old-style trees
-			'''
-			for c in xrange(0,int(density)):
-				x = random.randrange(0,self.imgx)
-				y = random.randrange(0,self.imgy)
-				self.draw.ellipse((x, y, x+8, y+8), fill = 'darkgreen',
-					outline ='green')
-				#some mild humor
-				#draw.text((x-4,y+4),"Tree"+str(c))
-			'''
 
-		# Tree ensity Modifiers
-		d ={
+		# Tree intensity Modifiers
+		tree_mod ={
 		'forest':[random.randint(2,4),('tree1','tree2')],
 		'plains':[0.7,	('tree3','desertF1')],
 		'hills':[0.5,	('tree3','desertF1')],
@@ -247,10 +254,9 @@ class Land_Image(object):
 		'desert':[0.1,	('desertF1','desertF2')]
 		}
 
-		trees(d[biome][0],d[biome][1])
+		trees(tree_mod[biome][0],tree_mod[biome][1])
 
 	def draw_road(self,targetCoord):
-
 		# draws line from each villiage to city
 		# self.draw.line((self.city_location,self.villageCoord), fill='gray')
 		roadLength = gridDistance((self.city_location,targetCoord))
@@ -274,15 +280,14 @@ class Town_Image(Land_Image):
 		self.camp_name = landImg.camp_name
 		self.streets = townGen.main('map',landImg.biome)
 
-
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
 		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
-		self.draw = ImageDraw.Draw(self.im)
-
-		self.drawStreets()
-		self.drawWalls()
+		# lets not draw things until it's ready
+		#self.draw = ImageDraw.Draw(self.im)
+		#self.drawStreets()
+		#self.drawWalls()
 
 	def drawBldgs(self):
 		pass
@@ -357,15 +362,17 @@ def main(opt):
 	if opt == 'tk':
 		landImg = Land_Image()
 		townImg = Town_Image()
-		bldgImg = Building_Image()
+		#bldgImg = Building_Image()
 		return (landImg.im, landImg.camp_name,
 			landImg.village_names ,landImg.camp_names,
 			townImg.streets)
+	if opt == 'small':
+		pass
 	else:
 		landImg = Land_Image()
 		townImg = Town_Image()
 		bldgImg = Building_Image()
-		townImg.show_image()
+		#townImg.show_image()
 
 		return 0
 

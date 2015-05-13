@@ -43,10 +43,10 @@ class AppData(object):
 			self.campNames, self.streets) = mapGen.main('tk')
 		self.other_locations = (self.villageNames + self.campNames)
 		print "AppData.new_data.Retrieved Data"
-	
+
 	def new_items(self, item_type):
 		if item_type == 'wep':
-			return itemGen.main('wep','')
+			return itemGen.main('wep','rnd')
 
 	def save_all(self):
 		def save_image():
@@ -87,9 +87,11 @@ class AppData(object):
 	def load_photo(self):
 		return ImageTk.PhotoImage(self.im)
 
-	def get_tree_data(self):
-		return self.other_locations, self.streets
-
+	def get_tree_data(self, opt):
+		if opt == 'city':
+			return self.other_locations, self.streets
+		if opt == 'towns':
+			return self.sm_streets
 
 
 class UI(tk.Frame,AppData):
@@ -179,13 +181,13 @@ class UI(tk.Frame,AppData):
 		print 'UI.get_photo.Done'
 
 	def fill_tree(self):
-		tree_locations, settlement_streets = dat.get_tree_data()
+		(tree_locations, settlement_streets) = dat.get_tree_data('city')
 		self.actor_coor={}
 
 		# top level
 		city_parent = self.tree.insert('', 'end', text=dat.cityName)
-		
-		
+		self.tree.insert('','end')
+
 		for street, bldg_li in settlement_streets.iteritems():
 			# add streets
 			street_parent = self.tree.insert(city_parent,
@@ -198,20 +200,25 @@ class UI(tk.Frame,AppData):
 					# add list of rooms
 					if rooms != 'Purpose':
 						rooms_parent = self.tree.insert(bldg_parent,
-						'end', text=rooms)
+							'end', text=rooms)
+						#bldg_item_parent = self.tree.insert(bldg_parent,
+						#	'end', text='Quests')
 					if type(roomsdata) == list:
 						for room in roomsdata: # list
 							# ensure that the room type gets parsed first
 							room = col.OrderedDict(room)
 							tempvalue = room.pop('Actors')
 							room['Actors'] = tempvalue
-							
+							tempvalue = room.pop('Weapons')
+							room['Weapons'] = tempvalue
+
 							for key, value in room.iteritems(): # dict
 								if key == 'Type':
 									# add the rooms themselves
 									room_parent = self.tree.insert(rooms_parent,
-										'end', text=value)		
-								else:
+										'end', text=value)
+
+								if key == 'Actors':
 									if room['Actors']:
 										# add the name of the actors
 										actor_parent = self.tree.insert(room_parent,
@@ -221,18 +228,22 @@ class UI(tk.Frame,AppData):
 											actor = self.tree.insert(actor_parent,
 											'end', text=actor_name, value=actor_info,
 											tags=actor_name)
-											
-											self.actor_coor[actor] = actor_info
-											
-									#item_parent = self.tree.insert(room_parent,
-									#'end', text='Items')
-									#for item, item_info in value
 
+											self.actor_coor[actor] = actor_info
+
+								if key == 'Weapons':
+									if bldg['Purpose'] == 'Weapon Smith':
+										room_items_parent = self.tree.insert(room_parent,
+											'end', text='Weapons')
+										for item_dict in value:
+											item_parent = self.tree.insert(room_items_parent,
+											'end', text=item_dict['Name'])
 
 		for settlement in tree_locations:
-			self.tree.insert('', 'end', text=settlement)
-		
-		
+			settlement_parent = self.tree.insert('',
+				'end', text=settlement)
+
+
 		print "UI.fill_tree.Done"
 
 	def update_details(self, event):
@@ -243,7 +254,6 @@ class UI(tk.Frame,AppData):
 			self.details.config(state='disabled')
 			print "UI.update_details.Done."
 		except KeyError:
-			#print "Selected item: %s has no values"%self.tree.focus()
 			self.details.config(state='normal')
 			self.details.delete(1.0, 'end')
 			self.details.insert('end',"Selected item has no values.")

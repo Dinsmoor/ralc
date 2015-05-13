@@ -26,10 +26,23 @@
 try:
 	import random
 	import charGen
+	import itemGen
 	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
+
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
 
 class Building(object):
 	'''
@@ -64,15 +77,22 @@ class Building(object):
 			}
 
 
-		roomTypes = d[self.bldgDat['Purpose']]		
+		roomTypes = d[self.bldgDat['Purpose']]
 		roomDat = list()
 		for room in roomTypes:
 			roomDat.append({
 			'Actors':self.get_inhabitants(random.randint(0,3)),
-			'Type':room
+			'Weapons':self.get_random_items(2),
+			'Type':room,
 			})
 		# needs to return list
 		return roomDat
+
+	def get_random_items(self, amount):
+		item_l = list()
+		for x in xrange(0,amount):
+			item_l.append(itemGen.main('wep', 'rnd'))
+		return item_l
 
 	def get_inhabitants(self, popul):
 		inhabitants = dict()

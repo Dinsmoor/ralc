@@ -26,7 +26,7 @@
 try:
 	import random
 	import argparse
-	from libdndGen import *
+	import itemGen
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 
@@ -35,6 +35,46 @@ racesTup = 	('Human','Elf','Dwarf','Halfling','Half-Elf','Half-Orc',
 			'Dragonborn','Gnome')
 classesTup = ('Cleric','Druid','Ranger','Paladin','Warlock','Wizard',
 			'Barbarian','Fighter','Rouge','Monk','Bard','Sorcerer')
+
+def wChoice(wCh):
+	import random
+	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+	totalChoice = sum(w for c, w in wCh)
+	random_uniform = random.uniform(0, totalChoice)
+	upto = 0
+	for c, w in wCh:
+		if upto + w > random_uniform:
+			return c
+		upto += w
+	assert False, "Shouldn't get here"
+def maxi(l):
+	m = max(l)
+	for i, v in enumerate(l):
+		if m == v:
+			return i
+def mini(l):
+	m = min(l)
+	for i, v in enumerate(l):
+		if m == v:
+			return i
+def getFromFile_LoL(fi):
+	fi = open(fi)
+	# Builds a list of lists from a file, seperated by newline
+	li = [i.strip().split(',') for i in fi.readlines() if not i.startswith("#")]
+	# ignore blank lines
+	li = [x for x in li if x != ['']]
+	li = [[st.strip() for st in l] for l in li]
+	fi.close()
+	return li
+def getFromFile_Dic(fi):
+	d = {}
+	with open(fi) as f:
+		for line in f:
+			if not line.startswith("#"):
+				(key, val) = line.strip().split('=')
+				d[key] = val
+	return d
+
 
 def parseMe():
 	'''
@@ -387,23 +427,23 @@ def getBackground(pcClass):
 		charBackground = (('Acolyte', 5), ('Charlatan', 40), ('Criminal', 15), ('Entertainer', 20), ('Folk Hero', 40), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
 	elif pcClass == "Sorcerer":
 		charBackground = (('Acolyte', 15), ('Charlatan', 20), ('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', ), ('Hermit', ), ('Noble', ), ('Outlander', ), ('Sage', ), ('Sailor', ), ('Soldier', ), ('Urchin', ))
-	
-	try: 
-		background = wChoice(charBackground) 
+
+	try:
+		background = wChoice(charBackground)
 		bgData = getFromFile_LoL('data/char/'+background.lower()+'Background')
 		trait = random.choice(bgData[0])
 		ideal = random.choice(bgData[1])
 		bond = random.choice(bgData[2])
 		flaw = random.choice(bgData[3])
-		#background specialty = random.choice(bgData[4]) 
-		
+		#background specialty = random.choice(bgData[4])
 
 
-	
+
+
 
 		return trait, ideal, bond, flaw
-	except: 
-		print "its not working" 
+	except:
+		print "its not working"
 		return None
 '''
 
@@ -513,11 +553,13 @@ def getHeightAndWeight(pcRace, pcSubrace):
 
 
 def main():
-	'''Used to output most data,
+	'''
+	Used to output most data,
 	stats and pc data are held in dicts, because it will make it much
 	easier to export to other programs, as it will pretty much just be
 	"Hey, get this data and print it, yo" and then this prog will be all
-	like.. "yea.. lemme get right on dat."'''
+	like.. "yea.. lemme get right on dat."
+	'''
 	parseMe()
 	global pc
 
@@ -547,7 +589,7 @@ def main():
 	pc['Lang']					= getLanguages(pc['Race'])
 	pc['Height'], pc['Weight']	= getHeightAndWeight(pc['Race'],pc['Subrace'])
 
-	
+
 	bio = """
 BIO:
 	Name:	%s
@@ -562,11 +604,11 @@ BIO:
 		pc['Subrace'], pc['Class'], pc['Age'], pc['Height'], pc['Alignment'], pc['Weight'],
 		 ", ".join([str(x) for x in pc['Lang']] )) #to get rid of ugly formatting
 
-	
-	pc['HitPoints']				= getHitPoints(pc['Class'], pc['conMod'], pcLevel, pc['Subrace'])
+
+	pc['HP']				= getHitPoints(pc['Class'], pc['conMod'], pc['Level'], pc['Subrace'])
 	pc['Speed']					= getSpeed(pc['Race'], pc['Subrace'])
-	
-	
+
+
 	stats = """
 STATS:
 	Level:	%d
@@ -579,13 +621,13 @@ STATS:
 	INT	%d (%d)
 	WIS	%d (%d)
 	CHR	%d (%d)
-	
-"""%(pc['Level'], pc['HitPoints'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
+
+"""%(pc['Level'], pc['HP'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
 	pc['conMod'], pc['INT'], pc['intMod'], pc['WIS'], pc['wisMod'], pc['CHR'], pc['chrMod'])
 
-	
+
 	pc['Spells'] = getSpells(pc['Class'], pc['Level'])
-	
+
 	def neatListReturn(li):
 		s = str()
 		for item in li:
@@ -594,7 +636,7 @@ STATS:
 			else:
 				return 'None\n'
 		return s
-		
+
 	spells = str()
 	if pc['Spells']:
 		spells = spells+"CANTRIPS:\n"+neatListReturn(pc['Spells'][0])
@@ -606,17 +648,29 @@ STATS:
 			except: break
 	else:
 		spells = "No Spells"
-	
-	'''
-	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class']) 
-	print"""Background
+
+	item_d = itemGen.main('wep','rnd')
+	weapon = '''
+WEAPON:
+	Name: 	 %s
+	Range:	 %s
+	Hit Die: 	%s
+	Dam Type:	%s
+
+	'''%(item_d['Name'],item_d['Weapon Type'],
+		item_d['Hit Die'],item_d['Damage Type'])
+
+	"""
+	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class'])
+	background = '''
+	Background:
 	Personality Trait: %s
 	Idea: %s
 	Bond: %s
 	Flaw: %s
-	"""%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
-	'''
-	pc['Info'] = bio+stats+spells
+	'''%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
+	"""
+	pc['Info'] = bio+stats+weapon+spells
 	return {'Name':pc['Name'],'Info':pc['Info']}
 
 if __name__ == '__main__':
