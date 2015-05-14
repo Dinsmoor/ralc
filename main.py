@@ -39,9 +39,8 @@ class AppData(object):
 		self.loading_compensation = False
 
 	def new_data(self):
-		(self.im, self.cityName, self.villageNames,
-			self.campNames, self.streets) = mapGen.main('tk')
-		self.other_locations = (self.villageNames + self.campNames)
+		(self.im, self.cityName, self.town_names,
+			self.streets) = mapGen.main('tk')
 		print "AppData.new_data.Retrieved Data"
 
 	def new_items(self, item_type):
@@ -54,7 +53,7 @@ class AppData(object):
 
 		def save_names():
 			savef = open('save/name', 'w')
-			pickle.dump((self.cityName, self.other_locations,
+			pickle.dump((self.cityName, self.town_names,
 				self.streets),savef)
 			savef.close
 
@@ -71,7 +70,7 @@ class AppData(object):
 
 		def load_names():
 			savef = open('save/name', 'r')
-			(self.cityName, self.other_locations,
+			(self.cityName, self.town_names,
 				self.streets) = pickle.load(savef)
 			savef.close
 
@@ -89,9 +88,9 @@ class AppData(object):
 
 	def get_tree_data(self, opt):
 		if opt == 'city':
-			return self.other_locations, self.streets
+			return self.streets
 		if opt == 'towns':
-			return self.sm_streets
+			return self.town_names
 
 
 class UI(tk.Frame,AppData):
@@ -103,9 +102,13 @@ class UI(tk.Frame,AppData):
 		self.grid()
 		self.get_photo()
 
+		self.frame2 = tk.Frame(self.frame)
+		self.create_frame2()
+
 		print "UI.__init__.Done"
 
-
+	def create_frame2(self):
+		self.frame2.grid()
 
 	def create_widgets(self):
 		def make_menu_bar():
@@ -181,8 +184,14 @@ class UI(tk.Frame,AppData):
 		print 'UI.get_photo.Done'
 
 	def fill_tree(self):
-		(tree_locations, settlement_streets) = dat.get_tree_data('city')
-		self.actor_coor={}
+		settlement_streets = dat.get_tree_data('city')
+		town_names = dat.get_tree_data('towns')
+		self.actor_coor = dict()
+		self.town_coor = dict()
+		self.city_coor = dict()
+		city_population = 0
+
+
 
 		# top level
 		city_parent = self.tree.insert('', 'end', text=dat.cityName)
@@ -222,12 +231,13 @@ class UI(tk.Frame,AppData):
 									if room['Actors']:
 										# add the name of the actors
 										actor_parent = self.tree.insert(room_parent,
-										'end', text=key)
+											'end', text=key)
 										for actor_name, actor_info in value.iteritems():
+											city_population += 1
 											#The data of the actor
 											actor = self.tree.insert(actor_parent,
-											'end', text=actor_name, value=actor_info,
-											tags=actor_name)
+												'end', text=actor_name, value=actor_info,
+												tags=actor_name)
 
 											self.actor_coor[actor] = actor_info
 
@@ -237,27 +247,56 @@ class UI(tk.Frame,AppData):
 											'end', text='Weapons')
 										for item_dict in value:
 											item_parent = self.tree.insert(room_items_parent,
-											'end', text=item_dict['Name'])
+												'end', text=item_dict['Name'])
 
-		for settlement in tree_locations:
-			settlement_parent = self.tree.insert('',
-				'end', text=settlement)
+		city_metadata = {
+		'Name':dat.cityName,
+		'Population':city_population,
+		}
+
+		self.city_desc ='''
+Name:		%s
+Population:	%d
+		'''%(city_metadata['Name'], city_metadata['Population'])
+
+		self.city_coor[city_parent] = city_metadata
+
+		for town in town_names:
+			town_parent = self.tree.insert('',
+				'end', text=town['Name'], tags=town['Name'],
+				value=town['Distance'])
+			self.town_coor[town_parent] = town
+
 
 
 		print "UI.fill_tree.Done"
 
 	def update_details(self, event):
+		self.details.config(state='normal')
+		self.details.delete(1.0, 'end')
 		try:
-			self.details.config(state='normal')
-			self.details.delete(1.0, 'end')
-			self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
+			try:
+				self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
+				print "UI.update_details.Actor.Done"
+			except KeyError: pass
+			try:
+				self.details.insert('end',str(self.town_coor[self.tree.focus()]['Distance'])+"km to %s"%dat.cityName)
+				#self.details.insert('end',str(self.town_coor[self.tree.focus()]))
+				print "UI.update_details.Town.Done"
+			except KeyError: pass
+			try:
+				if self.city_coor[self.tree.focus()]['Name'] == dat.cityName:
+					self.details.insert('end',self.city_desc)
+					print "UI.update_details.City.Done"
+			except KeyError: pass
 			self.details.config(state='disabled')
-			print "UI.update_details.Done."
+
 		except KeyError:
 			self.details.config(state='normal')
 			self.details.delete(1.0, 'end')
 			self.details.insert('end',"Selected item has no values.")
 			self.details.config(state='disabled')
+			print "UI.update_details.KeyError"
 
 	def callback(self, event):
 		try:

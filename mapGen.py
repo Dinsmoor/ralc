@@ -37,27 +37,22 @@ def getFromFile_T(fi):
 	fi.close()
 	return tu
 def getCityName():
-	import random
 	cityname = random.choice(getFromFile_T('data/cities'))
 	for s in cityname:
 		return s
 def getVillageName():
-	import random
 	villageName = random.choice(getFromFile_T('data/villages'))
 	for s in villageName:
 		return s
 def getCampName():
-	import random
 	campName = random.choice(getFromFile_T('data/camps'))
 	for s in campName:
 		return s
 def getBldgName():
-	import random
 	bldgName = random.choice(getFromFile_T('data/bldgs'))
 	for s in bldgName:
 		return s
 def wChoice(wCh):
-	import random
 	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
 	totalChoice = sum(w for c, w in wCh)
 	random_uniform = random.uniform(0, totalChoice)
@@ -84,11 +79,7 @@ class Land_Image(object):
 		'''
 		biome = self.get_biome()
 		self.biome = biome
-		self.camp_name = getCampName()
-
-		# names to be passed to main, filled when drawn
-		self.village_names = []
-		self.camp_names = []
+		self.city_name = getCampName()
 
 		# set base img size
 		self.imgx = 600
@@ -103,15 +94,14 @@ class Land_Image(object):
 		self.draw_terrain(biome)
 		self.draw_flora(biome)
 		self.draw_city()
-		self.draw_camps()
-		self.draw_village()
 
-		#self.drawKey()
-		#self.save_image()
-		#self.show_image()
+		camp_li = self.draw_camps()
+		vil_li = self.draw_village()
+		self.town_names = camp_li + vil_li
+
 	def get_biome(self):
 		biomeLeanVal = (('marsh' ,1.0),('plains'  ,5.0),
-						('hills' ,1.5),('tundra',1.0),
+						('hills' ,1.5),('tundra'  ,1.0),
 						('desert',2.0),('forest'  ,3.0))
 		return wChoice(biomeLeanVal)
 
@@ -127,7 +117,7 @@ class Land_Image(object):
 		biomeColors={
 		'forest':'#088A08','marsh':'#4B8A08',
 		'plains':'#D0FA58','hills':'#D8F781',
-		'tundra':'#D8D8D8','desert':'#F7D358'
+		'tundra':'#D8D8D8','desert':'#C09537'
 		}
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
 			fill=biomeColors[biome])
@@ -138,16 +128,15 @@ class Land_Image(object):
 		y = random.randrange(10,self.imgy-50)
 		image_to_paste = Image.open('data/sprites/city.png')
 		self.im.paste(image_to_paste, (x,y), image_to_paste)
-		self.draw.text((x-10,y+18),str(self.camp_name))
+		self.draw.text((x-10,y+18),str(self.city_name))
 		self.city_location = (x,y)
 
 	def draw_village(self):
 
 		density = random.randint(1,3)
+		village_li = list()
 		for c in xrange(0,density):
 			villageName = getVillageName()
-			self.village_names.append(villageName)
-
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
 			image_to_paste = Image.open('data/sprites/village.png')
@@ -156,13 +145,21 @@ class Land_Image(object):
 			self.draw.text((x-10,y+18),'%s'%villageName)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
+			streets = townGen.main('map','small')
+			villageDat = {
+			'Name':villageName,
+			'Distance':roadLength,
+			'Streets':streets,
+			}
+			village_li.append(villageDat)
+		return village_li
 
 	def draw_camps(self):
 
 		density = random.randint(1,3)
+		camp_li = list()
 		for c in xrange(0,density):
 			campName = getCampName()
-			self.camp_names.append(campName)
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
 			image_to_paste = Image.open('data/sprites/camp.png')
@@ -170,6 +167,14 @@ class Land_Image(object):
 			self.draw.text((x-10,y+18),"Camp %s"%campName)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
+			streets = townGen.main('map','small')
+			campDat = {
+			'Name':campName,
+			'Distance':roadLength,
+			'Streets':streets,
+			}
+			camp_li.append(campDat)
+		return camp_li
 
 	def draw_terrain(self,biome):
 
@@ -277,7 +282,7 @@ class Town_Image(Land_Image):
 
 	def __init__(self):
 		#get cityname from Land_Image
-		self.camp_name = landImg.camp_name
+		self.city_name = landImg.city_name
 		self.streets = townGen.main('map',landImg.biome)
 
 		self.imgx = 600
@@ -343,7 +348,7 @@ class Building_Image(Town_Image):
 
 	def __init__(self):
 		#get cityname from Land_Image
-		self.camp_name = landImg.camp_name
+		self.city_name = landImg.city_name
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
@@ -363,9 +368,8 @@ def main(opt):
 		landImg = Land_Image()
 		townImg = Town_Image()
 		#bldgImg = Building_Image()
-		return (landImg.im, landImg.camp_name,
-			landImg.village_names ,landImg.camp_names,
-			townImg.streets)
+		return (landImg.im, landImg.city_name,
+			landImg.town_names,townImg.streets)
 	if opt == 'small':
 		pass
 	else:

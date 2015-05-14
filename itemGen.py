@@ -65,6 +65,12 @@ def load_weapons():
 			}])
 	return weapon_list
 
+def load_wearables():
+	pass
+
+def rand_wearable():
+	pass
+
 def rand_weapon():
 	weapons = load_weapons() #list
 	rnd_wep = random.randint(0,len(weapons)-1)

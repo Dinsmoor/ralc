@@ -639,7 +639,7 @@ STATS:
 
 	spells = str()
 	if pc['Spells']:
-		spells = spells+"CANTRIPS:\n"+neatListReturn(pc['Spells'][0])
+		spells = spells+"\nCANTRIPS:\n"+neatListReturn(pc['Spells'][0])
 		c = 1
 		for spell in xrange(0,pc['Level']):
 			try:
@@ -647,7 +647,7 @@ STATS:
 				c += 1
 			except: break
 	else:
-		spells = "No Spells"
+		spells = "\nNo Spells"
 
 	item_d = itemGen.main('wep','rnd')
 	weapon = '''
