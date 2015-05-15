@@ -12,6 +12,11 @@ INTRO
 	combined effort of freedom-loving DND nerds to be collectively
 	lazier by means of effort.
 
+=====
+SCREENSHOTS:
+=====
+![](http://s3.postimg.org/7weqiw5pv/Screenshot_from_2015_05_14_12_49_26.png)
+
 =======
 PURPOSE
 =======
