@@ -26,10 +26,17 @@
 try:
 	import random
 	import bldgGen
-	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
+
+def getFromFile_T(fi):
+	fi = open(fi)
+	li = [i.strip().split('\n') for i in fi if not i.startswith("#")]
+	li = [x for x in li if x != ['']]
+	tu = tuple(li)
+	fi.close()
+	return tu
 
 def wChoice(wCh):
 	import random

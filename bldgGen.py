@@ -27,7 +27,6 @@ try:
 	import random
 	import charGen
 	import itemGen
-	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()

@@ -28,7 +28,6 @@ try:
 	from PIL import Image, ImageTk
 	import cPickle as pickle
 	import itemGen
-	from libdndGen import *
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
