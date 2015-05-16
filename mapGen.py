@@ -80,7 +80,10 @@ class Land_Image(object):
 		biome = self.get_biome()
 		self.biome = biome
 		self.city_name = getCampName()
-
+		if biome == ('tundra') or (biome == 'desert'):
+			self.text_color = 'black'
+		else:
+			self.text_color = 'white'
 		# set base img size
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -91,7 +94,7 @@ class Land_Image(object):
 		# start drawing on top of the image
 		self.draw_biome(biome)
 		self.draw_water(biome)
-		self.draw_terrain(biome)
+		#self.draw_terrain()
 		self.draw_flora(biome)
 		self.draw_city()
 
@@ -107,13 +110,19 @@ class Land_Image(object):
 
 	def draw_biome(self,biome):
 
-		'''
 		# new method for drawing biome, but my images are ugly D;
-		image_to_paste = Image.open('data/sprites/'+biome.lower()+str(random.randint(1,3))+'.png')
-		self.im.paste(image_to_paste, (0,0), image_to_paste)
+		image_to_paste = Image.open('data/sprites/%s_texture.png'%biome)
+		y_paste = 0
+		for y_row in xrange(0,5):
+			for x_paste_interval in xrange(0,self.imgx):
+				if x_paste_interval % 128 == int():
+					self.im.paste(image_to_paste,
+						(x_paste_interval,y_paste), image_to_paste)
+			y_paste += 128
 
-		'''
+		
 		# These colors are very up for debate. Default HTML colors are ugly
+		'''
 		biomeColors={
 		'forest':'#088A08','marsh':'#4B8A08',
 		'plains':'#D0FA58','hills':'#D8F781',
@@ -121,6 +130,7 @@ class Land_Image(object):
 		}
 		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
 			fill=biomeColors[biome])
+			'''
 
 	def draw_city(self):
 
@@ -128,7 +138,7 @@ class Land_Image(object):
 		y = random.randrange(10,self.imgy-50)
 		image_to_paste = Image.open('data/sprites/city.png')
 		self.im.paste(image_to_paste, (x,y), image_to_paste)
-		self.draw.text((x-10,y+18),str(self.city_name))
+		self.draw.text((x-10,y+18),str(self.city_name), fill=self.text_color)
 		self.city_location = (x,y)
 
 	def draw_village(self):
@@ -142,9 +152,9 @@ class Land_Image(object):
 			image_to_paste = Image.open('data/sprites/village.png')
 			self.im.paste(image_to_paste, (x,y), image_to_paste)
 
-			self.draw.text((x-10,y+18),'%s'%villageName)
+			self.draw.text((x-10,y+18),'%s'%villageName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
-			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
+			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
 			streets = townGen.main('map','small')
 			villageDat = {
 			'Name':villageName,
@@ -164,9 +174,9 @@ class Land_Image(object):
 			y = random.randrange(10,self.imgy-50)
 			image_to_paste = Image.open('data/sprites/camp.png')
 			self.im.paste(image_to_paste, (x,y), image_to_paste)
-			self.draw.text((x-10,y+18),"Camp %s"%campName)
+			self.draw.text((x-10,y+18),"Camp %s"%campName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
-			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength))
+			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
 			streets = townGen.main('map','small')
 			campDat = {
 			'Name':campName,
@@ -176,7 +186,18 @@ class Land_Image(object):
 			camp_li.append(campDat)
 		return camp_li
 
-	def draw_terrain(self,biome):
+	def draw_terrain(self):
+
+		def draw_scorch_marks():
+			density = random.randint(0,9)
+			if density > 2:
+				for c in xrange(0,density):
+					x = random.randrange(10,self.imgx-50)
+					y = random.randrange(10,self.imgy-50)
+					image_to_paste = Image.open('data/sprites/scorch_texture.png')
+					self.im.paste(image_to_paste, (x,y), image_to_paste)
+					
+
 
 		def hills():
 			density = random.randint(1,3)
@@ -185,18 +206,17 @@ class Land_Image(object):
 				y = random.randint(0,self.imgy)
 				self.draw.arc((x,y,x+20,y+20),220,340, fill='gray')
 
-		if biome == 'hills':
-			pass
-			#hills()
+		draw_scorch_marks()
 
 	def draw_water(self, biome):
 
 		def river(densityFactor):
 
-			density = random.randint(0,5)
+			density = random.randint(0,4)
 			streamCount = int(density + (density*densityFactor))
 			for c in xrange(0,streamCount):
 				# determines whether to start on x or y axis
+				dir_num = random.randint(4,9)
 				if random.choice((True,False)):
 					x = random.randrange(0,self.imgx)
 					y = 0
@@ -206,20 +226,22 @@ class Land_Image(object):
 				for null in xrange(0,10000):
 					# decides which direction to wander
 					if random.choice((True,False)):
-						if random.randint(0,9) > random.randint(0,9):
+						if random.randint(0,random.randint(5,9)) < random.randint(0,9):
 							x -= 1
 						else:
 							x += 1
 						if (x >= self.imgx):
 							break
 					else:
-						if random.randint(0,9) > random.randint(0,9):
+						if random.randint(0,dir_num) < random.randint(0,random.randint(5,9)):
 							y -= 1
 						else:
 							y += 1
 						if (y >= self.imgy):
 							break
-					self.draw.point((x,y), fill='navy')
+					self.draw.point((x,y), fill='#2A2CD8')
+					self.draw.point((x-1,y-1), fill='navy')
+					self.draw.point((x+1,y+1), fill='navy')
 
 		def lake():
 
