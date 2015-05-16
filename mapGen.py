@@ -80,10 +80,12 @@ class Land_Image(object):
 		biome = self.get_biome()
 		self.biome = biome
 		self.city_name = getCampName()
+		
 		if biome == ('tundra') or (biome == 'desert'):
 			self.text_color = 'black'
 		else:
 			self.text_color = 'white'
+			
 		# set base img size
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -97,10 +99,15 @@ class Land_Image(object):
 		#self.draw_terrain()
 		self.draw_flora(biome)
 		self.draw_city()
-
-		camp_li = self.draw_camps()
-		vil_li = self.draw_village()
-		self.town_names = camp_li + vil_li
+		
+		city_dic = dict()
+		city_dic['Name'] = self.city_name
+		city_dic['Distance'] = 0
+		
+		camp_dic = self.draw_camps()
+		vil_dic = self.draw_village()
+		self.town_names = camp_dic + vil_dic
+		self.town_names.append(city_dic)
 
 	def get_biome(self):
 		biomeLeanVal = (('marsh' ,1.0),('plains'  ,5.0),
@@ -145,6 +152,7 @@ class Land_Image(object):
 
 		density = random.randint(1,3)
 		village_li = list()
+		#name_list = list()
 		for c in xrange(0,density):
 			villageName = getVillageName()
 			x = random.randrange(10,self.imgx-50)
@@ -155,11 +163,10 @@ class Land_Image(object):
 			self.draw.text((x-10,y+18),'%s'%villageName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			streets = townGen.main('map','small')
+			#name_list.append(villageName)
 			villageDat = {
 			'Name':villageName,
 			'Distance':roadLength,
-			'Streets':streets,
 			}
 			village_li.append(villageDat)
 		return village_li
@@ -168,6 +175,7 @@ class Land_Image(object):
 
 		density = random.randint(1,3)
 		camp_li = list()
+		#name_list = list()
 		for c in xrange(0,density):
 			campName = getCampName()
 			x = random.randrange(10,self.imgx-50)
@@ -177,11 +185,10 @@ class Land_Image(object):
 			self.draw.text((x-10,y+18),"Camp %s"%campName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			streets = townGen.main('map','small')
+			#name_list.append(campName)
 			campDat = {
 			'Name':campName,
 			'Distance':roadLength,
-			'Streets':streets,
 			}
 			camp_li.append(campDat)
 		return camp_li
@@ -274,7 +281,7 @@ class Land_Image(object):
 		# Tree intensity Modifiers
 		tree_mod ={
 		'forest':[random.randint(2,4),('tree1','tree2')],
-		'plains':[0.7,	('tree3','desertF1')],
+		'plains':[0.5,	('tree3','desertF1')],
 		'hills':[0.5,	('tree3','desertF1')],
 		'tundra':[0.2,	('tree3','desertF1')],
 		'marsh':[1,		('marshF1','tree2')],
@@ -297,16 +304,18 @@ class Land_Image(object):
 
 
 class Town_Image(Land_Image):
+	
 	'''
 	All data needed to create a new image representing a Town-generated
 	area.
 	'''
 
 	def __init__(self):
+		
 		#get cityname from Land_Image
 		self.city_name = landImg.city_name
-		self.streets = townGen.main('map',landImg.biome)
-
+		
+		self.towns = self.populate_area()
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
@@ -316,9 +325,25 @@ class Town_Image(Land_Image):
 		#self.drawStreets()
 		#self.drawWalls()
 
-	def drawBldgs(self):
-		pass
-
+	def populate_area(self):
+		
+		cities = dict()
+		for city_dicts in landImg.town_names:
+			for city in ['Name']:
+				if city_dicts['Name'] == landImg.city_name:
+					cities[city_dicts['Name']] = townGen.main('big',landImg.biome)
+					#cities['Distance'] = 0
+				else:
+					cities[city_dicts['Name']] = townGen.main('small',landImg.biome)
+					#cities[city_dicts['Name']['Distance']] = city_dicts['Distance']
+		#for key, value in cities.iteritems():
+		#	if value == int():
+		#		print str(key), str(value) + '\n\n\n'
+		return cities
+		
+		
+		
+		
 	def drawWalls(self):
 
 		img_city_walls = Image.open('data/sprites/cityWalls.png')
@@ -391,7 +416,7 @@ def main(opt):
 		townImg = Town_Image()
 		#bldgImg = Building_Image()
 		return (landImg.im, landImg.city_name,
-			landImg.town_names,townImg.streets)
+			landImg.town_names,townImg.towns)
 	if opt == 'small':
 		pass
 	else:

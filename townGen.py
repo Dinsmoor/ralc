@@ -92,7 +92,7 @@ class Settlement(object):
 		return bldgList
 
 def main(opt, biome):
-	if opt == 'map':
+	if opt == 'big':
 		town = Settlement(biome)
 		return town.s
 	if opt == 'small':
@@ -100,7 +100,6 @@ def main(opt, biome):
 		return town.s
 	else:
 		town = Settlement('forest')
-		neatDicPrint(town.s)
 		return 0
 
 if __name__ == '__main__':
