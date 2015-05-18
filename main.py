@@ -149,10 +149,10 @@ class UI(tk.Frame):
 				selectmode='browse')
 			ysb = ttk.Scrollbar(self, orient='vertical',
 				command=self.tree.yview)
-			xsb = ttk.Scrollbar(self, orient='horizontal',
-				command=self.tree.xview)
+			#xsb = ttk.Scrollbar(self, orient='horizontal',
+			#	command=self.tree.xview)
 			ysb.grid(row=0, column=1, sticky='ns')
-			xsb.grid(row=1, column=0, sticky='ew')
+			#xsb.grid(row=1, column=0, sticky='ew')
 			self.tree.heading('#0', text='Name', anchor='w')
 			self.tree.column('#0', width=300, anchor='w')
 			self.tree.grid(row=0, column=0, sticky='NSEW')
