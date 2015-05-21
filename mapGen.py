@@ -80,12 +80,12 @@ class Land_Image(object):
 		biome = self.get_biome()
 		self.biome = biome
 		self.city_name = getCampName()
-		
+
 		if biome == ('tundra') or (biome == 'desert'):
 			self.text_color = 'black'
 		else:
 			self.text_color = 'white'
-			
+
 		# set base img size
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -99,11 +99,12 @@ class Land_Image(object):
 		#self.draw_terrain()
 		self.draw_flora(biome)
 		self.draw_city()
-		
+
 		city_dic = dict()
 		city_dic['Name'] = self.city_name
 		city_dic['Distance'] = 0
-		
+		city_dic['click_area'] = self.city_location
+
 		camp_dic = self.draw_camps()
 		vil_dic = self.draw_village()
 		self.town_names = camp_dic + vil_dic
@@ -127,7 +128,7 @@ class Land_Image(object):
 						(x_paste_interval,y_paste), image_to_paste)
 			y_paste += 128
 
-		
+
 		# These colors are very up for debate. Default HTML colors are ugly
 		'''
 		biomeColors={
@@ -166,7 +167,8 @@ class Land_Image(object):
 			#name_list.append(villageName)
 			villageDat = {
 			'Name':villageName,
-			'Distance':roadLength,
+			'Distance':str(roadLength),
+			'click_area':[x,y],
 			}
 			village_li.append(villageDat)
 		return village_li
@@ -188,7 +190,8 @@ class Land_Image(object):
 			#name_list.append(campName)
 			campDat = {
 			'Name':campName,
-			'Distance':roadLength,
+			'Distance':str(roadLength),
+			'click_area':[x,y],
 			}
 			camp_li.append(campDat)
 		return camp_li
@@ -203,7 +206,7 @@ class Land_Image(object):
 					y = random.randrange(10,self.imgy-50)
 					image_to_paste = Image.open('data/sprites/scorch_texture.png')
 					self.im.paste(image_to_paste, (x,y), image_to_paste)
-					
+
 
 
 		def hills():
@@ -290,12 +293,6 @@ class Land_Image(object):
 
 		trees(tree_mod[biome][0],tree_mod[biome][1])
 
-	def draw_road(self,targetCoord):
-		# draws line from each villiage to city
-		# self.draw.line((self.city_location,self.villageCoord), fill='gray')
-		roadLength = gridDistance((self.city_location,targetCoord))
-		return roadLength
-
 	def save_image(self):
 		self.im.save('landMap', "PNG")
 
@@ -304,17 +301,17 @@ class Land_Image(object):
 
 
 class Town_Image(Land_Image):
-	
+
 	'''
 	All data needed to create a new image representing a Town-generated
 	area.
 	'''
 
 	def __init__(self):
-		
+
 		#get cityname from Land_Image
 		self.city_name = landImg.city_name
-		
+
 		self.towns = self.populate_area()
 		self.imgx = 600
 		self.imgy = self.imgx
@@ -326,30 +323,37 @@ class Town_Image(Land_Image):
 		#self.drawWalls()
 
 	def populate_area(self):
-		
-		cities = dict()
+
+		city_list = list()
 		for city_dicts in landImg.town_names:
-			for city in ['Name']:
-				if city_dicts['Name'] == landImg.city_name:
-					cities[city_dicts['Name']] = townGen.main('big',landImg.biome)
-					#cities['Distance'] = 0
-				else:
-					cities[city_dicts['Name']] = townGen.main('small',landImg.biome)
-					#cities[city_dicts['Name']['Distance']] = city_dicts['Distance']
-		#for key, value in cities.iteritems():
-		#	if value == int():
-		#		print str(key), str(value) + '\n\n\n'
-		return cities
+			cities = dict()
+			if city_dicts['Name'] == landImg.city_name:
+				city_data = townGen.main('big',landImg.biome)
+				cities['Name'] = city_dicts['Name']
+				cities['Data'] = city_data
+				cities['Distance'] = city_dicts['Distance']
+				cities['click_area'] = city_dicts['click_area']
+			else:
+				town_data = townGen.main('small',landImg.biome)
+				cities['Name'] = city_dicts['Name']
+				cities['Data'] = town_data
+				cities['Distance'] = city_dicts['Distance']
+				cities['click_area'] = city_dicts['click_area']
+				#print type(cities['click_area'])
+			city_list.append(cities)
 		
-		
-		
-		
+		#for item in city_list:
+		#	for item in item.itervalues():
+		#		print item
+		return city_list
+
 	def drawWalls(self):
 
 		img_city_walls = Image.open('data/sprites/cityWalls.png')
 		self.im.paste(img_city_walls, (0,0), img_city_walls)
 
 	def drawStreets(self):
+
 		img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
 		total_streets = len(self.streets)
 		street_interval = self.imgx / total_streets

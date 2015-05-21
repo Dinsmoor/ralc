@@ -114,7 +114,6 @@ def main(opt, biome):
 		return bldg.bldgDat
 	else:
 		bldg = Building('forest')
-		neatDicPrint(bldg.bldgDat)
 		return 0
 
 if __name__ == '__main__':

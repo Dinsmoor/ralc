@@ -565,7 +565,7 @@ def main():
 
 
 	pc = {}
-	pc['Level'] 				= random.randint(1,20)
+	pc['Level'] 				= random.randint(1,6)
 	pc['Class']					= getStats()
 
 	if newClass is not None:
@@ -673,6 +673,9 @@ WEAPON:
 	pc['Info'] = bio+stats+weapon+spells
 	return {'Name':pc['Name'],'Info':pc['Info']}
 
+def custom_param():
+	sheet = main()
+	return sheet
+	
 if __name__ == '__main__':
-#	parseMe()
 	main()
