@@ -393,14 +393,9 @@ class CharSheetGen(tkSimpleDialog.Dialog):
 
 		self.char_text.grid(row=1, column=0)
 		self.apply()
-		#self.go_button = tk.Button(self, text='GO!',
-		#	command=self.get_sheet)
-		#self.go_button.grid(row=3, columnspan=2)
+
 
 	def ok(self, event=None):
-
-		#self.withdraw()
-		#self.update_idletasks()
 
 		self.apply()
 
