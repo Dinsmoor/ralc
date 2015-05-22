@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'Beta v0.62'
+RALC_VERSION = 'Beta v0.63'
 try:
 	import Tkinter as tk
 	import tkSimpleDialog
@@ -45,6 +45,7 @@ except ImportError:
 class UI(tk.Frame):
 
 	def __init__(self):
+		self.init_dir()
 		tk.Frame.__init__(self)
 		self.image_frame = tk.Frame(self)
 		self.master.title('RALC %s'%RALC_VERSION)
@@ -54,8 +55,16 @@ class UI(tk.Frame):
 		self.grid()
 		self.image_frame.grid(row=0, column=2)
 		self.get_photo()
-
 		print "UI.__init__.Done"
+
+	def init_dir(self):
+		dir_list = os.listdir('.')
+		if 'save' not in dir_list:
+			os.makedirs('save')
+		if 'data' not in dir_list:
+			tkMessageBox.showerror(
+				"Error","You are missing your data folder. Please Redownload")
+			exit()
 
 	def new_data(self):
 
@@ -443,7 +452,8 @@ class LoadDialog(tkSimpleDialog.Dialog):
 
 		self.file_listbox.delete(0, 'end')
 		dir_list = os.listdir('save')
-		dir_list.remove('.saveloc')
+		if '.saveloc' in dir_list:
+			dir_list.remove('.saveloc')
 		for subfolder in dir_list:
 			self.file_listbox.insert('end', subfolder)
 		print "LoadDialog.get_save_dir.Done"
