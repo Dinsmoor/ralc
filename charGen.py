@@ -660,6 +660,16 @@ WEAPON:
 	'''%(item_d['Name'],item_d['Weapon Type'],
 		item_d['Hit Die'],item_d['Damage Type'])
 
+	armor_d = itemGen.main('arm','rnd')
+	armor = '''
+ARMOR:
+	Name:	%s
+	Type:	%s
+	AC:	%s
+	Cost:	%s
+	'''%(armor_d['Name'],armor_d['Type'],
+		armor_d['AC'],armor_d['Cost'])
+
 	"""
 	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'] = getBackground(pc['Class'])
 	background = '''
@@ -670,12 +680,12 @@ WEAPON:
 	Flaw: %s
 	'''%(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'])
 	"""
-	pc['Info'] = bio+stats+weapon+spells
+	pc['Info'] = bio+stats+weapon+armor+spells
 	return {'Name':pc['Name'],'Info':pc['Info']}
 
-def custom_param():
+def custom_param(level=1, race='Human',clas='Wizard'):
 	sheet = main()
 	return sheet
-	
+
 if __name__ == '__main__':
 	main()

@@ -8,7 +8,7 @@ Glaive,1d10,slashing,martial,melee
 Halberd,1d10,slashing,martial,melee
 Lance,1d12,piercing,martial,melee
 Long Sword,1d8,slashing,martial,melee
-Maul,1d6,bludgeoning,martial,melee
+Maul,2d6,bludgeoning,martial,melee
 Morningstar,1d8,piercing,martial,melee
 Pike,1d10,piercing,martial,melee
 Rapier,1d8,piercing,martial,melee

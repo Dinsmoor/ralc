@@ -54,13 +54,14 @@ class Building(object):
 		self.bldgDat['Rooms'] = self.get_rooms(random.randint(1,3))
 
 	def get_purpose(self):
-		bldgtypes = ('Shack','Residence','General Store',
-					'Armorer','Livestock Area',
-					'Weapon Smith', 'Tavern', 'Inn')
-		return random.choice(bldgtypes)
+		bldgtypes = (('Shack',2),('Residence',8),('General Store',2),
+					('Armorer',1),('Livestock Area',1),
+					('Weapon Smith',1), ('Tavern',2), ('Inn',2))
+
+		return wChoice(bldgtypes)
 
 	def get_rooms(self, rooms):
-		#trouble here
+
 		d = {
 			'Shack':['Entry','Kitchen','Common Area'],
 			'Residence':['Entry','Kitchen','Living Area','Dining Area',
@@ -81,16 +82,21 @@ class Building(object):
 		for room in roomTypes:
 			roomDat.append({
 			'Actors':self.get_inhabitants(random.randint(0,3)),
-			'Weapons':self.get_random_items(2),
+			'Weapons':self.get_random_items('wep',random.randint(0,3)),
+			'Armor':self.get_random_items('arm',random.randint(0,3)),
 			'Type':room,
 			})
 		# needs to return list
 		return roomDat
 
-	def get_random_items(self, amount):
+	def get_random_items(self, typ, amount):
 		item_l = list()
-		for x in xrange(0,amount):
-			item_l.append(itemGen.main('wep', 'rnd'))
+		if typ == 'wep':
+			for x in xrange(0,amount):
+				item_l.append(itemGen.main('wep', 'rnd'))
+		elif typ == 'arm':
+			for x in xrange(0,amount):
+				item_l.append(itemGen.main('arm', 'rnd'))
 		return item_l
 
 	def get_inhabitants(self, popul):

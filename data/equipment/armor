@@ -1,0 +1,21 @@
+#name,type,cost,AC
+# Shield
+Shield,shield,10,2
+
+# Light Armor
+Padded,light,5,11
+Leather,light,10,11
+Studded Leather,light,45,12
+
+# Medium Armor
+Hide,medium,10,12
+Chain shirt,medium,50,13
+Scale mail,medium,50,14
+Breastplate,medium,400,14
+Half-plate,medium,750,15
+
+# Heavy Armor
+Ring mail,heavy,30,14
+Chain mail,heavy,75,16
+Splint,heavy,200,17
+Plate,heavy,1500,18

@@ -70,22 +70,22 @@ class Settlement(object):
 			'plains':0.7,
 			'hills':0.7,
 			'tundra':0.3,
-			'marsh':0.4,
+			'marsh':0.5,
 			'desert':0.2,
-			'small':0.1,
+			'small':0.2,
 			}
-			
-		
+
+
 		return int(size_mult[biome] * (random.randint(1,4) + 10))
 
 	def getStreets(self, citySize, biome):
 		streets = dict()
 		for val in xrange(0,citySize):
-			streets[getStreetName()] = self.fillStreet(biome)
+			streets[getStreetName()] = self.fillStreet(biome, citySize)
 		return streets
 
-	def fillStreet(self, biome):
-		lotCount = random.randint(1,4)
+	def fillStreet(self, biome, citySize):
+		lotCount = random.randint(1,4) + citySize
 		bldgList = []
 		for lot in xrange(0,lotCount):
 			bldgList.append(self.getBldgData(biome))

@@ -57,6 +57,10 @@ class UI(tk.Frame):
 		self.get_photo()
 		print "UI.__init__.Done"
 
+####
+# Data Gathering
+####
+
 	def init_dir(self):
 		dir_list = os.listdir('.')
 		if 'save' not in dir_list:
@@ -65,10 +69,9 @@ class UI(tk.Frame):
 			tkMessageBox.showerror(
 				"Error","You are missing your data folder. Please Redownload")
 			exit()
-
+		
 	def new_data(self):
-
-		(self.im, self.cityName, self.town_names,
+		(self.im, self.cityName,
 			self.towns) = mapGen.main('tk')
 		print "UI.new_data.Retrieved Data"
 
@@ -91,7 +94,7 @@ class UI(tk.Frame):
 		def save_names():
 
 			savef = open('save/%s/name'%save_name, 'w')
-			pickle.dump((self.cityName, self.town_names,
+			pickle.dump((self.cityName,
 				self.towns),savef)
 			savef.close
 
@@ -117,7 +120,7 @@ class UI(tk.Frame):
 		def load_names():
 
 			savef = open('save/%s/name'%load_name, 'r')
-			(self.cityName, self.town_names,
+			(self.cityName,
 				self.towns) = pickle.load(savef)
 			savef.close
 
@@ -139,7 +142,9 @@ class UI(tk.Frame):
 	def load_photo(self):
 
 		return ImageTk.PhotoImage(self.im)
-##########################################################
+##########
+# UI Init
+##########
 	def create_widgets(self):
 
 		def make_menu_bar():
@@ -230,7 +235,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		SaveDialog(self)
 
 	def create_char_sheet_dialog(self):
-		
+
 		CharSheetGen(self)
 
 	def load_state(self):
@@ -265,24 +270,26 @@ Distance to Region City: %s
 		'''%()
 
 	def fill_tree(self):
-		town_names = self.town_names
+		#town_names = self.town_names
 		self.actor_coor = dict()
 		self.town_coor = dict()
 		self.city_coor = dict()
 		self.item_coor = dict()
+		self.click_coor = dict()
 		city_population = 0
 
 		for city_dic in self.towns:
 			if city_dic['Name'] == self.cityName:
 				city_parent = self.tree.insert('', 0, text=city_dic['Name'])
 				self.tree.insert('', 1)
+				self.click_coor[city_parent] = city_dic['click_area']
 			else:
 				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])#,
-				#	tags=city['Name'],value=city['Distance'])
 				
-				self.town_coor[city_parent] = city_dic['Name']
+				self.click_coor[city_parent] = city_dic['click_area']
+				#self.town_coor[city_parent] = self.make_town_metadata(city_dic)
 			for city, city_info in city_dic.iteritems():
-				
+
 				if city == 'Distance':
 					pass
 					#self.town_coor[city_parent]
@@ -310,6 +317,9 @@ Distance to Region City: %s
 										room['Actors'] = tempvalue
 										tempvalue = room.pop('Weapons')
 										room['Weapons'] = tempvalue
+										tempvalue = room.pop('Armor')
+										room['Armor'] = tempvalue
+
 
 										for key, value in room.iteritems(): # dict
 											if key == 'Type':
@@ -323,7 +333,10 @@ Distance to Region City: %s
 													actor_parent = self.tree.insert(room_parent,
 														'end', text=key)
 													for actor_name, actor_info in value.iteritems():
-														city_population += 1
+														if city_dic['Name'] == self.cityName:
+															city_dic['Population'] += 1
+														else:
+															city_dic['Population'] += 1
 														#The data of the actor
 														actor = self.tree.insert(actor_parent,
 															'end', text=actor_name, value=actor_info,
@@ -333,43 +346,67 @@ Distance to Region City: %s
 
 											if key == 'Weapons':
 												if bldg['Purpose'] == 'Weapon Smith':
-													room_items_parent = self.tree.insert(room_parent,
+													wep_items_parent = self.tree.insert(room_parent,
 														'end', text='Weapons')
 													for item_dict in value:
-														item_parent = self.tree.insert(room_items_parent,
+														item = self.tree.insert(wep_items_parent,
 															'end', text=item_dict['Name'])
 
-				city_metadata = {
-		'Name':self.cityName,
-		'Population':city_population,
-		}
+														self.item_coor[item] = item_dict['Name']
 
-		self.city_desc ='''
-Name:		%s
+											if key == 'Armor':
+												if bldg['Purpose'] == 'Armorer':
+													armor_items_parent = self.tree.insert(room_parent,
+														'end', text='Armor')
+													for item_dict in value:
+														item = self.tree.insert(armor_items_parent,
+															'end', text=item_dict['Name'])
+
+														self.item_coor[item] = item_dict['Name']
+											
+											self.town_coor[city_parent] = self.make_town_metadata(city_dic)
+
+
+
+	def make_town_metadata(self, town):
+		
+		desc = '''
+Name:	%s
 Population:	%d
-		'''%(city_metadata['Name'], city_metadata['Population'])
-		#self.city_coor[city_parent] = city_metadata
-		print "UI.fill_tree.Done"
+Distance:	%skm to %s.
+		'''%(town['Name'], town['Population'],
+			town['Distance'], self.cityName)
+		return desc
+
+####
+# Callbacks
+####
+
+	def find_selection_type(self, event):
+		items = list()
+		items.append(itemGen.main('wep','all'))
+		items.append(itemGen.main('arm','all'))
 
 	def update_details(self, event):
-
-		self.details.config(state='normal')
-		self.details.delete(1.0, 'end')
-		try:
+		
+		def actor_update():
 			try:
 				self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
 				print "UI.update_details.Actor.Done"
 			except KeyError: pass
-			#try:
-			#	self.details.insert('end',str(self.town_coor[self.tree.focus()]['Distance'])+"km to %s"%self.cityName)
-			#	#self.details.insert('end',str(self.town_coor[self.tree.focus()]))
-			#	print "UI.update_details.Town.Done"
-			#except KeyError: pass
+		
+		def town_update():
 			try:
-				if self.city_coor[self.tree.focus()]['Name'] == self.cityName:
-					self.details.insert('end',self.city_desc)
-					print "UI.update_details.City.Done"
+				self.details.insert('end',str(self.town_coor[self.tree.focus()]))
+				print "UI.update_details.Town.Done"
 			except KeyError: pass
+		
+		self.details.config(state='normal')
+		self.details.delete(1.0, 'end')
+		
+		try:
+			actor_update()
+			town_update()
 			self.details.config(state='disabled')
 
 		except KeyError:
@@ -380,23 +417,30 @@ Population:	%d
 			print "UI.update_details.KeyError"
 
 	def city_map_select(self, event):
-		print event.x, event.y
+		
+		for city_id, click_corner in self.click_coor.items():
+			x_true = event.x >= click_corner[0] >= event.x - 20
+			y_true = event.y >= click_corner[1] >= event.y - 20
+			if x_true and y_true:
+				self.tree.selection_set(city_id)
+				self.tree.focus(city_id)
+				self.update_details(city_id)
+			else:
+				pass
 
-	def callback(self, event):
 
-		try:
-			neatDicPrint(self.actor_coor[self.tree.focus()])
-		except KeyError:
-			print "Item has no values"
+#####
+# Dialogs
+#####
 
 class CharSheetGen(tkSimpleDialog.Dialog):
-	
+
 	def body(self, master):
 
 		self.title('Character Sheet Generator')
 		inst = tk.Label(master, text="Generate a random character sheet.")
 		inst.grid(row=0, columnspan=2)
-		
+
 		self.char_text = tk.Text(master, width=50,
 			height=30, state='disabled')
 
@@ -414,11 +458,11 @@ class CharSheetGen(tkSimpleDialog.Dialog):
 		self.char_text.delete(1.0, 'end')
 		self.char_text.insert('end',char_sheet['Info'])
 		self.char_text.config(state='disabled')
-		
-		
+
+
 
 class SaveDialog(tkSimpleDialog.Dialog):
-	
+
 	def body(self, master):
 
 		self.title('Save')

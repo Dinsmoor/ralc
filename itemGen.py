@@ -64,11 +64,24 @@ def load_weapons():
 			}])
 	return weapon_list
 
-def load_wearables():
-	pass
+def load_armor():
+	armdata = import_weapon_file('data/equipment/armor')
+	armor_list = list()
+	#name,type,cost,AC
+	for arm in armdata:
+		armor_list.append([{
+		'Name':arm[0],
+		'Type':arm[1],
+		'Cost':arm[2],
+		'AC':arm[3],
+		}])
+	return armor_list
 
-def rand_wearable():
-	pass
+def rand_armor():
+	armor = load_armor()
+	rnd_arm = random.randint(0,len(armor)-1)
+	for data in armor[rnd_arm]:
+		return data
 
 def rand_weapon():
 	weapons = load_weapons() #list
@@ -86,8 +99,14 @@ def main(opt, item):
 			return rand_weapon()
 		elif item == 'all':
 			return load_weapons()
+	if opt == 'arm':
+		if item == 'rnd':
+			return rand_armor()
+		elif item == 'all':
+			return load_armor()
 	else:
 		print rand_weapon()
+		print rand_armor()
 		return 0
 
 if __name__ == '__main__':

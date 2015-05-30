@@ -151,20 +151,17 @@ class Land_Image(object):
 
 	def draw_village(self):
 
-		density = random.randint(1,3)
+		density = random.randint(1,random.randint(2,5))
 		village_li = list()
-		#name_list = list()
+		image_to_paste = Image.open('data/sprites/village.png')
 		for c in xrange(0,density):
 			villageName = getVillageName()
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			image_to_paste = Image.open('data/sprites/village.png')
 			self.im.paste(image_to_paste, (x,y), image_to_paste)
-
 			self.draw.text((x-10,y+18),'%s'%villageName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			#name_list.append(villageName)
 			villageDat = {
 			'Name':villageName,
 			'Distance':str(roadLength),
@@ -175,19 +172,17 @@ class Land_Image(object):
 
 	def draw_camps(self):
 
-		density = random.randint(1,3)
+		density = random.randint(1,random.randint(2,5))
 		camp_li = list()
-		#name_list = list()
+		image_to_paste = Image.open('data/sprites/camp.png')
 		for c in xrange(0,density):
 			campName = getCampName()
 			x = random.randrange(10,self.imgx-50)
 			y = random.randrange(10,self.imgy-50)
-			image_to_paste = Image.open('data/sprites/camp.png')
 			self.im.paste(image_to_paste, (x,y), image_to_paste)
 			self.draw.text((x-10,y+18),"Camp %s"%campName, fill=self.text_color)
 			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
 			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			#name_list.append(campName)
 			campDat = {
 			'Name':campName,
 			'Distance':str(roadLength),
@@ -332,12 +327,14 @@ class Town_Image(Land_Image):
 				cities['Name'] = city_dicts['Name']
 				cities['Data'] = city_data
 				cities['Distance'] = city_dicts['Distance']
+				cities['Population'] = 0
 				cities['click_area'] = city_dicts['click_area']
 			else:
 				town_data = townGen.main('small',landImg.biome)
 				cities['Name'] = city_dicts['Name']
 				cities['Data'] = town_data
 				cities['Distance'] = city_dicts['Distance']
+				cities['Population'] = 0
 				cities['click_area'] = city_dicts['click_area']
 				#print type(cities['click_area'])
 			city_list.append(cities)
@@ -420,7 +417,7 @@ def main(opt):
 		townImg = Town_Image()
 		#bldgImg = Building_Image()
 		return (landImg.im, landImg.city_name,
-			landImg.town_names,townImg.towns)
+			townImg.towns)
 	if opt == 'small':
 		pass
 	else:

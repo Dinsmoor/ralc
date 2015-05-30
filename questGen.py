@@ -50,61 +50,74 @@ Quest Requirements:
 	NPCs
 
 '''
+class Quest(object):
+	def __init__(self, actors):
+		pass
 
-def getTheme():
-	'''
-	Based on the NPC requesting the quest, blacksmiths could be item
-	hunting missions, royal courts could be embassy/diplomatic missions,
-	bandits could be combat, etc. Should compile a list.
-	'''
-	return 'Combat'
+	def get_reward(self, reward):
+		pass
 
-def getDifficulty():
-	'''
-	Based on the hostility of the region, as well as techlevel and such.
-	Probably should be implemented in landGen and used in other programs,
-	such as being just imported to here.
-	'''
-	return 'Normal'
+	def get_completion_requirements(self, reqire_list):
+		pass
 
-def getRewards():
-	'''
-	Choses a related reward for quest difficulty, the area, how affluent
-	the region is, and the type of quest.
-	ie, a mission for a gov't, usually gold, a farmer, general goods,
-	a blacksmith, a good weapon/armor, innkeeper, free room/board
-	'''
-	return '10 Gold'
+	def quest_description(self):
+		print "Generic Quest"
 
-def getLocation():
-	'''
-	Chooses the cell(building and room) where the quest origionates,
-	just keeps for reference
-	'''
-	return 'Bar in Orgthall'
+class LootQuest(Quest):
+	"Go hunt down this lost treasure"
+	def __init__(self):
+		Quest.quest_description(self)
+	pass
 
-def getNPCs():
-	'''
-	Should Lookup the dictionary of NPCs in a region with the quest flag
-	and then assign them either a part of a quest, or to be in charge of
-	a quest. Should be determined by a data value such as pc['questVal']=
-	0 = No Quest
-	1 = Minor Part in Q
-	2 = Major Part in Q
-	4 = Owner of Q
-	This function could have either a minor or major impact. Not yet decided.
-	Could:
-		Dynamically create NPCs based on need of quest
-	or:
-		Use pre-created dict of characters to assign to a paticular quest
-	'''
-	return 'Amanda Hugnkis'
+class TheftQuest(LootQuest):
+	"Silently Steal an item"
+	pass
+
+class MugQuest(LootQuest):
+	"Mug person for item"
+	pass
+
+
+class LocateObjectQuest(Quest):
+	"Locate an object"
+	pass
+
+
+class LocatePersonQuest(Quest):
+	"Locate an person"
+	pass
+
+class RescueQuest(LocatePersonQuest):
+	"Locate and rescure NPC"
+	pass
+
+
+class KillQuest(Quest):
+	"Kill Someone/something"
+	pass
+
+class MurderQuest(KillQuest):
+	"Kill person violently"
+	pass
+
+class AssasinateQuest(KillQuest):
+	"Kill person Silently"
+	pass
+
+
+class UprisingQuest(Quest):
+	"Cause a village to revolt"
+	pass
+
+class DefendQuest(Quest):
+	"Fight back invading force"
+	pass
+
+
+LootQuest()
 
 def main():
-	quest = {}
-	quest['theme'] = getTheme()
-	quest['difficulty'] = getDifficulty()
-	return quest
+	return
 
 if __name__ == '__main__':
 	 main()
