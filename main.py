@@ -44,7 +44,12 @@ except ImportError:
 
 class UI(tk.Frame):
 
+	'''
+	Class that describes the UI and how the information is formatted.
+	'''
+	
 	def __init__(self):
+		
 		self.init_dir()
 		tk.Frame.__init__(self)
 		self.image_frame = tk.Frame(self)
@@ -62,15 +67,17 @@ class UI(tk.Frame):
 ####
 
 	def init_dir(self):
+		
 		dir_list = os.listdir('.')
 		if 'save' not in dir_list:
 			os.makedirs('save')
 		if 'data' not in dir_list:
 			tkMessageBox.showerror(
-				"Error","You are missing your data folder. Please Redownload")
+				"Error","You are missing your data folder.")
 			exit()
 		
 	def new_data(self):
+		
 		(self.im, self.cityName,
 			self.towns) = mapGen.main('tk')
 		print "UI.new_data.Retrieved Data"
@@ -106,7 +113,12 @@ class UI(tk.Frame):
 
 
 	def load_all(self, load_name):
-
+		
+		'''
+		Ensures that the save name to load is valid, then loads the
+		associated content and refreshes widgets.
+		'''
+		
 		def check_dir():
 
 			if os.path.exists('save/%s'%load_name):
@@ -125,29 +137,34 @@ class UI(tk.Frame):
 			savef.close
 
 		if check_dir():
-
 			load_image()
 			print 'UI.load_all.Loaded Image From Disk'
 			load_names()
 			print 'UI.load_all.Loaded Names From Disk'
-			self.loading_compensation = True
+			#self.loading_compensation = True
 			self.create_widgets()
 			self.get_photo()
-			self.loading_compensation = False
+			#self.loading_compensation = False
 			print 'UI.load_all.Refreshed Widgets'
 		else:
 			print 'UI.load_all.Failed[NO FOLDER PRESENT]'
 
-
-	def load_photo(self):
-
-		return ImageTk.PhotoImage(self.im)
 ##########
 # UI Init
 ##########
 	def create_widgets(self):
 
+		'''
+		Creates menu bar, tree view and details pane.
+		'''
+		
 		def make_menu_bar():
+			
+			'''
+			Used for callbacks, instumental for loading/saving and
+			accessing the tools/about menus. Will feature many other
+			tools later.
+			'''
 			self.option_add('*tearOff', False)
 			self.menubar = tk.Menu(self.master)
 			self.filemenu = tk.Menu(self.menubar)
@@ -172,14 +189,15 @@ class UI(tk.Frame):
 
 		def make_tree_view():
 
+			'''
+			Defines tree instance for use later in fill_tree
+			'''
+			
 			self.tree = ttk.Treeview(self, height=25,
 				selectmode='browse')
 			ysb = ttk.Scrollbar(self, orient='vertical',
 				command=self.tree.yview)
-			#xsb = ttk.Scrollbar(self, orient='horizontal',
-			#	command=self.tree.xview)
 			ysb.grid(row=0, column=1, sticky='ns')
-			#xsb.grid(row=1, column=0, sticky='ew')
 			self.tree.heading('#0', text='Name', anchor='w')
 			self.tree.column('#0', width=300, anchor='w')
 			self.tree.grid(row=0, column=0, sticky='NSEW')
@@ -188,7 +206,11 @@ class UI(tk.Frame):
 			print "UI.make_tree_view.Done"
 
 		def make_details_pane():
-
+			
+			'''
+			Defines first instance of the details pane.
+			'''
+			
 			self.details_frame = ttk.Frame(self, borderwidth=2,
 				relief="sunken", width=200, height=600)
 			self.details = tk.Text(self.details_frame, width=50,
@@ -226,34 +248,61 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		"About",info_text)
 
 	def create_load_dialog(self):
-
+		
+		'''
+		Interior handler for an external class
+		'''
+		
 		LoadDialog(self)
 
 
 	def create_save_dialog(self):
-
+		
+		'''
+		Interior handler for an external class
+		'''
+		
 		SaveDialog(self)
 
 	def create_char_sheet_dialog(self):
-
+		
+		'''
+		Interior handler for an external class
+		'''
+		
 		CharSheetGen(self)
 
 	def load_state(self):
-
+		
+		'''
+		Loads saved data and redraws widgets.
+		'''
+		
 		self.load_all()
 		self.create_widgets()
 		self.get_photo()
 		print 'UI.load_state.Done'
 
 	def new_state(self):
-
+		
+		'''
+		Just calles for new data and redraws widgets.
+		'''
+		
 		self.new_data()
 		self.create_widgets()
 		self.get_photo()
 		print 'UI.new_state.Done'
 
 	def get_photo(self):
-		self.img = self.load_photo()
+		
+		'''
+		Converts PIL/PNG image into a Tk-compatible image type, creates
+		a canvas that has a clickable surface that is able to select
+		settlements using a callback to city_map_select.
+		'''
+		
+		self.img = ImageTk.PhotoImage(self.im)
 
 		self.canvas = tk.Canvas(self.image_frame, background='grey',
 			width=600, height=600)
@@ -262,15 +311,16 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		self.canvas.bind('<Button>', self.city_map_select)
 		print 'UI.get_photo.Done'
 
-	def build_town_info(self, name, dist):
-		info = '''
-Settlement Name: %s
-Distance to Region City: %s
-
-		'''%()
-
 	def fill_tree(self):
-		#town_names = self.town_names
+		
+		'''
+		Abandon all hope, ye who enter here.
+		
+		Very sensitive to upstream datatypes and needs to get better
+		ways of handling invalid datatypes. Eventually will migrate
+		everything to dictionaries so they can be unpacked easier later. 
+		'''
+
 		self.actor_coor = dict()
 		self.town_coor = dict()
 		self.city_coor = dict()
@@ -287,7 +337,7 @@ Distance to Region City: %s
 				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])#,
 				
 				self.click_coor[city_parent] = city_dic['click_area']
-				#self.town_coor[city_parent] = self.make_town_metadata(city_dic)
+
 			for city, city_info in city_dic.iteritems():
 
 				if city == 'Distance':
@@ -299,7 +349,7 @@ Distance to Region City: %s
 						street_parent = self.tree.insert(city_parent,
 								'end', text=street, tags=street)
 						for bldg in bldg_li:
-							# add buildgins
+							# add buildings
 							bldg_parent = self.tree.insert(street_parent,
 								'end', text=bldg['Purpose'])
 							for rooms, roomsdata in bldg.iteritems():
@@ -389,6 +439,12 @@ Distance:	%skm to %s.
 
 	def update_details(self, event):
 		
+		'''
+		Since multiple types fo data will be updated, it inspects various
+		data sources and just plugs in whatever is applicible. Kind of dumb,
+		but works. Otherwise will just empty the text box.
+		'''
+		
 		def actor_update():
 			try:
 				self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
@@ -404,30 +460,27 @@ Distance:	%skm to %s.
 		self.details.config(state='normal')
 		self.details.delete(1.0, 'end')
 		
-		try:
-			actor_update()
-			town_update()
-			self.details.config(state='disabled')
-
-		except KeyError:
-			self.details.config(state='normal')
-			self.details.delete(1.0, 'end')
-			self.details.insert('end',"Selected item has no values.")
-			self.details.config(state='disabled')
-			print "UI.update_details.KeyError"
+		actor_update()
+		town_update()
+		self.details.config(state='disabled')
 
 	def city_map_select(self, event):
 		
+		'''
+		Checks click coordinates against a bounding box equivalent to
+		the graphic size of the settlement sprite in a coorelation
+		dictionary filled with each sprite's location.
+		
+		Sets selection and focus to corresponding town, then change is
+		reflected in self.details automatically.
+		'''
+		
 		for city_id, click_corner in self.click_coor.items():
-			x_true = event.x >= click_corner[0] >= event.x - 20
+			x_true = event.x >= click_corner[0] >= event.x - 20 # png is 20x20px
 			y_true = event.y >= click_corner[1] >= event.y - 20
 			if x_true and y_true:
 				self.tree.selection_set(city_id)
 				self.tree.focus(city_id)
-				self.update_details(city_id)
-			else:
-				pass
-
 
 #####
 # Dialogs
@@ -436,7 +489,12 @@ Distance:	%skm to %s.
 class CharSheetGen(tkSimpleDialog.Dialog):
 
 	def body(self, master):
-
+		
+		'''
+		Just a text box for displaying generated sheet.
+		Should use pages later to specify options for a custom sheet.
+		'''
+		
 		self.title('Character Sheet Generator')
 		inst = tk.Label(master, text="Generate a random character sheet.")
 		inst.grid(row=0, columnspan=2)
@@ -449,6 +507,10 @@ class CharSheetGen(tkSimpleDialog.Dialog):
 
 
 	def ok(self, event=None):
+		'''
+		Need to replace stock ok() because I don't want it to exit
+		immediately after creating a new sheet.
+		'''
 
 		self.apply()
 
