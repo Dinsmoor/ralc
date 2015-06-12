@@ -395,7 +395,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 														self.actor_coor[actor] = actor_info
 
 											if key == 'Weapons':
-												if bldg['Purpose'] == 'Weapon Smith':
+												if True:# bldg['Purpose'] == 'Weapon Smith':
 													wep_items_parent = self.tree.insert(room_parent,
 														'end', text='Weapons')
 													for item_dict in value:
@@ -405,7 +405,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 														self.item_coor[item] = item_dict['Name']
 
 											if key == 'Armor':
-												if bldg['Purpose'] == 'Armorer':
+												if True:#bldg['Purpose'] == 'Armorer':
 													armor_items_parent = self.tree.insert(room_parent,
 														'end', text='Armor')
 													for item_dict in value:

@@ -74,6 +74,17 @@ def getFromFile_Dic(fi):
 				(key, val) = line.strip().split('=')
 				d[key] = val
 	return d
+	
+def get_background_list(fi):
+	fi = open(fi)
+	# Builds a list of lists from a file, seperated by newline
+	li = [i.strip().split('::') for i in fi.readlines() if not i.startswith("#")]
+	# ignore blank lines
+	li = [x for x in li if x != ['']]
+	li = [[st.strip() for st in l] for l in li]
+	fi.close()
+	return li
+
 
 
 def parseMe():
