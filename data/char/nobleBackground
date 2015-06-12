@@ -3,16 +3,16 @@
 # Configuration file for the "Noble" background
 
 # Personality Trait				bg[0] 
-My eloquent flattery makes everyone I talk to feel like the most wonderul and important person in the world., The common folk love me fo my kindness and generosity., No one could doubt looking at my regal bearing that I am a cut above the unwashed masses., I take great pains to always look my best and follow the latest fashions., I do not like to get my hands dirty and I will not be caught dead in unsuitable accommodations., Despite my noble birth I do not place myself above other folk. We all have the same blood., My favor once lost is lost forever. If you do me an injury I will crush you. Ruin your name and salf your fields.
+My eloquent flattery makes everyone I talk to feel like the most wonderul and important person in the world.::The common folk love me fo my kindness and generosity.::No one could doubt looking at my regal bearing that I am a cut above the unwashed masses.::I take great pains to always look my best and follow the latest fashions.::I do not like to get my hands dirty, and I won't be caught dead in unsuitable accommodations.::Despite my noble birth, I do not place myself above other folk. We all have the same blood.::My favor, once lost, is lost forever.::If you do me an injury, I will crush you, ruin your name, and salt your fields.
 
 # Ideals						bg[1]
-Respect: Respect is due to me becuse of my position; but all people regardless of station deserve to be treated, Responsibility: It is my duty to respect the authority of those above mel just as those below me must respect mine. (Lawful), Indepedence: I must prove that I can handle myself without the coddling of my family. (Chaotic), Power: If I can attain more power no one will tell me what to do. (Evil), Family: Blood runs thicker tha water. (Any), Noble Obligation: It is my duty to protect and care for the people beneath me. (Good)
+Respect: Respect is due to me becuse of my position, but all people regardless of station deserve to be treated with dignity. (Good)::Responsibility: It is my duty to respect the authority of those above me, just as those below me must respect mine. (Lawful)::Indepedence: I must prove that I can handle myself without the coddling of my family. (Chaotic)::Power: If I can attain more power, no one will tell me what to do. (Evil)::Family: Blood runs thicker than water. (Any)::Noble Obligation: It is my duty to protect and care for the people beneath me. (Good)
 
 # Bonds							bg[2]
-I will face any challenge to win the approval of my family., My houses alliance with another family must be sustained at all costs., Nothing is more important than the other memers of my family., I am in love with the heir of a family that my family despises., My loyalty to my sovereign is unwavering., The common folk must see me as a hero of the people.
+I will face any challenge to win the approval of my family.::My houses alliance with another family must be sustained at all costs.::Nothing is more important than the other memers of my family.::I am in love with the heir of a family that my family despises.::My loyalty to my sovereign is unwavering.::The common folk must see me as a hero of the people.
 
 # Flaws							bg[3
-I secretly believe that everyone is beneath me., I hide a truly scandalous secret that could ruin my family forever., I too often hear veiled insults and threats in every word addressed to me and I am quick to anger., I have an insatiable desire for carnal pleasures., In fact the world does revolve around me., By my words and actions I often bring shame to my family.
+I secretly believe that everyone is beneath me.::I hide a truly scandalous secret that could ruin my family forever.::I too often hear veiled insults and threats in every word addressed to me, and I'm quick to anger.::I have an insatiable desire for carnal pleasures.::In fact the world does revolve around me.::By my words and actions, I often bring shame to my family.
 
 # Speacialty 					bg[4]
 

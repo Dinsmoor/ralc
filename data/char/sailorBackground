@@ -1,0 +1,19 @@
+# See sampleConfig for comments usage data
+
+# Configuration file for the "Sailor" background
+
+# Personality Trait				bg[0] 
+My friends know they can rely on me, no matter what.::I work hard so that I can play hard when the work is done.::I enjoy sailing into new ports and making new friends over a flagon of ale.::I stretch the truth for the sake of a good story.::To me, a tavern brawl is a nice way to get to know a new city.::I never pass up a friendly wager.::My language is as foul as an otyugh nest.::I like a job well done, especially if I can convince someone else to do it.
+
+# Ideals						bg[1]
+Respect: The thing that keeps a ship together is mutual respect between captain and crew. (Good)::Fairness: We all do the work, so we all share in the rewards. (Lawful)::Freedom: The sea is freedom- the freedom to go anywhere and do anything. (Chaotic)::Mastery: I'm a predator, and the other ships and chart my own destiny. (Any)
+
+# Bonds							bg[2]
+I'm loyal to my captain first, everything else second.::The ship is most important- crewmates and captains come and go.::I'll always remember the first ship.::In a harbor town, I have a paramour whose eyes nearly stole from the sea.::I was cheated out of my fair share of the profits, and I want to get my due.::Ruthless pirates murdered my captain and crewmates, plundered out ship, and left me to die. Vengence will be mine.
+
+# Flaws							bg[3
+I follow orders, even if I think they're wrong.::I'll say anything to avoid having to do extra work.::Once someone questions my courage, I never back down no matter how dangerous the situation.::I can't help but pocket loose coins and other trinkets I come across.::My pride will probably lead to my destruction. 
+
+# Speacialty 					bg[4]
+Officer::Scout::Infantry::Calvary::Healer::Quartermaster::Standard bearer::Support staff (cook, blacksmith, or the like)
+

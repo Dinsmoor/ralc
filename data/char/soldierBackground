@@ -1,0 +1,18 @@
+# See sampleConfig for comments usage data
+
+# Configuration file for the "Soldier" background
+
+# Personality Trait				bg[0] 
+I'm always polite and respectful.::I'm haunted by memories of war. I can't get the images of violence out of my mind.::I've lost too many friends, and I'm slow to make new ones.::I'm full of inspiring and cautionary tales from my military eperience relevant to almost every combat situation.::I can stare down a hell hound without flinching.::I enjoy being strong and lik breaking things.::I have a crude sense of humor.::I face problems head-on. A simple, direct solution is the best path to success.
+
+# Ideals						bg[1]
+Greater Good: Our lot is to lay down our lives in defense of others. (Good)::Respobsibility: I do what I must and obey just authority. (Lawful)::Independence: When people follow orders blindly, they embrace a kind of tyranny. (Chaotic)::Might: In life as in war, the stronger oforce wins. (Evil)::Live and Let Live: Ideals aren't worth killing over or going to war with. (Neutral)::Nation: My city, nation, or people are all that matter. (Any)
+
+# Bonds							bg[2]
+I would still lay down my life for the people I served with.::Someone saved my life on the battlefeild. To this day, I will never leave a friend behind.::My honor is my life.::I'll never forget the crushing defeat my company suffered or the enemies who dealt it.::Those who fight beside me are those worth dying for.::I fight for those who cannot fight for themselves.
+
+# Flaws							bg[3
+The monstrous enemy we faced in battle still leaves me quivering with fear.::I have little respect for anyone who is not a proven warrior.::I made a terrible mistake in battle cost many lives- and I would do anything to keep that mistake secret.::My hatered of my enemies is blind and unreasoning.::I obey the law, even if the law causes misery.::I'd rather eat my armor than admit I'm wrong.
+
+# Speacialty 					bg[4]
+Officer::Scout::Infantry::Calvary::Healer::Quartermaster::Standard bearer::Support staff (cook, blacksmith, or the like)
