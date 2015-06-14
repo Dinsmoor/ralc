@@ -422,7 +422,7 @@ def getBackground(pcClass):
 		flaw = random.choice(bgData[3])
 		specialty = random.choice(bgData[4])
 
-		return trait, ideal, bond, flaw, specialty
+		return trait, ideal, bond, flaw, specialty, background
 	except:
 		print "Background FAIL"
 		return 'FAIL','FAIL','FAIL','FAIL','FAIL'
@@ -586,6 +586,7 @@ def main():
 	pc['Lang'] = getLanguages(pc['Race'])
 	pc['Height'], pc['Weight'] = getHeightAndWeight(pc['Race'],pc['Subrace'])
 
+	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'], pc['Specilty'], pc['Background'] = getBackground(pc['Class'])
 
 	bio = """
 BIO:
@@ -593,12 +594,13 @@ BIO:
 	Gender:	%s
 	Race:   %s (%s)
 	Class:	%s
+	Background:	%s
 	Age:	%d	Height:	%dcm
 	Align:	%s	Weight:	%dkg
 	Lang:	%s
 
 	""" %(pc['Name'], pc['Gender'], pc['Race'],
-		pc['Subrace'], pc['Class'], pc['Age'], pc['Height'], pc['Alignment'], pc['Weight'],
+		pc['Subrace'], pc['Class'], pc['Background'], pc['Age'], pc['Height'], pc['Alignment'], pc['Weight'],
 		 ", ".join([str(x) for x in pc['Lang']] )) #to get rid of ugly formatting
 
 
@@ -668,7 +670,6 @@ ARMOR:
 		armor_d['AC'],armor_d['Cost'])
 
 
-	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'], pc['Specilty'] = getBackground(pc['Class'])
 	background = '''
 Background:
 	Personality Trait: %s
