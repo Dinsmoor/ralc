@@ -536,17 +536,16 @@ def getHeightAndWeight(pcRace, pcSubrace):
 		return 0,0
 
 def settings_config(pc_config):
-	global newClass, newRace
-	try:
+	global newClass, newRace, pcLevel
+	if pc_config['use']:
 		pcLevel	= pc_config['Level']
-		if pcLevel >50:
-			pcLevel = 50
-			print "Max level is 50!"
-	except:	pcLevel =	1
-	try:	newClass= 	pc_config['Class']
-	except:	newClass=	None
-	try:	newRace	=	pc_config['Race']
-	except:	newRace =	None
+		newRace	=	pc_config['Race']
+		newClass= 	pc_config['Class']
+	else:
+		pcLevel =	random.randint(1,6)
+		newClass=	None
+		newRace =	None
+
 
 def main():
 	'''
@@ -560,17 +559,17 @@ def main():
 
 
 	pc = {}
-	pc['Level'] 				= random.randint(1,6)
-	if pc['Level'] != pc_config['Level']:
-		pc['Level'] = pc_config['Level']
+	pc['Level'] = pcLevel # Good level range
+	#if pc['Level'] != pc_config['Level']:
+	#	pc['Level'] = pc_config['Level']
 
 	pc['Class']					= getStats()
 
 	if newClass is not None:
 		if newClass.title() in classesTup:
-			pc['Class']			= forceClass(pc['Class'])
-	pc['Gender']				= random.choice(('Male','Female'))
-	pc['Race']					= getRace(pc['Class'])
+			pc['Class']	= forceClass(pc['Class'])
+	pc['Gender'] = random.choice(('Male','Female'))
+	pc['Race'] = getRace(pc['Class'])
 	if newRace is not None:
 		if newRace.title() in racesTup:
 			pc['Race'] = newRace.title()
@@ -580,12 +579,12 @@ def main():
 	pc['conMod'] = getStatModifiers(pc['CON']);pc['intMod']	= getStatModifiers(pc['INT'])
 	pc['wisMod'] = getStatModifiers(pc['WIS']);pc['chrMod']	= getStatModifiers(pc['CHR'])
 
-	pc['Alignment'] 			= getAlignment(pc['Race'])
-	pc['Name']					= getName(pc['Race'], pc['Gender'])
-	pc['Speed']					= getSpeed(pc['Race'], pc['Subrace'])
-	pc['Age']					= getAge(pc['Race'])
-	pc['Lang']					= getLanguages(pc['Race'])
-	pc['Height'], pc['Weight']	= getHeightAndWeight(pc['Race'],pc['Subrace'])
+	pc['Alignment'] = getAlignment(pc['Race'])
+	pc['Name'] = getName(pc['Race'], pc['Gender'])
+	pc['Speed'] = getSpeed(pc['Race'], pc['Subrace'])
+	pc['Age'] = getAge(pc['Race'])
+	pc['Lang'] = getLanguages(pc['Race'])
+	pc['Height'], pc['Weight'] = getHeightAndWeight(pc['Race'],pc['Subrace'])
 
 
 	bio = """
@@ -594,7 +593,7 @@ BIO:
 	Gender:	%s
 	Race:   %s (%s)
 	Class:	%s
-	Age:	%d		Height:	%dcm
+	Age:	%d	Height:	%dcm
 	Align:	%s	Weight:	%dkg
 	Lang:	%s
 
@@ -691,6 +690,7 @@ def custom_param(pc_config):
 
 if __name__ == '__main__':
 	pc_config = {
+'use':False,
 'Level':15,
 'Class':"Barbarian",
 'Race':'Elf',
