@@ -74,7 +74,7 @@ def getFromFile_Dic(fi):
 				(key, val) = line.strip().split('=')
 				d[key] = val
 	return d
-	
+
 def get_background_list(fi):
 	fi = open(fi)
 	# Builds a list of lists from a file, seperated by newline
@@ -84,32 +84,6 @@ def get_background_list(fi):
 	li = [[st.strip() for st in l] for l in li]
 	fi.close()
 	return li
-
-
-
-def parseMe():
-	'''
-	Allows overriding by -l,-c,-r as a temp method of controlling what comes out.
-	Should be replaced and made legacy by calling this file from other files,
-	where it will provide data to populate a city. See Readme for full planning.
-	'''
-	global pcLevel, newClass, newRace
-	parser = argparse.ArgumentParser(prog='python charGen.py', description='Creates a description for a character for DnDv5.')
-	parser.add_argument('-l',metavar='level', help='force character level')
-	parser.add_argument('-c',metavar='class', help='force character class')
-	parser.add_argument('-r',metavar='race', help='force character race')
-	args = parser.parse_args()
-
-	try:
-		pcLevel	=	int(args.l)
-		if pcLevel >50:
-			pcLevel = 50
-			print "Max level is 50!"
-	except:	pcLevel =	1
-	try:	newClass= 	args.c
-	except:	newClass=	None
-	try:	newRace	=	args.r
-	except:	newRace =	None
 
 def forceClass(pcClass):
 	'''
@@ -447,7 +421,7 @@ def getBackground(pcClass):
 		bond = random.choice(bgData[2])
 		flaw = random.choice(bgData[3])
 		specialty = random.choice(bgData[4])
-	
+
 		return trait, ideal, bond, flaw, specialty
 	except:
 		print "Background FAIL"
@@ -525,6 +499,9 @@ def getSpeed(pcRace, pcSubrace):
 		return 30
 
 def getHeightAndWeight(pcRace, pcSubrace):
+	'''
+	Filled with h/w of corresponding races as of DND5e player guide
+	'''
 	try:
 		if (pcRace == "Human") or (pcRace == "Half-Elf") or pcRace == ("Tiefling"):
 			h = (140 + random.randint(5,50))
@@ -558,6 +535,18 @@ def getHeightAndWeight(pcRace, pcSubrace):
 		print "ERROR IN GETH/W"
 		return 0,0
 
+def settings_config(pc_config):
+	global newClass, newRace
+	try:
+		pcLevel	= pc_config['Level']
+		if pcLevel >50:
+			pcLevel = 50
+			print "Max level is 50!"
+	except:	pcLevel =	1
+	try:	newClass= 	pc_config['Class']
+	except:	newClass=	None
+	try:	newRace	=	pc_config['Race']
+	except:	newRace =	None
 
 def main():
 	'''
@@ -573,6 +562,9 @@ def main():
 
 	pc = {}
 	pc['Level'] 				= random.randint(1,6)
+	if pc['Level'] != pc_config['Level']:
+		pc['Level'] = pc_config['Level']
+
 	pc['Class']					= getStats()
 
 	if newClass is not None:
@@ -688,14 +680,22 @@ Background:
 	Specilty: %s
 	'''%(pc['Trait'], pc['Idea'],
 		pc['Bond'], pc['Flaw'], pc['Specilty'])
-	
+
 	pc['Info'] = bio+stats+weapon+armor+spells+background
 	return {'Name':pc['Name'],'Info':pc['Info']}
 
-def custom_param(level=1, race='Human',clas='Wizard'):
+def custom_param(pc_config):
+
+	settings_config(pc_config)
 	sheet = main()
 	return sheet
 
 if __name__ == '__main__':
+	pc_config = {
+'Level':15,
+'Class':"Barbarian",
+'Race':'Elf',
+	}
+	settings_config(pc_config)
 	main()
-	#print pc['Info']
+	print pc['Info']

@@ -82,8 +82,8 @@ class Building(object):
 		for room in roomTypes:
 			roomDat.append({
 			'Actors':self.get_inhabitants(random.randint(0,3)),
-			'Weapons':self.get_random_items('wep',random.randint(0,3)),
-			'Armor':self.get_random_items('arm',random.randint(0,3)),
+			'Weapons':self.get_random_items('wep',random.randint(0,2)),
+			'Armor':self.get_random_items('arm',random.randint(0,2)),
 			'Type':room,
 			})
 		# needs to return list

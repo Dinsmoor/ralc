@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'Beta v0.63'
+RALC_VERSION = 'Beta v0.65'
 try:
 	import Tkinter as tk
 	import tkSimpleDialog
@@ -47,13 +47,18 @@ class UI(tk.Frame):
 	'''
 	Class that describes the UI and how the information is formatted.
 	'''
-	
+
+
+
 	def __init__(self):
-		
+
 		self.init_dir()
 		tk.Frame.__init__(self)
+		#self.settings = SettingsMenu(self)
 		self.image_frame = tk.Frame(self)
 		self.master.title('RALC %s'%RALC_VERSION)
+
+		print "UI.__init__.Starting"
 		self.new_data()
 
 		self.create_widgets()
@@ -67,7 +72,7 @@ class UI(tk.Frame):
 ####
 
 	def init_dir(self):
-		
+
 		dir_list = os.listdir('.')
 		if 'save' not in dir_list:
 			os.makedirs('save')
@@ -75,9 +80,9 @@ class UI(tk.Frame):
 			tkMessageBox.showerror(
 				"Error","You are missing your data folder.")
 			exit()
-		
+
 	def new_data(self):
-		
+
 		(self.im, self.cityName,
 			self.towns) = mapGen.main('tk')
 		print "UI.new_data.Retrieved Data"
@@ -113,12 +118,12 @@ class UI(tk.Frame):
 
 
 	def load_all(self, load_name):
-		
+
 		'''
 		Ensures that the save name to load is valid, then loads the
 		associated content and refreshes widgets.
 		'''
-		
+
 		def check_dir():
 
 			if os.path.exists('save/%s'%load_name):
@@ -157,9 +162,9 @@ class UI(tk.Frame):
 		'''
 		Creates menu bar, tree view and details pane.
 		'''
-		
+
 		def make_menu_bar():
-			
+
 			'''
 			Used for callbacks, instumental for loading/saving and
 			accessing the tools/about menus. Will feature many other
@@ -168,8 +173,10 @@ class UI(tk.Frame):
 			self.option_add('*tearOff', False)
 			self.menubar = tk.Menu(self.master)
 			self.filemenu = tk.Menu(self.menubar)
-			self.infomenu = tk.Menu(self.menubar)
+			self.editmenu = tk.Menu(self.menubar)
 			self.toolmenu = tk.Menu(self.menubar)
+			self.infomenu = tk.Menu(self.menubar)
+
 
 			self.menubar.add_cascade(label="File", menu=self.filemenu)
 			self.filemenu.add_command(label="New", command=self.new_state)
@@ -177,11 +184,16 @@ class UI(tk.Frame):
 			self.filemenu.add_command(label="Load", command=self.create_load_dialog)
 			self.filemenu.add_command(label="Exit", command=self.quit)
 
-			self.menubar.add_cascade(label="Info", menu=self.infomenu)
-			self.infomenu.add_command(label="About", command=self.create_about_dialog)
+			self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+			self.editmenu.add_command(label="Settings", command=self.create_settings_menu)
 
 			self.menubar.add_cascade(label="Tools", menu=self.toolmenu)
 			self.toolmenu.add_command(label="Char Sheet", command=self.create_char_sheet_dialog)
+
+			self.menubar.add_cascade(label="Info", menu=self.infomenu)
+			self.infomenu.add_command(label="About", command=self.create_about_dialog)
+
+
 
 			self.tk.call(self.master, "config", "-menu", self.menubar)
 
@@ -192,7 +204,7 @@ class UI(tk.Frame):
 			'''
 			Defines tree instance for use later in fill_tree
 			'''
-			
+
 			self.tree = ttk.Treeview(self, height=25,
 				selectmode='browse')
 			ysb = ttk.Scrollbar(self, orient='vertical',
@@ -206,11 +218,11 @@ class UI(tk.Frame):
 			print "UI.make_tree_view.Done"
 
 		def make_details_pane():
-			
+
 			'''
 			Defines first instance of the details pane.
 			'''
-			
+
 			self.details_frame = ttk.Frame(self, borderwidth=2,
 				relief="sunken", width=200, height=600)
 			self.details = tk.Text(self.details_frame, width=50,
@@ -248,60 +260,63 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		"About",info_text)
 
 	def create_load_dialog(self):
-		
+
 		'''
 		Interior handler for an external class
 		'''
-		
+
 		LoadDialog(self)
 
+	def create_settings_menu(self):
+
+		SettingsMenu(self)
 
 	def create_save_dialog(self):
-		
+
 		'''
 		Interior handler for an external class
 		'''
-		
+
 		SaveDialog(self)
 
 	def create_char_sheet_dialog(self):
-		
+
 		'''
 		Interior handler for an external class
 		'''
-		
+
 		CharSheetGen(self)
 
 	def load_state(self):
-		
+
 		'''
 		Loads saved data and redraws widgets.
 		'''
-		
+
 		self.load_all()
 		self.create_widgets()
 		self.get_photo()
 		print 'UI.load_state.Done'
 
 	def new_state(self):
-		
+
 		'''
 		Just calles for new data and redraws widgets.
 		'''
-		
+
 		self.new_data()
 		self.create_widgets()
 		self.get_photo()
 		print 'UI.new_state.Done'
 
 	def get_photo(self):
-		
+
 		'''
 		Converts PIL/PNG image into a Tk-compatible image type, creates
 		a canvas that has a clickable surface that is able to select
 		settlements using a callback to city_map_select.
 		'''
-		
+
 		self.img = ImageTk.PhotoImage(self.im)
 
 		self.canvas = tk.Canvas(self.image_frame, background='grey',
@@ -312,19 +327,20 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		print 'UI.get_photo.Done'
 
 	def fill_tree(self):
-		
+
 		'''
 		Abandon all hope, ye who enter here.
-		
+
 		Very sensitive to upstream datatypes and needs to get better
 		ways of handling invalid datatypes. Eventually will migrate
-		everything to dictionaries so they can be unpacked easier later. 
+		everything to dictionaries so they can be unpacked easier later.
 		'''
 
 		self.actor_coor = dict()
 		self.town_coor = dict()
 		self.city_coor = dict()
-		self.item_coor = dict()
+		self.wep_coor = dict()
+		self.arm_coor = dict()
 		self.click_coor = dict()
 		city_population = 0
 
@@ -335,7 +351,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 				self.click_coor[city_parent] = city_dic['click_area']
 			else:
 				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])#,
-				
+
 				self.click_coor[city_parent] = city_dic['click_area']
 
 			for city, city_info in city_dic.iteritems():
@@ -402,7 +418,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 														item = self.tree.insert(wep_items_parent,
 															'end', text=item_dict['Name'])
 
-														self.item_coor[item] = item_dict['Name']
+														self.wep_coor[item] = item_dict
 
 											if key == 'Armor':
 												if True:#bldg['Purpose'] == 'Armorer':
@@ -412,14 +428,36 @@ https://www.gnu.org/licenses/gpl-2.0.html
 														item = self.tree.insert(armor_items_parent,
 															'end', text=item_dict['Name'])
 
-														self.item_coor[item] = item_dict['Name']
-											
+														self.arm_coor[item] = item_dict
+
 											self.town_coor[city_parent] = self.make_town_metadata(city_dic)
 
 
+	def make_armor_metadata(self, arm):
+
+		desc = '''
+Name:	%s
+Type:	%s
+Cost:	%s
+AC:	%s
+		'''%(arm['Name'], arm['Type'],
+			arm['Cost'], arm['AC'])
+		return desc
+
+	def make_weapon_metadata(self, wep):
+
+		desc = '''
+Name:		%s
+Hit Die:		%s
+Damage Type:	%s
+Weapon Class:	%s
+Weapon Type:	%s
+		'''%(wep['Name'],wep['Hit Die'],wep['Damage Type'],
+			wep['Weapon Class'],wep['Weapon Type'])
+		return desc
 
 	def make_town_metadata(self, town):
-		
+
 		desc = '''
 Name:	%s
 Population:	%d
@@ -438,43 +476,59 @@ Distance:	%skm to %s.
 		items.append(itemGen.main('arm','all'))
 
 	def update_details(self, event):
-		
+
 		'''
 		Since multiple types fo data will be updated, it inspects various
 		data sources and just plugs in whatever is applicible. Kind of dumb,
 		but works. Otherwise will just empty the text box.
 		'''
-		
+
 		def actor_update():
 			try:
 				self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
 				print "UI.update_details.Actor.Done"
 			except KeyError: pass
-		
+
 		def town_update():
 			try:
 				self.details.insert('end',str(self.town_coor[self.tree.focus()]))
 				print "UI.update_details.Town.Done"
 			except KeyError: pass
-		
+
+		def arm_update():
+			try:
+				text = self.make_armor_metadata(self.arm_coor[self.tree.focus()])
+				self.details.insert('end',str(text))
+				print "UI.update_details.Arm.Done"
+			except KeyError: pass
+
+		def wep_update():
+			try:
+				text = self.make_weapon_metadata(self.wep_coor[self.tree.focus()])
+				self.details.insert('end',str(text))
+				print "UI.update_details.Wep.Done"
+			except KeyError: pass
+
 		self.details.config(state='normal')
 		self.details.delete(1.0, 'end')
-		
+
 		actor_update()
 		town_update()
+		wep_update()
+		arm_update()
 		self.details.config(state='disabled')
 
 	def city_map_select(self, event):
-		
+
 		'''
 		Checks click coordinates against a bounding box equivalent to
 		the graphic size of the settlement sprite in a coorelation
 		dictionary filled with each sprite's location.
-		
+
 		Sets selection and focus to corresponding town, then change is
 		reflected in self.details automatically.
 		'''
-		
+
 		for city_id, click_corner in self.click_coor.items():
 			x_true = event.x >= click_corner[0] >= event.x - 20 # png is 20x20px
 			y_true = event.y >= click_corner[1] >= event.y - 20
@@ -489,12 +543,12 @@ Distance:	%skm to %s.
 class CharSheetGen(tkSimpleDialog.Dialog):
 
 	def body(self, master):
-		
+
 		'''
 		Just a text box for displaying generated sheet.
 		Should use pages later to specify options for a custom sheet.
 		'''
-		
+
 		self.title('Character Sheet Generator')
 		inst = tk.Label(master, text="Generate a random character sheet.")
 		inst.grid(row=0, columnspan=2)
@@ -538,6 +592,24 @@ class SaveDialog(tkSimpleDialog.Dialog):
 
 		save_name = str(self.e1.get())
 		ui.save_all(save_name)
+
+class SettingsMenu(tkSimpleDialog.Dialog):
+
+	def body(self, master):
+		self.title('Settings')
+		#self.settings_tabs = ttk.Notebook(self)
+		#self.settings_tabs.grid()
+		#self.settings_tabs.add(master,text="Test")
+
+		self.scale_label = tk.Label(master, text="Town Size")
+		self.civ_size_scale = tk.Scale(master, orient='horizontal', from_=0, to=100)
+
+		self.scale_label.grid(row=0, column=0)
+		self.civ_size_scale.grid(row=0, column=1)
+
+	def apply(self):
+		return self.civ_size_scale.get()
+
 
 class LoadDialog(tkSimpleDialog.Dialog):
 
