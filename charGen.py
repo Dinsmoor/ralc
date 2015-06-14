@@ -556,7 +556,6 @@ def main():
 	"Hey, get this data and print it, yo" and then this prog will be all
 	like.. "yea.. lemme get right on dat."
 	'''
-	parseMe()
 	global pc
 
 
