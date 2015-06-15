@@ -389,29 +389,29 @@ def getSkills(pcRace, pcClass):
 
 def getBackground(pcClass):
 	if pcClass == "Cleric":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 25), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10), ('Outlander', 5), ('Sage', 15), ('Sailor', 5), ('Soldier', 5), ('Urchin', 5))
 	elif pcClass == "Druid":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble',0 ), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 20), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10), ('Outlander', 10), ('Sage', 20), ('Sailor', 5), ('Soldier', 5), ('Urchin', 10))
 	elif pcClass == "Ranger":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 15), ('Charlatan', 15), ('Criminal', 10), ('Entertainer', 10), ('Folk Hero', 15), ('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15), ('Outlander', 10), ('Sage', 15), ('Sailor', 5), ('Soldier', 15), ('Urchin', 10))
 	elif pcClass == "Paladin":
-		charBackground =  (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground =  (('Acolyte', 20), ('Charlatan', 10), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 0), ('Hermit', 5), ('Noble', 20), ('Outlander', 10), ('Sage', 15), ('Sailor', 5), ('Soldier', 20), ('Urchin', 5))
 	elif pcClass == "Warlock":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 5), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10), ('Outlander', 10), ('Sage', 25), ('Sailor', 10), ('Soldier', 5), ('Urchin', 10))
 	elif pcClass == "Wizard":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 10), ('Charlatan', 5), ('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10), ('Outlander', 10), ('Sage', 25), ('Sailor', 10), ('Soldier', 5), ('Urchin', 5))
 	elif pcClass == "Barbarian":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 5), ('Charlatan', 5), ('Criminal', 15), ('Entertainer', 10), ('Folk Hero', 10), ('Guild Artisan', 10), ('Hermit', 5), ('Noble', 5), ('Outlander', 20), ('Sage', 5), ('Sailor', 10), ('Soldier', 5), ('Urchin', 10))
 	elif pcClass == "Fighter":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 10), ('Charlatan', 15), ('Criminal', 15), ('Entertainer',15), ('Folk Hero', 20), ('Guild Artisan', 10), ('Hermit', 5), ('Noble', 20), ('Outlander', 15), ('Sage', 10), ('Sailor', 15), ('Soldier', 25), ('Urchin', 15))
 	elif pcClass == "Rouge":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 5), ('Charlatan', 25), ('Criminal', 20), ('Entertainer', 15), ('Folk Hero', 10), ('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10), ('Outlander', 15), ('Sage', 10), ('Sailor', 15), ('Soldier', 5), ('Urchin', 20))
 	elif pcClass == "Monk":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 30), ('Charlatan', 5), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 5), ('Guild Artisan', 15), ('Hermit', 5), ('Noble', 15), ('Outlander', 15), ('Sage', 20), ('Sailor', 5), ('Soldier', 5), ('Urchin', 5))
 	elif pcClass == "Bard":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 10), ('Charlatan', 25), ('Criminal', 15), ('Entertainer', 30), ('Folk Hero', 10), ('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10), ('Outlander', 5), ('Sage', 10), ('Sailor', 15), ('Soldier', 5), ('Urchin', 15))
 	elif pcClass == "Sorcerer":
-		charBackground = (('Acolyte', 1), ('Charlatan', 0), ('Criminal', 0), ('Entertainer', 0), ('Folk Hero', 0), ('Guild Artisan', 0), ('Hermit', 0), ('Noble', 0), ('Outlander', 0), ('Sage', 0), ('Sailor', 0), ('Soldier', 0), ('Urchin', 0))
+		charBackground = (('Acolyte', 10), ('Charlatan', 15), ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10), ('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15), ('Outlander', 10), ('Sage', 20), ('Sailor', 10), ('Soldier', 5), ('Urchin', 10))
 
 	try:
 		background = wChoice(charBackground)
@@ -422,11 +422,12 @@ def getBackground(pcClass):
 		bond = random.choice(bgData[2])
 		flaw = random.choice(bgData[3])
 		specialty = random.choice(bgData[4])
+		feature = random.choice(bgData[5])
 
-		return trait, ideal, bond, flaw, specialty, background
+		return trait, ideal, bond, flaw, specialty, background, feature
 	except:
 		print "Background FAIL"
-		return 'FAIL','FAIL','FAIL','FAIL','FAIL', 'FAIL'
+		return 'FAIL','FAIL','FAIL','FAIL','FAIL', 'FAIL', 'FAIL'
 
 
 def getProficiencies(pcRace, pcSubrace):
@@ -587,7 +588,8 @@ def main():
 	pc['Lang'] = getLanguages(pc['Race'])
 	pc['Height'], pc['Weight'] = getHeightAndWeight(pc['Race'],pc['Subrace'])
 
-	pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'], pc['Specilty'], pc['Background'] = getBackground(pc['Class'])
+	(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'],
+		pc['Specilty'], pc['Background'], pc['Feature']) = getBackground(pc['Class'])
 
 	bio = """
 BIO:
@@ -678,11 +680,12 @@ Ideal:\n\t%s
 Bond:\n\t%s
 Flaw:\n\t%s
 Specilty:\n\t%s
+Feature:\n\t%s
 	'''%(pc['Trait'], pc['Idea'],
-		pc['Bond'], pc['Flaw'], pc['Specilty'])
+		pc['Bond'], pc['Flaw'], pc['Specilty'], pc['Feature'])
 
 	pc['Info'] = bio+stats+weapon+armor+spells+background
-	return {'Name':pc['Name'],'Info':pc['Info']}
+	return pc #{'Name':pc['Name'],'Info':pc['Info']}
 
 def custom_param(pc_config):
 
