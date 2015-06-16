@@ -106,13 +106,11 @@ class UI(tk.Frame):
 	Class that describes the UI and how the information is formatted.
 	'''
 
-
-
 	def __init__(self):
 
 		self.init_dir()
 		tk.Frame.__init__(self)
-		#self.settings = SettingsMenu(self)
+		self.settings = self.init_settings()
 		self.image_frame = tk.Frame(self)
 		self.master.title('RALC %s'%RALC_VERSION)
 
@@ -129,6 +127,25 @@ class UI(tk.Frame):
 # Data Gathering
 ####
 
+	def init_settings(self):
+		char_setting = {
+				'use':False,
+				'Level':15,
+				'Class':"Barbarian",
+				'Race':'Elf',
+					}
+
+		map_setting = {
+					'Biome':'Forest',
+					}
+
+		default_settings = {
+				'char':char_setting,
+				'map':map_setting
+
+						}
+		return default_settings
+
 	def init_dir(self):
 
 		dir_list = os.listdir('.')
@@ -142,7 +159,7 @@ class UI(tk.Frame):
 	def new_data(self):
 
 		(self.im, self.cityName,
-			self.towns) = mapGen.main('tk')
+			self.towns) = mapGen.main('tk', self.settings)
 		print "UI.new_data.Retrieved Data"
 
 	def new_items(self, item_type):
@@ -505,8 +522,8 @@ AC:	%s
 	def make_weapon_metadata(self, wep):
 
 		desc = '''
-Name:		%s
-Hit Die:		%s
+Name:	%s
+Hit Die:	%s
 Damage Type:	%s
 Weapon Class:	%s
 Weapon Type:	%s
@@ -657,14 +674,14 @@ class SettingsMenu(Dialog):
 		self.title('Settings')
 		self.settings_tabs = ttk.Notebook(self)
 		self.settings_tabs.grid()
-		
-		self.settings = dict()
-		
+
+		self.data_dict = dict()
+
 		self.main_page = tk.Frame(self)
 		self.map_page = tk.Frame(self)
 		self.town_page = tk.Frame(self)
 		self.char_page = tk.Frame(self)
-		
+
 		self.settings_tabs.add(self.main_page,text="Main")
 		self.settings_tabs.add(self.map_page,text="Map")
 		self.settings_tabs.add(self.town_page,text="Towns")
@@ -672,28 +689,29 @@ class SettingsMenu(Dialog):
 
 		def make_main_page():
 			pass
-			
+
 		def make_map_page():
 			tk.Label(self.main_page, text="Town Size").grid(row=0, column=0)
-			self.settings['city_size_scale'] = tk.Scale(self.main_page,
-				orient='horizontal', from_=0, to=20)
+			self.data_dict['city_size_scale'] = tk.Scale(self.main_page,
+				orient='horizontal', from_=0, to=20).grid(row=0, column=1)
 
-			self.settings['city_size_scale'].grid(row=0, column=1)
-			
 		def make_town_page():
 			pass
-			
+
 		def make_char_page():
-			pass
+			tk.Label(self.char_page, text="Median Char Level").grid(row=0, column=0)
+			self.data_dict['char_level'] = tk.Scale(self.char_page,
+				orient='horizontal', from_=1, to=30).grid(row=0, column=1)
 
 		make_main_page()
 		make_map_page()
 		make_town_page()
 		make_char_page()
-	
-	def apply(self):
-		print self.settings['city_size_scale'].get()
 
+	def apply(self):
+		#print self.data_dict['city_size_scale'].get()
+
+		return self.data_dict
 
 class LoadDialog(Dialog):
 

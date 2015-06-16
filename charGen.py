@@ -689,7 +689,7 @@ Feature:\n\t%s
 
 def custom_param(pc_config):
 
-	settings_config(pc_config)
+	settings_config(pc_config['char'])
 	sheet = main()
 	return sheet
 

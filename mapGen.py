@@ -302,7 +302,9 @@ class Town_Image(Land_Image):
 	area.
 	'''
 
-	def __init__(self):
+	def __init__(self, pref):
+
+		self.settings = pref
 
 		#get cityname from Land_Image
 		self.city_name = landImg.city_name
@@ -323,14 +325,14 @@ class Town_Image(Land_Image):
 		for city_dicts in landImg.town_names:
 			cities = dict()
 			if city_dicts['Name'] == landImg.city_name:
-				city_data = townGen.main('big',landImg.biome)
+				city_data = townGen.main('big',landImg.biome, self.settings)
 				cities['Name'] = city_dicts['Name']
 				cities['Data'] = city_data
 				cities['Distance'] = city_dicts['Distance']
 				cities['Population'] = 0
 				cities['click_area'] = city_dicts['click_area']
 			else:
-				town_data = townGen.main('small',landImg.biome)
+				town_data = townGen.main('small',landImg.biome, self.settings)
 				cities['Name'] = city_dicts['Name']
 				cities['Data'] = town_data
 				cities['Distance'] = city_dicts['Distance']
@@ -338,7 +340,7 @@ class Town_Image(Land_Image):
 				cities['click_area'] = city_dicts['click_area']
 				#print type(cities['click_area'])
 			city_list.append(cities)
-		
+
 		#for item in city_list:
 		#	for item in item.itervalues():
 		#		print item
@@ -410,11 +412,11 @@ class Building_Image(Town_Image):
 	def show_image(self):
 		self.im.show()
 
-def main(opt):
+def main(opt, pref):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
 		landImg = Land_Image()
-		townImg = Town_Image()
+		townImg = Town_Image(pref)
 		#bldgImg = Building_Image()
 		return (landImg.im, landImg.city_name,
 			townImg.towns)
@@ -422,12 +424,12 @@ def main(opt):
 		pass
 	else:
 		landImg = Land_Image()
-		townImg = Town_Image()
+		townImg = Town_Image(pref)
 		bldgImg = Building_Image()
 		#townImg.show_image()
 
 		return 0
 
 if __name__ == '__main__':
-	main('')
+	main('', '')
 

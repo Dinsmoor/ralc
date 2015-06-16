@@ -47,7 +47,9 @@ class Building(object):
 	'''
 	Facilitates the population of itself, passes data to townGen
 	'''
-	def __init__(self, biome):
+	def __init__(self, biome, pref):
+		self.settings = pref
+
 		self.bldgDat = {}
 		self.bldgDat['Rooms'] = {}
 		self.bldgDat['Purpose'] = self.get_purpose()
@@ -100,34 +102,29 @@ class Building(object):
 		return item_l
 
 	def get_inhabitants(self, popul):
-		pc_config = {
-				'use':False,
-				'Level':15,
-				'Class':"Barbarian",
-				'Race':'Elf',
-					}
+
 		inhabitants = dict()
 		for inhabitant in xrange(0,popul):
 			personType = random.choice(('Commoner', 'Merchant',
 							'Warrior', 'Peasant', 'Noble'))
-			person = charGen.custom_param(pc_config)
+			person = charGen.custom_param(self.settings)
 			person['Role'] = personType
 			key_name = person['Name']
 			inhabitants[key_name] = person
 		return inhabitants
 
-def main(opt, biome):
+def main(opt, biome, pref):
 	'''
 	Used to interface with townGen.
 	'''
 
 	if opt == 'town':
-		bldg = Building(biome)
+		bldg = Building(biome, pref)
 		return bldg.bldgDat
 	else:
-		bldg = Building('forest')
+		bldg = Building('forest', pref)
 		return 0
 
 if __name__ == '__main__':
-	main(None,None)
+	main(None,None, dict())
 

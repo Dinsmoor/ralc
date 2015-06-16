@@ -56,12 +56,13 @@ def getStreetName():
 		return s
 
 class Settlement(object):
-	def __init__(self, biome):
+	def __init__(self, biome, pref):
+		self.settings = pref
 		citySize = self.getCitySize(biome)
 		self.s = self.getStreets(citySize, biome)
 
 	def getBldgData(self, biome):
-		return bldgGen.main('town', biome)
+		return bldgGen.main('town', biome, self.settings)
 
 	def getCitySize(self, biome):
 		# city size multipliers
@@ -91,17 +92,17 @@ class Settlement(object):
 			bldgList.append(self.getBldgData(biome))
 		return bldgList
 
-def main(opt, biome):
+def main(opt, biome, pref):
 	if opt == 'big':
-		town = Settlement(biome)
+		town = Settlement(biome, pref)
 		return town.s
 	if opt == 'small':
-		town = Settlement('small')
+		town = Settlement('small', pref)
 		return town.s
 	else:
-		town = Settlement('forest')
+		town = Settlement('forest', pref)
 		return 0
 
 if __name__ == '__main__':
-	main(None,None)
+	main(None,None, dict())
 
