@@ -111,5 +111,3 @@ def main(opt, item):
 
 if __name__ == '__main__':
 	main(None, None)
-
-# LOLJK
