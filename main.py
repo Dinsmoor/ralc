@@ -44,61 +44,63 @@ except ImportError:
 
 class Dialog(tk.Toplevel):
 
-    def __init__(self, parent, title = None):
+	def __init__(self, parent, title = None):
 
-        tk.Toplevel.__init__(self, parent)
-        self.transient(parent)
-        if title:
-            self.title(title)
-        self.parent = parent
-        self.result = None
-        body = tk.Frame(self)
-        self.initial_focus = self.body(body)
-        body.grid(padx=5, pady=5)
-        self.buttonbox()
-        self.grab_set()
-        if not self.initial_focus:
-            self.initial_focus = self
-        self.protocol("WM_DELETE_WINDOW", self.cancel)
-        self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
-                                  parent.winfo_rooty()+50))
-        self.initial_focus.focus_set()
-        self.wait_window(self)
+		tk.Toplevel.__init__(self, parent)
+		self.transient(parent)
+		if title:
+			self.title(title)
+		self.parent = parent
+		self.result = None
+		body = tk.Frame(self)
+		self.initial_focus = self.body(body)
+		body.grid(padx=5, pady=5)
+		self.buttonbox()
+		self.grab_set()
+		if not self.initial_focus:
+			self.initial_focus = self
+		self.protocol("WM_DELETE_WINDOW", self.cancel)
+		self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+								  parent.winfo_rooty()+50))
+		self.initial_focus.focus_set()
+		self.wait_window(self)
 
-    def body(self, master):
-        pass
+	def body(self, master):
+		pass
 
-    def buttonbox(self):
-        box = tk.Frame(self)
+	def buttonbox(self):
+		box = tk.Frame(self)
 
-        w = tk.Button(box, text="OK", width=10, command=self.ok, default='active')
-        w.grid(row=0,column=0, padx=5, pady=5)
-        w = tk.Button(box, text="Cancel", width=10, command=self.cancel)
-        w.grid(row=0,column=1, padx=5, pady=5)
+		w = tk.Button(box, text="OK", width=10, command=self.ok, default='active')
+		w.grid(row=0,column=0, padx=5, pady=5)
+		w = tk.Button(box, text="Cancel", width=10, command=self.cancel)
+		w.grid(row=0,column=1, padx=5, pady=5)
 
-        self.bind("<Return>", self.ok)
-        self.bind("<Escape>", self.cancel)
+		self.bind("<Return>", self.ok)
+		self.bind("<Escape>", self.cancel)
 
-        box.grid(row=2)
+		box.grid(row=2)
 
-    def ok(self, event=None):
-        if not self.validate():
-            self.initial_focus.focus_set()
-            return
-        self.withdraw()
-        self.update_idletasks()
-        self.apply()
-        self.cancel()
+	def ok(self, event=None):
+		if not self.validate():
+			self.initial_focus.focus_set()
+			return
+		self.withdraw()
+		self.update_idletasks()
+		self.apply()
+		self.cancel()
 
-    def cancel(self, event=None):
-        self.parent.focus_set()
-        self.destroy()
+	def cancel(self, event=None):
+		self.parent.focus_set()
+		self.destroy()
 
-    def validate(self):
-        return 1
+	def validate(self):
+		return 1
 
-    def apply(self):
-        pass
+	def apply(self):
+		pass
+
+####################
 
 class UI(tk.Frame):
 
@@ -115,12 +117,13 @@ class UI(tk.Frame):
 		self.master.title('RALC %s'%RALC_VERSION)
 
 		print "UI.__init__.Starting"
-		self.new_data()
-
+		self.first_run = True
 		self.create_widgets()
-		self.grid()
-		self.image_frame.grid(row=0, column=2)
-		self.get_photo()
+		#self.new_data()
+		#self.grid()
+
+		#self.fill_tree()
+		#self.get_photo()
 		print "UI.__init__.Done"
 
 ####
@@ -157,9 +160,14 @@ class UI(tk.Frame):
 			exit()
 
 	def new_data(self):
-
+		self.new_button.destroy()
+		self.grid()
 		(self.im, self.cityName,
 			self.towns) = mapGen.main('tk', self.settings)
+
+		self.get_photo()
+		self.fill_tree()
+		self.image_frame.grid(row=0, column=2)
 		print "UI.new_data.Retrieved Data"
 
 	def new_items(self, item_type):
@@ -221,10 +229,12 @@ class UI(tk.Frame):
 			print 'UI.load_all.Loaded Image From Disk'
 			load_names()
 			print 'UI.load_all.Loaded Names From Disk'
-			#self.loading_compensation = True
+			self.grid()
+			self.new_button.destroy()
 			self.create_widgets()
 			self.get_photo()
-			#self.loading_compensation = False
+			self.fill_tree()
+			self.image_frame.grid(row=0, column=2)
 			print 'UI.load_all.Refreshed Widgets'
 		else:
 			print 'UI.load_all.Failed[NO FOLDER PRESENT]'
@@ -237,6 +247,18 @@ class UI(tk.Frame):
 		'''
 		Creates menu bar, tree view and details pane.
 		'''
+
+		def make_initial_button():
+
+			'''
+			Used as quick options to access things that would normally
+			be in the file menu when starting application.
+			'''
+			if self.first_run == True:
+				self.new_button = tk.Button(text="New",
+					padx=70, pady=30, command=self.new_data)
+				self.new_button.grid()
+				self.first_run = False
 
 		def make_menu_bar():
 
@@ -254,7 +276,7 @@ class UI(tk.Frame):
 
 
 			self.menubar.add_cascade(label="File", menu=self.filemenu)
-			self.filemenu.add_command(label="New", command=self.new_state)
+			self.filemenu.add_command(label="New", command=self.new_data)
 			self.filemenu.add_command(label="Save", command=self.create_save_dialog)
 			self.filemenu.add_command(label="Load", command=self.create_load_dialog)
 			self.filemenu.add_command(label="Exit", command=self.quit)
@@ -308,13 +330,10 @@ class UI(tk.Frame):
 
 			print "UI.make_details_pane.Done"
 
-
-		make_tree_view()
-		print 'UI.create_widgets.make_tree_view.Done'
 		make_menu_bar()
+		make_tree_view()
 		make_details_pane()
-		self.fill_tree()
-		print 'UI.create_widgets.make_menu_bar.Done'
+		make_initial_button()
 
 	def create_about_dialog(self):
 		info_text = '''
@@ -410,16 +429,16 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		ways of handling invalid datatypes. Eventually will migrate
 		everything to dictionaries so they can be unpacked easier later.
 		'''
-
 		self.actor_coor = dict()
 		self.town_coor = dict()
 		self.city_coor = dict()
 		self.wep_coor = dict()
 		self.arm_coor = dict()
 		self.click_coor = dict()
-		city_population = 0
+
 
 		for city_dic in self.towns:
+			city_dic['Population'] = 0
 			if city_dic['Name'] == self.cityName:
 				city_parent = self.tree.insert('', 0, text=city_dic['Name'])
 				self.tree.insert('', 1)
@@ -625,15 +644,34 @@ class CharSheetGen(Dialog):
 		'''
 
 		self.title('Character Sheet Generator')
-		inst = tk.Label(master, text="Generate a random character sheet.")
-		inst.grid(row=0, columnspan=2)
+		self.char_gen_tabs = ttk.Notebook(self)
+		self.char_gen_tabs.grid()
 
-		self.char_text = tk.Text(master, width=50,
+		self.show_page = tk.Frame(self)
+		self.set_page = tk.Frame(self)
+
+		self.char_gen_tabs.add(self.show_page, text='Sheet')
+		self.char_gen_tabs.add(self.set_page, text='Settings')
+
+		tk.Label(self.show_page, text="Generate a random character sheet.").grid(row=0, columnspan=2)
+		self.char_text = tk.Text(self.show_page, width=50,
 			height=30, state='disabled')
-
 		self.char_text.grid(row=1, column=0)
+
 		self.apply()
 
+	def buttonbox(self):
+		box = tk.Frame(self)
+
+		w = tk.Button(box, text="Next", width=10, command=self.ok, default='active')
+		w.grid(row=0,column=0, padx=5, pady=5)
+		w = tk.Button(box, text="Close", width=10, command=self.cancel)
+		w.grid(row=0,column=1, padx=5, pady=5)
+
+		self.bind("<Return>", self.ok)
+		self.bind("<Escape>", self.cancel)
+
+		box.grid(row=2)
 
 	def ok(self, event=None):
 		'''
@@ -644,7 +682,7 @@ class CharSheetGen(Dialog):
 		self.apply()
 
 	def apply(self):
-		char_sheet = charGen.custom_param()
+		char_sheet = charGen.custom_param(ui.settings)
 		self.char_text.config(state='normal')
 		self.char_text.delete(1.0, 'end')
 		self.char_text.insert('end',char_sheet['Info'])
@@ -688,11 +726,13 @@ class SettingsMenu(Dialog):
 		self.settings_tabs.add(self.char_page,text="Chars")
 
 		def make_main_page():
-			pass
+			self.use_img = tk.BooleanVar()
+			ttk.Checkbutton(self.main_page, variable=self.use_img,
+				text="Use Generated Images").grid()
 
 		def make_map_page():
-			tk.Label(self.main_page, text="Town Size").grid(row=0, column=0)
-			self.data_dict['city_size_scale'] = tk.Scale(self.main_page,
+			tk.Label(self.map_page, text="Town Size").grid(row=0, column=0)
+			self.data_dict['city_size_scale'] = tk.Scale(self.map_page,
 				orient='horizontal', from_=0, to=20).grid(row=0, column=1)
 
 		def make_town_page():
@@ -710,7 +750,7 @@ class SettingsMenu(Dialog):
 
 	def apply(self):
 		#print self.data_dict['city_size_scale'].get()
-
+		print self.use_img.get()
 		return self.data_dict
 
 class LoadDialog(Dialog):
