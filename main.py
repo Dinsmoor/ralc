@@ -464,11 +464,6 @@ https://www.gnu.org/licenses/gpl-2.0.html
 								'end', text=bldg['Purpose'])
 							for rooms, roomsdata in bldg.iteritems():
 								# add list of rooms
-								if rooms != 'Purpose':
-									rooms_parent = self.tree.insert(bldg_parent,
-										'end', text=rooms)
-									#bldg_item_parent = self.tree.insert(bldg_parent,
-									#	'end', text='Quests')
 								if type(roomsdata) == list:
 									for room in roomsdata: # list
 										# ensure that the room type gets parsed first
@@ -484,7 +479,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 										for key, value in room.iteritems(): # dict
 											if key == 'Type':
 												# add the rooms themselves
-												room_parent = self.tree.insert(rooms_parent,
+												room_parent = self.tree.insert(bldg_parent,
 													'end', text=value)
 
 											if key == 'Actors':
@@ -695,11 +690,18 @@ class SaveDialog(Dialog):
 	def body(self, master):
 
 		self.title('Save')
-		tk.Label(master, text="Choose a name to save your area.").grid(row=0, columnspan=2)
-		tk.Label(master, text="Save Name:").grid(row=1)
+		l1 = tk.Label(master, text="Choose a name to save your area.")
+		l1.grid(row=0, columnspan=2)
+		l2 = tk.Label(master, text="Save Name:")
+		l2.grid(row=1)
 		self.e1 = tk.Entry(master)
 		self.e1.grid(row=1, column=1)
-		return self.e1
+		try:
+			self.e1.insert(0, ui.cityName)
+			return self.e1
+		except:
+			tkMessageBox.showerror('Error','No data to save!')
+			self.cancel()
 
 	def apply(self):
 
