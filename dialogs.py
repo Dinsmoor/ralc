@@ -29,6 +29,7 @@ import ttk
 import tkMessageBox
 import os
 import shutil
+import charGen
 
 class Dialog(tk.Toplevel):
 

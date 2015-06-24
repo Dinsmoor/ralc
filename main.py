@@ -28,7 +28,6 @@ try:
 	import ttk
 	import dialogs
 	import mapGen
-	import charGen
 	import collections as col
 	from PIL import Image, ImageTk
 	import cPickle as pickle
