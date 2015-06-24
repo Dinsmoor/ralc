@@ -36,6 +36,11 @@ def getFromFile_T(fi):
 	tu = tuple(li)
 	fi.close()
 	return tu
+
+def getSmallName(small_type):
+	name = random.choice(getFromFile_T('data/'+small_type.lower()+'s'))
+	for s in name:
+		return s
 def getCityName():
 	cityname = random.choice(getFromFile_T('data/cities'))
 	for s in cityname:
@@ -73,13 +78,13 @@ class Land_Image(object):
 	area.
 	'''
 
-	def __init__(self):
+	def __init__(self, biome_ovr):
 		'''
 		Collects needed data to draw on top of a canvas. Order matters!
 		'''
-		biome = self.get_biome()
+		biome = self.get_biome(biome_ovr)
 		self.biome = biome
-		self.city_name = getCampName()
+		self.city_name = getCityName()
 
 		if biome == ('tundra') or (biome == 'desert'):
 			self.text_color = 'black'
@@ -98,23 +103,24 @@ class Land_Image(object):
 		self.draw_water(biome)
 		#self.draw_terrain()
 		self.draw_flora(biome)
-		self.draw_city()
 
-		city_dic = dict()
-		city_dic['Name'] = self.city_name
-		city_dic['Distance'] = 0
-		city_dic['click_area'] = self.city_location
-
-		camp_dic = self.draw_camps()
-		vil_dic = self.draw_village()
-		self.town_names = camp_dic + vil_dic
+		city_dic = self.draw_city()
+		self.town_names = self.draw_smalls()#camp_dic + vil_dic
 		self.town_names.append(city_dic)
 
-	def get_biome(self):
+
+	def get_biome(self, override):
+
+		if override != None:
+			print "mapGen: biome is %s (override)" %override
+			return override.lower()
+
 		biomeLeanVal = (('marsh' ,1.0),('plains'  ,5.0),
 						('hills' ,1.5),('tundra'  ,1.0),
 						('desert',2.0),('forest'  ,3.0))
-		return wChoice(biomeLeanVal)
+		biome = wChoice(biomeLeanVal)
+		print "mapGen: biome is %s" %biome
+		return biome
 
 	def draw_biome(self,biome):
 
@@ -128,18 +134,6 @@ class Land_Image(object):
 						(x_paste_interval,y_paste), image_to_paste)
 			y_paste += 128
 
-
-		# These colors are very up for debate. Default HTML colors are ugly
-		'''
-		biomeColors={
-		'forest':'#088A08','marsh':'#4B8A08',
-		'plains':'#D0FA58','hills':'#D8F781',
-		'tundra':'#D8D8D8','desert':'#C09537'
-		}
-		self.draw.rectangle((0,0,self.im.size[0],self.im.size[0]),
-			fill=biomeColors[biome])
-			'''
-
 	def draw_city(self):
 
 		x = random.randrange(10,self.imgx-50)
@@ -148,48 +142,39 @@ class Land_Image(object):
 		self.im.paste(image_to_paste, (x,y), image_to_paste)
 		self.draw.text((x-10,y+18),str(self.city_name), fill=self.text_color)
 		self.city_location = (x,y)
+		city_dic = {
+			'Name':self.city_name,
+			'Type':'Region Capital',
+			'Distance':0,
+			'click_area':self.city_location
+					}
+		return city_dic
 
-	def draw_village(self):
+	def draw_smalls(self):
 
-		density = random.randint(1,random.randint(2,5))
-		village_li = list()
-		image_to_paste = Image.open('data/sprites/village.png')
-		for c in xrange(0,density):
-			villageName = getVillageName()
-			x = random.randrange(10,self.imgx-50)
-			y = random.randrange(10,self.imgy-50)
-			self.im.paste(image_to_paste, (x,y), image_to_paste)
-			self.draw.text((x-10,y+18),'%s'%villageName, fill=self.text_color)
-			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
-			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			villageDat = {
-			'Name':villageName,
-			'Distance':str(roadLength),
-			'click_area':[x,y],
-			}
-			village_li.append(villageDat)
-		return village_li
+		smalls_li = list()
+		types = ['Cave','Village',
+				'Camp','Temple']
 
-	def draw_camps(self):
-
-		density = random.randint(1,random.randint(2,5))
-		camp_li = list()
-		image_to_paste = Image.open('data/sprites/camp.png')
-		for c in xrange(0,density):
-			campName = getCampName()
-			x = random.randrange(10,self.imgx-50)
-			y = random.randrange(10,self.imgy-50)
-			self.im.paste(image_to_paste, (x,y), image_to_paste)
-			self.draw.text((x-10,y+18),"Camp %s"%campName, fill=self.text_color)
-			roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
-			self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-			campDat = {
-			'Name':campName,
-			'Distance':str(roadLength),
-			'click_area':[x,y],
-			}
-			camp_li.append(campDat)
-		return camp_li
+		for TYPE in types:
+			density = random.randint(1,5)
+			image_to_paste = Image.open('data/sprites/'+TYPE.lower()+'.png')
+			for c in xrange(0,density):
+				name = getSmallName(TYPE)
+				x = random.randrange(10,self.imgx-50)
+				y = random.randrange(10,self.imgy-50)
+				self.im.paste(image_to_paste, (x,y), image_to_paste)
+				self.draw.text((x-10,y+18),'%s'%name, fill=self.text_color)
+				roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
+				self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
+				smallsDat = {
+				'Type':TYPE,
+				'Name':name,
+				'Distance':str(roadLength),
+				'click_area':[x,y],
+				}
+				smalls_li.append(smallsDat)
+		return smalls_li
 
 	def draw_terrain(self):
 
@@ -324,26 +309,18 @@ class Town_Image(Land_Image):
 		city_list = list()
 		for city_dicts in landImg.town_names:
 			cities = dict()
-			if city_dicts['Name'] == landImg.city_name:
+
+			cities['Name'] = city_dicts['Name']
+			cities['Type'] = city_dicts['Type']
+			cities['Distance'] = city_dicts['Distance']
+			cities['click_area'] = city_dicts['click_area']
+			if city_dicts['Type'] == "Region Captital":
 				city_data = townGen.main('big',landImg.biome, self.settings)
-				cities['Name'] = city_dicts['Name']
 				cities['Data'] = city_data
-				cities['Distance'] = city_dicts['Distance']
-				cities['Population'] = 0
-				cities['click_area'] = city_dicts['click_area']
 			else:
 				town_data = townGen.main('small',landImg.biome, self.settings)
-				cities['Name'] = city_dicts['Name']
 				cities['Data'] = town_data
-				cities['Distance'] = city_dicts['Distance']
-				cities['Population'] = 0
-				cities['click_area'] = city_dicts['click_area']
-				#print type(cities['click_area'])
 			city_list.append(cities)
-
-		#for item in city_list:
-		#	for item in item.itervalues():
-		#		print item
 		return city_list
 
 	def drawWalls(self):
@@ -415,7 +392,7 @@ class Building_Image(Town_Image):
 def main(opt, pref):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
-		landImg = Land_Image()
+		landImg = Land_Image(pref['map']['Biome'])
 		townImg = Town_Image(pref)
 		#bldgImg = Building_Image()
 		return (landImg.im, landImg.city_name,
@@ -423,7 +400,7 @@ def main(opt, pref):
 	if opt == 'small':
 		pass
 	else:
-		landImg = Land_Image()
+		landImg = Land_Image(pref['map']['Biome'])
 		townImg = Town_Image(pref)
 		bldgImg = Building_Image()
 		#townImg.show_image()
@@ -431,5 +408,20 @@ def main(opt, pref):
 		return 0
 
 if __name__ == '__main__':
-	main('', '')
+	char_setting = {
+				'use':False,
+				'Level':15,
+				'Class':"Barbarian",
+				'Race':'Elf',
+					}
+
+	map_setting = {
+					'Biome':None,
+					}
+
+	default_settings = {
+				'char':char_setting,
+				'map':map_setting
+						}
+	main('', default_settings)
 

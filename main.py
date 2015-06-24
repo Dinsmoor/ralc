@@ -79,7 +79,7 @@ class UI(tk.Frame):
 					}
 
 		map_setting = {
-					'Biome':'Forest',
+					'Biome':None,
 					}
 
 		default_settings = {
@@ -475,18 +475,27 @@ Weapon Type:	%s
 		return desc
 
 	def make_town_metadata(self, town):
-
 		desc = '''
 Name:	%s
+Type:	%s
 Population:	%d
 Distance:	%skm to %s.
-		'''%(town['Name'], town['Population'],
+		'''%(town['Name'], town['Type'],
+			town['Population'],
 			town['Distance'], self.cityName)
 		return desc
 
 ####
 # Callbacks
 ####
+
+	def draw_select_ring(self, bbox):
+		try:
+			self.canvas.delete(self.selection_indicator)
+		except AttributeError:
+			pass
+		self.selection_indicator = self.canvas.create_rectangle(
+			bbox[0]+20,bbox[1]+20,bbox[2]+20,bbox[3]+20, outline='red')
 
 	def find_selection_type(self, event):
 		items = list()
@@ -507,10 +516,10 @@ Distance:	%skm to %s.
 				print "UI.update_details.Actor.Done"
 			except KeyError: pass
 
-		def town_update():
+		def object_update():
 			try:
 				self.details.insert('end',str(self.town_coor[self.tree.focus()]))
-				print "UI.update_details.Town.Done"
+				print "UI.update_details.Object.Done"
 			except KeyError: pass
 
 		def arm_update():
@@ -531,7 +540,7 @@ Distance:	%skm to %s.
 		self.details.delete(1.0, 'end')
 
 		actor_update()
-		town_update()
+		object_update()
 		wep_update()
 		arm_update()
 		self.details.config(state='disabled')
@@ -553,6 +562,9 @@ Distance:	%skm to %s.
 			if x_true and y_true:
 				self.tree.selection_set(city_id)
 				self.tree.focus(city_id)
+				select_bbox = (click_corner[0],click_corner[1],
+					click_corner[0]-20,click_corner[1]-20)
+				self.draw_select_ring(select_bbox)
 
 ui = UI()
 ui.mainloop()
