@@ -22,6 +22,7 @@
 #
 #
 RALC_VERSION = 'Beta v0.65'
+DEBUG = True
 try:
 	import Tkinter as tk
 	import tkMessageBox
@@ -364,7 +365,14 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		self.wep_coor = dict()
 		self.arm_coor = dict()
 		self.click_coor = dict()
-
+		self.master_coor = {
+		'Actors':actor_coor,
+		'Town':town_coor,
+		'City':city_coor,
+		'Weapons':wep_coor,
+		'Armor':arm_coor,
+		'Clicks':click_coor,
+				}
 
 		for city_dic in self.towns:
 			city_dic['Population'] = 0
@@ -451,6 +459,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 											self.town_coor[city_parent] = self.make_town_metadata(city_dic)
 
 
+
 	def make_armor_metadata(self, arm):
 
 		desc = '''
@@ -492,10 +501,13 @@ Distance:	%skm to %s.
 	def draw_select_ring(self, bbox):
 		try:
 			self.canvas.delete(self.selection_indicator)
-		except AttributeError:
-			pass
+		except AttributeError as err:
+			if DEBUG:
+				print err
+
 		self.selection_indicator = self.canvas.create_rectangle(
-			bbox[0]+20,bbox[1]+20,bbox[2]+20,bbox[3]+20, outline='red')
+			bbox[0],bbox[1]+20,bbox[0]+20,bbox[1],
+			outline='red', width=2)
 
 	def find_selection_type(self, event):
 		items = list()
@@ -514,27 +526,36 @@ Distance:	%skm to %s.
 			try:
 				self.details.insert('end',self.actor_coor[self.tree.focus()]['Info'])
 				print "UI.update_details.Actor.Done"
-			except KeyError: pass
+			except KeyError as err:
+				if DEBUG:
+					print err
 
 		def object_update():
 			try:
 				self.details.insert('end',str(self.town_coor[self.tree.focus()]))
+
 				print "UI.update_details.Object.Done"
-			except KeyError: pass
+			except KeyError as err:
+				if DEBUG:
+					print err
 
 		def arm_update():
 			try:
 				text = self.make_armor_metadata(self.arm_coor[self.tree.focus()])
 				self.details.insert('end',str(text))
 				print "UI.update_details.Arm.Done"
-			except KeyError: pass
+			except KeyError as err:
+				if DEBUG:
+					print err
 
 		def wep_update():
 			try:
 				text = self.make_weapon_metadata(self.wep_coor[self.tree.focus()])
 				self.details.insert('end',str(text))
 				print "UI.update_details.Wep.Done"
-			except KeyError: pass
+			except KeyError as err:
+				if DEBUG:
+					print err
 
 		self.details.config(state='normal')
 		self.details.delete(1.0, 'end')
@@ -543,6 +564,7 @@ Distance:	%skm to %s.
 		object_update()
 		wep_update()
 		arm_update()
+		self.draw_select_ring(self.click_coor[self.tree.focus()])
 		self.details.config(state='disabled')
 
 	def city_map_select(self, event):
@@ -562,9 +584,7 @@ Distance:	%skm to %s.
 			if x_true and y_true:
 				self.tree.selection_set(city_id)
 				self.tree.focus(city_id)
-				select_bbox = (click_corner[0],click_corner[1],
-					click_corner[0]-20,click_corner[1]-20)
-				self.draw_select_ring(select_bbox)
+				self.draw_select_ring(click_corner)
 
 ui = UI()
 ui.mainloop()
