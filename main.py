@@ -34,6 +34,7 @@ try:
 	import cPickle as pickle
 	import itemGen
 	import os
+	import random
 except ImportError:
 	tkMessageBox.showerror(
 		"Error","You are missing essential Libraries. See README.md")
@@ -73,20 +74,23 @@ class UI(tk.Frame):
 
 	def init_settings(self):
 		char_setting = {
-				'use':False,
-				'Level':15,
-				'Class':"Barbarian",
-				'Race':'Elf',
-					}
+			'use':False,
+			'Level':random.randint(1,3),
+			'Class':'Commoner',
+			'Race':None,
+				}
 
 		map_setting = {
 					'Biome':None,
 					}
+		town_settings = {
+					'size_mod': 1.0
+					}
 
 		default_settings = {
 				'char':char_setting,
-				'map':map_setting
-
+				'map':map_setting,
+				'town':town_settings
 						}
 		return default_settings
 
@@ -101,6 +105,7 @@ class UI(tk.Frame):
 			exit()
 
 	def new_data(self):
+		self.create_widgets()
 		self.new_button.destroy()
 		self.grid()
 		(self.im, self.cityName,
@@ -365,40 +370,45 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		self.wep_coor = dict()
 		self.arm_coor = dict()
 		self.click_coor = dict()
-		self.master_coor = {
-		'Actors':actor_coor,
-		'Town':town_coor,
-		'City':city_coor,
-		'Weapons':wep_coor,
-		'Armor':arm_coor,
-		'Clicks':click_coor,
-				}
+		#self.master_coor = {
+		#'Actors':actor_coor,
+		#'Town':town_coor,
+		#'City':city_coor,
+		#'Weapons':wep_coor,
+		#'Armor':arm_coor,
+		#'Clicks':click_coor,
+				#}
 
 		for city_dic in self.towns:
+			# Prevent overcounting population by resetting the population
+			# to 0 every iteration of population
 			city_dic['Population'] = 0
 			if city_dic['Name'] == self.cityName:
 				city_parent = self.tree.insert('', 0, text=city_dic['Name'])
+				# Give a blank seperator for asthetics
 				self.tree.insert('', 1)
+				# Add click data to coorelation dictionary
 				self.click_coor[city_parent] = city_dic['click_area']
 			else:
-				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])#,
+				# Same as above, except the blank line
+				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])
 
 				self.click_coor[city_parent] = city_dic['click_area']
 
 			for city, city_info in city_dic.iteritems():
 
-				if city == 'Distance':
-					pass
-					#self.town_coor[city_parent]
+				# There is other information, such as 'Name' and others,
+				# however we only need to populate from the information
+				# further down the chain
 				if city == 'Data':
 					for street, bldg_li in city_info.iteritems():
-						# add streets
+						# add streets to the listing
 						street_parent = self.tree.insert(city_parent,
 								'end', text=street, tags=street)
 						for bldg in bldg_li:
-							# add buildings
+							# add buildings to streets, listed by purpose
 							bldg_parent = self.tree.insert(street_parent,
-								'end', text=bldg['Purpose'])
+								'end', text=bldg['Name'])
 							for rooms, roomsdata in bldg.iteritems():
 								# add list of rooms
 								if type(roomsdata) == list:
@@ -437,24 +447,22 @@ https://www.gnu.org/licenses/gpl-2.0.html
 														self.actor_coor[actor] = actor_info
 
 											if key == 'Weapons':
-												if True:# bldg['Purpose'] == 'Weapon Smith':
-													wep_items_parent = self.tree.insert(room_parent,
-														'end', text='Weapons')
-													for item_dict in value:
-														item = self.tree.insert(wep_items_parent,
-															'end', text=item_dict['Name'])
+												wep_items_parent = self.tree.insert(room_parent,
+													'end', text='Weapons')
+												for item_dict in value:
+													item = self.tree.insert(wep_items_parent,
+														'end', text=item_dict['Name'])
 
-														self.wep_coor[item] = item_dict
+													self.wep_coor[item] = item_dict
 
 											if key == 'Armor':
-												if True:#bldg['Purpose'] == 'Armorer':
-													armor_items_parent = self.tree.insert(room_parent,
-														'end', text='Armor')
-													for item_dict in value:
-														item = self.tree.insert(armor_items_parent,
-															'end', text=item_dict['Name'])
+												armor_items_parent = self.tree.insert(room_parent,
+													'end', text='Armor')
+												for item_dict in value:
+													item = self.tree.insert(armor_items_parent,
+														'end', text=item_dict['Name'])
 
-														self.arm_coor[item] = item_dict
+													self.arm_coor[item] = item_dict
 
 											self.town_coor[city_parent] = self.make_town_metadata(city_dic)
 

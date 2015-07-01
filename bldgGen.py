@@ -50,46 +50,51 @@ class Building(object):
 	def __init__(self, biome, pref):
 		self.settings = pref
 
-		self.bldgDat = {}
+		self.bldgDat = dict()
 		self.bldgDat['Rooms'] = {}
-		self.bldgDat['Purpose'] = self.get_purpose()
-		self.bldgDat['Rooms'] = self.get_rooms(random.randint(1,3))
+		self.bldgDat['Purpose'], self.bldgDat['Rooms'] = self.get_rooms(random.randint(1,3))
+		try:
+			owner = random.choice(self.bldgDat['Rooms'][0]['Actors'].values())
+		except IndexError:
+			owner = "Community"
+		self.bldgDat['Name'] = owner['First Name']+"'s %s"%self.bldgDat['Purpose']
 
-	def get_purpose(self):
-		bldgtypes = (('Shack',2),('Residence',8),('General Store',2),
-					('Armorer',1),('Livestock Area',1),
-					('Weapon Smith',1), ('Tavern',2), ('Inn',2))
-
-		return wChoice(bldgtypes)
 
 	def get_rooms(self, rooms):
 
 		d = {
 			'Shack':['Entry','Kitchen','Common Area'],
+
 			'Residence':['Entry','Kitchen','Living Area','Dining Area',
 				'Common Area', 'Sleeping Quarters'],
+
 			'General Store':['Entry','Store Room', 'Counter'],
-			'Armorer':['Entry','Forge', 'Counter'],
-			'Livestock Area':['Gate','Barn','Slaughter Room'],
-			'Weapon Smith':['Entry','Forge', 'Counter',
+
+			'Armory':['Entry','Forge', 'Counter'],
+
+			'Farm':['Gate','Barn','Slaughter Room'],
+
+			'Weapon Forge':['Entry','Forge', 'Counter',
 				'Grinding Wheel'],
+
 			'Tavern':['Entry','Kitchen','Social Area', 'Harlot Room'],
+
 			'Inn':['Entry','Kitchen',
 				'Common Area', 'Sleeping Quarters']
 			}
 
-
-		roomTypes = d[self.bldgDat['Purpose']]
+		purpose = random.choice(d.keys())
+		roomTypes = d[purpose]
 		roomDat = list()
 		for room in roomTypes:
 			roomDat.append({
-			'Actors':self.get_inhabitants(random.randint(0,3)),
+			'Actors':self.get_inhabitants(random.randint(1,5)),
 			'Weapons':self.get_random_items('wep',random.randint(0,2)),
 			'Armor':self.get_random_items('arm',random.randint(0,2)),
 			'Type':room,
 			})
 		# needs to return list
-		return roomDat
+		return purpose, roomDat
 
 	def get_random_items(self, typ, amount):
 		item_l = list()
@@ -102,13 +107,22 @@ class Building(object):
 		return item_l
 
 	def get_inhabitants(self, popul):
-
 		inhabitants = dict()
 		for inhabitant in xrange(0,popul):
-			personType = random.choice(('Commoner', 'Merchant',
-							'Warrior', 'Peasant', 'Noble'))
-			person = charGen.custom_param(self.settings)
-			person['Role'] = personType
+			if random.choice((True, False, False)):
+				char_setting = {
+					'use':True,
+					'Level':random.randint(1,3),
+					'Class':'Commoner',
+					'Race':None,
+						}
+				settings = {
+						'char':char_setting
+							}
+				person = charGen.custom_param(settings)
+			else:
+				person = charGen.custom_param(self.settings)
+
 			key_name = person['Name']
 			inhabitants[key_name] = person
 		return inhabitants
@@ -126,5 +140,14 @@ def main(opt, biome, pref):
 		return 0
 
 if __name__ == '__main__':
-	main(None,None, dict())
+	char_setting = {
+			'use':False,
+			'Level':random.randint(1,3),
+			'Class':'Commoner',
+			'Race':None,
+				}
+	settings = {
+			'char':char_setting
+				}
+	main(None,None, settings)
 

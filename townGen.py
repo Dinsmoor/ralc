@@ -61,13 +61,16 @@ class Settlement(object):
 		citySize = self.getCitySize(biome)
 		self.s = self.getStreets(citySize, biome)
 
+	def parse_settings(self):
+		self.settings['town']['size_mod']
+
 	def getBldgData(self, biome):
 		return bldgGen.main('town', biome, self.settings)
 
 	def getCitySize(self, biome):
 		# city size multipliers
 		size_mult ={
-			'forest':1,
+			'forest':1.0,
 			'plains':0.7,
 			'hills':0.7,
 			'tundra':0.3,
@@ -75,7 +78,8 @@ class Settlement(object):
 			'desert':0.2,
 			'small':0.2,
 			}
-
+		if self.settings['town']['size_mod'] != 1.0:
+			size_mult = size_mult * self.settings['town']['size_mod']
 
 		return int(size_mult[biome] * (random.randint(1,4) + 10))
 
@@ -104,5 +108,24 @@ def main(opt, biome, pref):
 		return 0
 
 if __name__ == '__main__':
-	main(None,None, dict())
+	char_setting = {
+		'use':False,
+		'Level':random.randint(1,3),
+		'Class':'Commoner',
+		'Race':None,
+			}
+
+	map_setting = {
+				'Biome':None,
+				}
+	town_settings = {
+				'size_mod': 1.0
+				}
+
+	default_settings = {
+			'char':char_setting,
+			'map':map_setting,
+			'town':town_settings
+					}
+	main(None,None, default_settings)
 

@@ -314,7 +314,7 @@ class Town_Image(Land_Image):
 			cities['Type'] = city_dicts['Type']
 			cities['Distance'] = city_dicts['Distance']
 			cities['click_area'] = city_dicts['click_area']
-			if city_dicts['Type'] == "Region Captital":
+			if city_dicts['Type'] == "Region Capital":
 				city_data = townGen.main('big',landImg.biome, self.settings)
 				cities['Data'] = city_data
 			else:
@@ -409,19 +409,23 @@ def main(opt, pref):
 
 if __name__ == '__main__':
 	char_setting = {
-				'use':False,
-				'Level':15,
-				'Class':"Barbarian",
-				'Race':'Elf',
-					}
+		'use':False,
+		'Level':random.randint(1,3),
+		'Class':'Commoner',
+		'Race':None,
+			}
 
 	map_setting = {
-					'Biome':None,
-					}
+				'Biome':None,
+				}
+	town_settings = {
+				'size_mod': 1.0
+				}
 
 	default_settings = {
-				'char':char_setting,
-				'map':map_setting
-						}
+			'char':char_setting,
+			'map':map_setting,
+			'town':town_settings
+					}
 	main('', default_settings)
 
