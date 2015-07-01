@@ -392,7 +392,7 @@ class Building_Image(Town_Image):
 def main(opt, pref):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
-		landImg = Land_Image(pref['map']['Biome'])
+		landImg = Land_Image(pref['map']['biome'])
 		townImg = Town_Image(pref)
 		#bldgImg = Building_Image()
 		return (landImg.im, landImg.city_name,
@@ -400,7 +400,7 @@ def main(opt, pref):
 	if opt == 'small':
 		pass
 	else:
-		landImg = Land_Image(pref['map']['Biome'])
+		landImg = Land_Image(pref['map']['biome'])
 		townImg = Town_Image(pref)
 		bldgImg = Building_Image()
 		#townImg.show_image()

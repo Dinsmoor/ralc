@@ -174,10 +174,9 @@ class SettingsMenu(Dialog):
 
 	def body(self, master):
 		self.title('Settings')
+		
 		self.settings_tabs = ttk.Notebook(self)
 		self.settings_tabs.grid()
-
-		self.data_dict = dict()
 
 		self.main_page = tk.Frame(self)
 		self.map_page = tk.Frame(self)
@@ -192,20 +191,32 @@ class SettingsMenu(Dialog):
 		def make_main_page():
 			self.use_img = tk.BooleanVar()
 			ttk.Checkbutton(self.main_page, variable=self.use_img,
-				text="Use Generated Images").grid()
+				text="Future option").grid()
 
 		def make_map_page():
-			tk.Label(self.map_page, text="Town Size").grid(row=0, column=0)
-			self.data_dict['city_size_scale'] = tk.Scale(self.map_page,
-				orient='horizontal', from_=0, to=20).grid(row=0, column=1)
+			biomes = ('Random','Marsh','Plains',
+					'Hills','Tundra',
+					'Desert','Forest')
+			tk.Label(self.map_page, text="Biomes").grid(row=0)
+			self.biome_listbox = tk.Listbox(self.map_page, selectmode='single')
+			self.biome_listbox.grid(row=1)
+			for biome in biomes:
+				self.biome_listbox.insert('end', biome)
+			self.biome_listbox.selection_set('0')
 
 		def make_town_page():
-			pass
+			#tk.Label(self.town_page, text="Town Size").grid(row=0, column=0)
+			self.city_size_mod_scale = tk.Scale(self.town_page,
+				orient='horizontal', from_=0.1, to=3.0, resolution=0.1,
+				label='Town Size', length=200)
+			self.city_size_mod_scale.grid(row=0, column=1)
+			self.city_size_mod_scale.set(1.0)
 
 		def make_char_page():
 			tk.Label(self.char_page, text="Median Char Level").grid(row=0, column=0)
-			self.data_dict['char_level'] = tk.Scale(self.char_page,
-				orient='horizontal', from_=1, to=30).grid(row=0, column=1)
+			self.level_scale = tk.Scale(self.char_page,
+				orient='horizontal', from_=1, to=20)
+			self.level_scale.grid(row=0, column=1)
 
 		make_main_page()
 		make_map_page()
@@ -213,9 +224,15 @@ class SettingsMenu(Dialog):
 		make_char_page()
 
 	def apply(self):
-		#print self.data_dict['city_size_scale'].get()
-		print self.use_img.get()
-		return self.data_dict
+		# Map Apply
+		self.parent.settings['map']['biome'] = self.biome_listbox.get(
+								self.biome_listbox.curselection()).lower()
+		if self.parent.settings['map']['biome'] == 'random':
+			self.parent.settings['map']['biome'] = None
+		# Town Apply
+		self.parent.settings['town']['size_mod'] = self.city_size_mod_scale.get()
+		# Char Apply
+		self.parent.settings['char']['Level'] = self.level_scale.get()
 
 class LoadDialog(Dialog):
 

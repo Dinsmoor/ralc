@@ -78,10 +78,11 @@ class Settlement(object):
 			'desert':0.2,
 			'small':0.2,
 			}
+		mult = size_mult[biome]
 		if self.settings['town']['size_mod'] != 1.0:
-			size_mult = size_mult * self.settings['town']['size_mod']
+			mult = mult * self.settings['town']['size_mod']
 
-		return int(size_mult[biome] * (random.randint(1,4) + 10))
+		return int(mult * (random.randint(1,4) + 10))
 
 	def getStreets(self, citySize, biome):
 		streets = dict()
@@ -116,7 +117,7 @@ if __name__ == '__main__':
 			}
 
 	map_setting = {
-				'Biome':None,
+				'biome':None,
 				}
 	town_settings = {
 				'size_mod': 1.0

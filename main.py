@@ -81,7 +81,7 @@ class UI(tk.Frame):
 				}
 
 		map_setting = {
-					'Biome':None,
+					'biome':None,
 					}
 		town_settings = {
 					'size_mod': 1.0
@@ -308,8 +308,10 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		dialogs.LoadDialog(self)
 
 	def create_settings_menu(self):
-
-		dialogs.SettingsMenu(self)
+		
+		print self.settings
+		sett = dialogs.SettingsMenu(self)
+		print self.settings
 
 	def create_save_dialog(self):
 

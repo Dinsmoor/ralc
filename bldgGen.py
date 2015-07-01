@@ -109,7 +109,7 @@ class Building(object):
 	def get_inhabitants(self, popul):
 		inhabitants = dict()
 		for inhabitant in xrange(0,popul):
-			if random.choice((True, False, False)):
+			if random.choice((True, True, False)):
 				char_setting = {
 					'use':True,
 					'Level':random.randint(1,3),
