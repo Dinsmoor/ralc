@@ -764,12 +764,8 @@ def custom_param(pc_config):
 	return sheet
 
 if __name__ == '__main__':
-	pc_config = {
-'use':False,
-'Level':1,
-'Class':"Barbarian",
-'Race':'Human',
-	}
-	settings_config(pc_config)
+	import def_settings
+	default_settings = def_settings.get_def_settings()
+	settings_config(default_settings['char'])
 	main()
 	print pc['Info']

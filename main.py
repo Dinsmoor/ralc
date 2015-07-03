@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'Beta v0.65'
+RALC_VERSION = 'Beta v0.66'
 DEBUG = True
 try:
 	import Tkinter as tk
@@ -57,15 +57,19 @@ class UI(tk.Frame):
 		self.settings = self.init_settings()
 		self.image_frame = tk.Frame(self)
 		self.master.title('RALC %s'%RALC_VERSION)
-
+		
+		self.actor_coor = dict()
+		self.town_coor = dict()
+		self.city_coor = dict()
+		self.wep_coor = dict()
+		self.arm_coor = dict()
+		self.click_coor = dict()
+		self.photo_coor = dict()
+		
+		
 		print "UI.__init__.Starting"
 		self.first_run = True
 		self.create_widgets()
-		#self.new_data()
-		#self.grid()
-
-		#self.fill_tree()
-		#self.get_photo()
 		print "UI.__init__.Done"
 
 ####
@@ -73,26 +77,9 @@ class UI(tk.Frame):
 ####
 
 	def init_settings(self):
-		char_setting = {
-			'use':False,
-			'Level':random.randint(1,3),
-			'Class':'Commoner',
-			'Race':None,
-				}
+		import def_settings
+		return def_settings.get_def_settings()
 
-		map_setting = {
-					'biome':None,
-					}
-		town_settings = {
-					'size_mod': 1.0
-					}
-
-		default_settings = {
-				'char':char_setting,
-				'map':map_setting,
-				'town':town_settings
-						}
-		return default_settings
 
 	def init_dir(self):
 
@@ -108,7 +95,7 @@ class UI(tk.Frame):
 		self.create_widgets()
 		self.new_button.destroy()
 		self.grid()
-		(self.im, self.cityName,
+		(self.city_im, self.cityName,
 			self.towns) = mapGen.main('tk', self.settings)
 
 		self.get_photo()
@@ -128,9 +115,9 @@ class UI(tk.Frame):
 			if not os.path.exists('save/%s'%save_name):
 				os.makedirs('save/%s'%save_name)
 
-		def save_image():
+		def save_images():
 
-			self.im.save('save/%s/img'%save_name,'PNG')
+			self.city_im.save('save/%s/img'%save_name,'PNG')
 
 		def save_names():
 
@@ -140,7 +127,7 @@ class UI(tk.Frame):
 			savef.close
 
 		make_dir()
-		save_image()
+		save_images()
 		print 'UI.save_all.Image Saved'
 		save_names()
 		print 'UI.save_all.Names Saved'
@@ -160,7 +147,7 @@ class UI(tk.Frame):
 
 		def load_image():
 
-			self.im = Image.open('save/%s/img'%load_name)
+			self.city_im = Image.open('save/%s/img'%load_name)
 
 
 		def load_names():
@@ -257,7 +244,7 @@ class UI(tk.Frame):
 			self.tree.column('#0', width=300, anchor='w')
 			self.tree.grid(row=0, column=0, sticky='NSEW')
 
-			self.tree.bind("<<TreeviewSelect>>", self.update_details)
+			self.tree.bind("<<TreeviewSelect>>", self.update_ui)
 			print "UI.make_tree_view.Done"
 
 		def make_details_pane():
@@ -308,7 +295,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		dialogs.LoadDialog(self)
 
 	def create_settings_menu(self):
-		
+
 		print self.settings
 		sett = dialogs.SettingsMenu(self)
 		print self.settings
@@ -340,7 +327,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		self.get_photo()
 		print 'UI.load_state.Done'
 
-	def get_photo(self):
+	def get_photo(self, im_coor=None):
 
 		'''
 		Converts PIL/PNG image into a Tk-compatible image type, creates
@@ -348,8 +335,13 @@ https://www.gnu.org/licenses/gpl-2.0.html
 		settlements using a callback to city_map_select.
 		'''
 
-		self.img = ImageTk.PhotoImage(self.im)
-
+		self.img = ImageTk.PhotoImage(self.city_im)
+		
+		photos = self.photo_coor.iterkeys()
+		
+		if im_coor in photos:
+			self.img = ImageTk.PhotoImage(self.photo_coor[im_coor])
+			
 		self.canvas = tk.Canvas(self.image_frame, background='grey',
 			width=600, height=600)
 		self.canvas.grid(row=0, column=0)
@@ -360,26 +352,8 @@ https://www.gnu.org/licenses/gpl-2.0.html
 	def fill_tree(self):
 
 		'''
-		Abandon all hope, ye who enter here.
-
-		Very sensitive to upstream datatypes and needs to get better
-		ways of handling invalid datatypes. Eventually will migrate
-		everything to dictionaries so they can be unpacked easier later.
+		Fills tree with data and configs.
 		'''
-		self.actor_coor = dict()
-		self.town_coor = dict()
-		self.city_coor = dict()
-		self.wep_coor = dict()
-		self.arm_coor = dict()
-		self.click_coor = dict()
-		#self.master_coor = {
-		#'Actors':actor_coor,
-		#'Town':town_coor,
-		#'City':city_coor,
-		#'Weapons':wep_coor,
-		#'Armor':arm_coor,
-		#'Clicks':click_coor,
-				#}
 
 		for city_dic in self.towns:
 			# Prevent overcounting population by resetting the population
@@ -387,22 +361,25 @@ https://www.gnu.org/licenses/gpl-2.0.html
 			city_dic['Population'] = 0
 			if city_dic['Name'] == self.cityName:
 				city_parent = self.tree.insert('', 0, text=city_dic['Name'])
+				# Add click data to coorelation dictionary
 				# Give a blank seperator for asthetics
 				self.tree.insert('', 1)
-				# Add click data to coorelation dictionary
+				self.click_coor[city_parent] = city_dic['click_area']
+			elif city_dic['Type'] == 'Cave':
+				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])
 				self.click_coor[city_parent] = city_dic['click_area']
 			else:
 				# Same as above, except the blank line
 				city_parent = self.tree.insert('', 'end', text=city_dic['Name'])
-
 				self.click_coor[city_parent] = city_dic['click_area']
 
-			for city, city_info in city_dic.iteritems():
-
+			for city_key, city_info in city_dic.iteritems():
+				if city_dic['Type'] == 'Cave':
+					break
 				# There is other information, such as 'Name' and others,
 				# however we only need to populate from the information
 				# further down the chain
-				if city == 'Data':
+				if city_key == 'Data':
 					for street, bldg_li in city_info.iteritems():
 						# add streets to the listing
 						street_parent = self.tree.insert(city_parent,
@@ -519,6 +496,14 @@ Distance:	%skm to %s.
 			bbox[0],bbox[1]+20,bbox[0]+20,bbox[1],
 			outline='red', width=2)
 
+	def update_ui(self, event):
+		try:
+			self.get_photo(event)
+			self.update_details(event)
+		except Exception as err:
+			if DEBUG:
+				print err
+
 	def find_selection_type(self, event):
 		items = list()
 		items.append(itemGen.main('wep','all'))
@@ -576,6 +561,7 @@ Distance:	%skm to %s.
 		arm_update()
 		self.draw_select_ring(self.click_coor[self.tree.focus()])
 		self.details.config(state='disabled')
+
 
 	def city_map_select(self, event):
 

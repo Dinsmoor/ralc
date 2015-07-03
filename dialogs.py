@@ -174,7 +174,7 @@ class SettingsMenu(Dialog):
 
 	def body(self, master):
 		self.title('Settings')
-		
+
 		self.settings_tabs = ttk.Notebook(self)
 		self.settings_tabs.grid()
 

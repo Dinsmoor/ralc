@@ -22,12 +22,10 @@
 #
 #
 
-import random
-
 def get_def_settings():
 	char_setting = {
 		'use':False,
-		'Level':random.randint(1,3),
+		'Level':1,
 		'Class':'Commoner',
 		'Race':None,
 			}
@@ -37,7 +35,7 @@ def get_def_settings():
 				}
 	town_settings = {
 				'size_mod': 1.0,
-				'affluence':1.0,
+				'affluence': 1.0,
 				'govt':None,
 				}
 

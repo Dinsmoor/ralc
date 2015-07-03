@@ -23,8 +23,10 @@
 #
 
 try:
-	import random, townGen
-	from PIL import Image, ImageDraw, ImageTk
+	import random
+	import townGen
+	import caveGen
+	from PIL import Image, ImageDraw, ImageTk, ImageFilter
 except ImportError:
 	print "You are missing essential Libraries. See README.md"
 	exit()
@@ -86,7 +88,8 @@ class Land_Image(object):
 		self.biome = biome
 		self.city_name = getCityName()
 
-		if biome == ('tundra') or (biome == 'desert'):
+		blacktext = ('tundra','desert','marsh')
+		if biome in blacktext:
 			self.text_color = 'black'
 		else:
 			self.text_color = 'white'
@@ -115,7 +118,7 @@ class Land_Image(object):
 			print "mapGen: biome is %s (override)" %override
 			return override.lower()
 
-		biomeLeanVal = (('marsh' ,1.0),('plains'  ,5.0),
+		biomeLeanVal = (('marsh' ,1.0),('plains'  ,3.0),
 						('hills' ,1.5),('tundra'  ,1.0),
 						('desert',2.0),('forest'  ,3.0))
 		biome = wChoice(biomeLeanVal)
@@ -273,6 +276,9 @@ class Land_Image(object):
 
 		trees(tree_mod[biome][0],tree_mod[biome][1])
 
+	def draw_kingdom_flag(self):
+		pass
+
 	def save_image(self):
 		self.im.save('landMap', "PNG")
 
@@ -280,7 +286,11 @@ class Land_Image(object):
 		self.im.show()
 
 
-class Town_Image(Land_Image):
+
+
+
+
+class Town_Image(object):
 
 	'''
 	All data needed to create a new image representing a Town-generated
@@ -301,34 +311,31 @@ class Town_Image(Land_Image):
 		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
 		# lets not draw things until it's ready
 		#self.draw = ImageDraw.Draw(self.im)
-		#self.drawStreets()
-		#self.drawWalls()
 
 	def populate_area(self):
 
 		city_list = list()
-		for city_dicts in landImg.town_names:
+		for city_dict in landImg.town_names:
 			cities = dict()
 
-			cities['Name'] = city_dicts['Name']
-			cities['Type'] = city_dicts['Type']
-			cities['Distance'] = city_dicts['Distance']
-			cities['click_area'] = city_dicts['click_area']
-			if city_dicts['Type'] == "Region Capital":
+			if city_dict['Type'] == "Region Capital":
 				city_data = townGen.main('big',landImg.biome, self.settings)
-				cities['Data'] = city_data
+				city_dict['Data'] = city_data
+			elif city_dict['Type'] == 'Cave':
+				city_dict['Data'] = None
+			
 			else:
 				town_data = townGen.main('small',landImg.biome, self.settings)
-				cities['Data'] = town_data
-			city_list.append(cities)
+				city_dict['Data'] = town_data
+			city_list.append(city_dict)
 		return city_list
 
-	def drawWalls(self):
+	def draw_walls(self):
 
 		img_city_walls = Image.open('data/sprites/cityWalls.png')
 		self.im.paste(img_city_walls, (0,0), img_city_walls)
 
-	def drawStreets(self):
+	def draw_streets(self):
 
 		img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
 		total_streets = len(self.streets)
@@ -358,7 +365,10 @@ class Town_Image(Land_Image):
 				bldg_x = self.imgx / bldg
 				self.im.paste(img_bldgSimple, (bldg_x,y-10), img_bldgSimple)
 
-	def drawLots(self):
+	def draw_lots(self):
+		pass
+
+	def draw_flag(self):
 		pass
 
 	def save_image(self):
@@ -367,7 +377,7 @@ class Town_Image(Land_Image):
 	def show_image(self):
 		self.im.show()
 
-class Building_Image(Town_Image):
+class Building_Image(object):
 	'''
 	All data needed to create a new image representing a Bldg-generated
 	area.
@@ -375,7 +385,6 @@ class Building_Image(Town_Image):
 
 	def __init__(self):
 		#get cityname from Land_Image
-		self.city_name = landImg.city_name
 		self.imgx = 600
 		self.imgy = self.imgx
 		# initilize the image
@@ -389,6 +398,50 @@ class Building_Image(Town_Image):
 	def show_image(self):
 		self.im.show()
 
+class Cave_Image:
+	
+	def __init__(self):
+		self.cave = caveGen.CA_CaveFactory(120,120,0.49)
+		
+		self.imgx = 600
+		self.imgy = self.imgx
+		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
+		
+		walls, floors = self.parse_arry()
+		self.pil_img = self.draw_cave(walls, floors)
+		
+		self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
+		self.im = self.im.filter(ImageFilter.SHARPEN)
+		
+		self.im.show()
+		
+	def parse_arry(self):
+		arry = self.cave.arry
+		
+		walls = []
+		floors = []
+		
+		for r in range(0,120):
+			for c in range(0,120):
+				if arry[r][c] in (caveGen.WALL,caveGen.PERM_WALL):
+					walls.append((r * 5,c * 5))
+				else:
+					floors.append((r * 5,c * 5))
+		return walls, floors
+		
+	def draw_cave(self, walls, floors):
+		cave_draw = ImageDraw.Draw(self.im)
+		
+		for x, y in walls:
+			x2 = x + 20
+			y2 = y + 20
+			cave_draw.rectangle((x,y,x2,y2), fill='black')
+		
+	def filter_cave(self):
+		pass
+					
+
+
 def main(opt, pref):
 	global landImg, townImg, bldgImg
 	if opt == 'tk':
@@ -400,32 +453,16 @@ def main(opt, pref):
 	if opt == 'small':
 		pass
 	else:
-		landImg = Land_Image(pref['map']['biome'])
-		townImg = Town_Image(pref)
-		bldgImg = Building_Image()
+		#landImg = Land_Image(pref['map']['biome'])
+		#townImg = Town_Image(pref)
+		#bldgImg = Building_Image()
+		caveImg = Cave_Image()
 		#townImg.show_image()
 
 		return 0
 
 if __name__ == '__main__':
-	char_setting = {
-		'use':False,
-		'Level':random.randint(1,3),
-		'Class':'Commoner',
-		'Race':None,
-			}
-
-	map_setting = {
-				'Biome':None,
-				}
-	town_settings = {
-				'size_mod': 1.0
-				}
-
-	default_settings = {
-			'char':char_setting,
-			'map':map_setting,
-			'town':town_settings
-					}
+	import def_settings
+	default_settings = def_settings.get_def_settings()
 	main('', default_settings)
 

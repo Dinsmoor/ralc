@@ -140,14 +140,7 @@ def main(opt, biome, pref):
 		return 0
 
 if __name__ == '__main__':
-	char_setting = {
-			'use':False,
-			'Level':random.randint(1,3),
-			'Class':'Commoner',
-			'Race':None,
-				}
-	settings = {
-			'char':char_setting
-				}
-	main(None,None, settings)
+	import def_settings
+	default_settings = def_settings.get_def_settings()
+	main(None,None, default_settings)
 

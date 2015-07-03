@@ -38,6 +38,16 @@ def getFromFile_T(fi):
 	fi.close()
 	return tu
 
+def getFromFile_LoL(fi):
+	fi = open(fi)
+	# Builds a list of lists from a file, seperated by newline
+	li = [i.strip().split(',') for i in fi.readlines() if not i.startswith("#")]
+	# ignore blank lines
+	li = [x for x in li if x != ['']]
+	li = [[st.strip() for st in l] for l in li]
+	fi.close()
+	return li
+
 def wChoice(wCh):
 	import random
 	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
@@ -58,6 +68,9 @@ def getStreetName():
 class Settlement(object):
 	def __init__(self, biome, pref):
 		self.settings = pref
+		#affluence = self.get_affluence()
+		#govt = self.get_govt(affluence)
+		#senses = self.get_senses(affluence, govt)
 		citySize = self.getCitySize(biome)
 		self.s = self.getStreets(citySize, biome)
 
@@ -84,6 +97,63 @@ class Settlement(object):
 
 		return int(mult * (random.randint(1,4) + 10))
 
+	def get_govt(self, affluence):
+
+		d = {
+			1.0:'Democracy'
+			}
+
+		govt = d[affluence]
+		return govt
+
+	def get_affluence(self):
+		aff = self.settings['town']['affluence']
+
+		return aff
+
+	def get_clans(self):
+		pass
+
+	def get_laws(self, govt):
+		pass
+		
+	def get_wares(self, affluence):
+		pass
+	
+	def get_economy(self, govt, affluence):
+		pass
+		
+	def get_description(self):
+		pass
+
+	def get_senses(self, affluence, govt):
+
+		senses = getFromFile_LoL('data/senses')
+		affluence = 'poor'
+		d = {
+			'poor':(0,1,2,3,4,5),
+			'average':(6,7,8,9,10,11),
+			'affluent':(12,13,14,15,16,17),
+			'rich':(18,19,20,21,22,23),
+			}
+
+		senses_filtered = list()
+		for sense in d[affluence]:
+			senses_filtered.append(senses[sense])
+
+		smell_des = "You smell %s. You would describe the town's smell as %s.\n"%(
+			random.choice(senses_filtered[0]),
+			random.choice(senses_filtered[1]))
+		sight_des = "You see %s. You would describe the town's signts as %s.\n"%(
+			random.choice(senses_filtered[2]),
+			random.choice(senses_filtered[3]))
+		sound_des = "You hear %s. You would describe the town's sounds as %s.\n"%(
+			random.choice(senses_filtered[4]),
+			random.choice(senses_filtered[5]))
+		desc = smell_des+sight_des+sound_des
+		print desc
+		return desc
+
 	def getStreets(self, citySize, biome):
 		streets = dict()
 		for val in xrange(0,citySize):
@@ -109,24 +179,7 @@ def main(opt, biome, pref):
 		return 0
 
 if __name__ == '__main__':
-	char_setting = {
-		'use':False,
-		'Level':random.randint(1,3),
-		'Class':'Commoner',
-		'Race':None,
-			}
-
-	map_setting = {
-				'biome':None,
-				}
-	town_settings = {
-				'size_mod': 1.0
-				}
-
-	default_settings = {
-			'char':char_setting,
-			'map':map_setting,
-			'town':town_settings
-					}
+	import def_settings
+	default_settings = def_settings.get_def_settings()
 	main(None,None, default_settings)
 
