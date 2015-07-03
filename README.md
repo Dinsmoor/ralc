@@ -20,3 +20,12 @@ cross-platform free software.
 python-tk
 python-imaging
 python-imaging-tk`
+
+###USAGE:
+This program tries to be as cross-platform as possible, but will run best on
+a linux-based system. Reguardless, it _should_ run on any environment that
+has a python2.7 installation with the required dependancies.
+Run like:
+`python main.py`
+A GUI will then appear with an option to create a new area, or
+save/load/new character sheet.

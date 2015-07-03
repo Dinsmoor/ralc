@@ -120,5 +120,7 @@ def main():
 	return
 
 if __name__ == '__main__':
-	 main()
+	import def_settings
+	default_settings = def_settings.get_def_settings()
+	main()
 
