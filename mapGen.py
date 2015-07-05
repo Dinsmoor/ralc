@@ -323,7 +323,7 @@ class Town_Image(object):
 				city_dict['Data'] = city_data
 			elif city_dict['Type'] == 'Cave':
 				city_dict['Data'] = None
-			
+
 			else:
 				town_data = townGen.main('small',landImg.biome, self.settings)
 				city_dict['Data'] = town_data
@@ -399,28 +399,28 @@ class Building_Image(object):
 		self.im.show()
 
 class Cave_Image:
-	
+
 	def __init__(self):
-		self.cave = caveGen.CA_CaveFactory(120,120,0.49)
-		
+		self.cave = caveGen.CA_CaveFactory(120,120,0.493)# Density
+
 		self.imgx = 600
 		self.imgy = self.imgx
 		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
-		
+
 		walls, floors = self.parse_arry()
 		self.pil_img = self.draw_cave(walls, floors)
-		
-		self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
-		self.im = self.im.filter(ImageFilter.SHARPEN)
-		
+
+		#self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
+		#self.im = self.im.filter(ImageFilter.SHARPEN)
+
 		self.im.show()
-		
+
 	def parse_arry(self):
 		arry = self.cave.arry
-		
+
 		walls = []
 		floors = []
-		
+
 		for r in range(0,120):
 			for c in range(0,120):
 				if arry[r][c] in (caveGen.WALL,caveGen.PERM_WALL):
@@ -428,18 +428,18 @@ class Cave_Image:
 				else:
 					floors.append((r * 5,c * 5))
 		return walls, floors
-		
+
 	def draw_cave(self, walls, floors):
 		cave_draw = ImageDraw.Draw(self.im)
-		
+
 		for x, y in walls:
 			x2 = x + 20
 			y2 = y + 20
 			cave_draw.rectangle((x,y,x2,y2), fill='black')
-		
+
 	def filter_cave(self):
 		pass
-					
+
 
 
 def main(opt, pref):
