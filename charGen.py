@@ -151,6 +151,19 @@ def getStatRoll():
 	rList.pop(mini(rList))
 	return (rList[0] + rList[1] + rList[2])
 
+def get_prof_level(level):
+	d = {
+	(1,2,3,4):2,
+	(5,6,7,8):3,
+	(9,10,11,12):4,
+	(13,14,15,16):5,
+	(17,18,19,20):6,
+		}
+
+	for k, v in d.iteritems():
+		if level in k:
+			return v
+
 def getRaceBonus(pcRace):
 	'''
 	Easy, but ugly way to get bonuses per race, but since we have
@@ -162,12 +175,22 @@ def getRaceBonus(pcRace):
 	if pcRace == "Dwarf":
 		subraces 	= ('Mountain','Hill')
 		pc['CON'] +=2
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Dwarven Resilience')
 	elif pcRace == "Elf":
 		subraces	= ('High','Wood','Dark')
 		pc['DEX'] += 2
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Keen Senses')
+		pc['Prof'].append('Perception')
+		pc['Traits'].append('Fey Ancestry')
+		pc['Traits'].append('Trance')
 	elif pcRace == "Halfling":
 		subraces= ('Lightfoot','Stout')
 		pc['DEX'] += 2
+		pc['Traits'].append('Lucky')
+		pc['Traits'].append('Brave')
+		pc['Traits'].append('Halfling Nimbleness')
 	elif pcRace == "Human":
 		subraces = ('Calishite','Chondathan','Shou','Damaran',
 		'Tethyrian','Illuskan','Turami','Mulan','Rashemi')
@@ -177,15 +200,33 @@ def getRaceBonus(pcRace):
 		subraces = ('Black','Blue','Brass','Bronze','Copper',
 		'Gold','Green','Red','White','Silver')
 		pc['STR'] +=2; pc['CHR'] +=1
+		pc['Traits'].append('Draconic Ancestry')
+		pc['Traits'].append('Breath Weapon')
+		pc['Traits'].append('Damage Resistance')
 	elif pcRace == "Gnome":
 		subraces = ('Forest','Rock')
 		pc['DEX'] +=1
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Gnome Cunning')
 	elif pcRace == 'Half-Elf':
 		pc['CHR'] +=2
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Fey Ancestry')
+		pc['Traits'].append('Skill Versitality')
+		pc['Traits'].append('+1 Language')
 	elif pcRace == 'Half-Orc':
 		pc['STR'] +=2; pc['CON'] +=1
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Menacing')
+		pc['Traits'].append('Relentless Endurance')
+		pc['Traits'].append('Savage Attack')
+		pc['Prof'].append('Intimidation')
+
 	elif pcRace == 'Tiefling':
 		pc['INT'] +=1; pc['CHR'] +=2
+		pc['Traits'].append('Darkvision')
+		pc['Traits'].append('Hellish Resistance')
+		pc['Traits'].append('Infernal Legacy')
 	try:
 		pcSubrace = random.choice(subraces)
 		getSubraceBonus(pcSubrace)
@@ -197,22 +238,41 @@ def getSubraceBonus(pcSubrace):
 	global pc
 	if pcSubrace == 'Hill':
 			pc['WIS'] += 1
+			pc['Traits'].append('Dwarven Toughness')
 	elif pcSubrace == "Mountain":
 			pc['STR'] += 2
+			pc['Traits'].append('Dwarven Armor Training')
 	elif pcSubrace == "High":
 			pc['INT'] += 1
+			pc['Traits'].append('Elf Weapon Training')
+			pc['Traits'].append('+1 Cantrip')
+			pc['Traits'].append('Extra Language')
 	elif pcSubrace == "Wood":
 			pc['WIS'] += 1
+			pc['Traits'].append('Elf Weapon Training')
+			pc['Traits'].append('Fleet of Foot')
+			pc['Traits'].append('Mask of the Wild')
 	elif pcSubrace == "Dark":
 			pc['CHR'] += 1
+			pc['Traits'].append('Superior Darkvision')
+			pc['Traits'].append('Sunlight Sensitivity')
+			pc['Traits'].append('Drow Magic')
+			pc['Traits'].append('Drow Weapon Training')
 	elif pcSubrace == 'Lightfoot':
 			pc['CHR'] += 1
+			pc['Traits'].append('Naturally Stealthy')
 	elif pcSubrace == 'Stout':
 			pc['CON'] += 1
+			pc['Traits'].append('Stout Resilience')
 	elif pcSubrace == 'Forest':
 			pc['DEX'] += 1
+			pc['Traits'].append('Natural Illusionist')
+			pc['Traits'].append('Speak with Small Beasts')
 	elif pcSubrace == 'Rock':
 			pc['CON'] += 1
+			pc['Traits'].append('Artificer’s Lore')
+			pc['Traits'].append('Tinker')
+
 
 def getHitPoints(pcClass, conMod, pcLevel, pcSubrace):
 	'''
@@ -253,85 +313,72 @@ def getRace(pcClass):
 	upon one variable, but I'm unaware of any other mathematical expression
 	or method that would make this easier.
 	'''
-	try:
-		if pcClass == "Fighter":
-			raceList = 	(('Dwarf',10),('Elf',5),('Halfling',5),('Human',25),
-			('Dragonborn',3),('Gnome',2),('Half-Elf',5),('Half-Orc',5),('Tiefling',2))
-		elif pcClass == "Ranger":
-			raceList = 	(('Dwarf',10),('Elf',15),('Halfling',5),('Human',25),
-			('Dragonborn',1),('Gnome',5),('Half-Elf',5),('Half-Orc',1),('Tiefling',1))
-		elif pcClass == "Barbarian":
-			raceList = 	(('Dwarf',15),('Elf',5),('Halfling',5),('Human',25),
-			('Dragonborn',3),('Gnome',1),('Half-Elf',2),('Half-Orc',10),('Tiefling',3))
-		elif pcClass == "Wizard":
-			raceList = 	(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
-			('Dragonborn',2),('Gnome',8),('Half-Elf',10),('Half-Orc',1),('Tiefling',2))
-		elif pcClass == "Cleric":
-			raceList = 	(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
-			('Dragonborn',2),('Gnome',2),('Half-Elf',10),('Half-Orc',2),('Tiefling',2))
-		elif pcClass == "Bard":
-			raceList = 	(('Dwarf',5),('Elf',15),('Halfling',15),('Human',25),
-			('Dragonborn',5),('Gnome',5),('Half-Elf',10),('Half-Orc',5),('Tiefling',5))
-		elif pcClass == "Druid":
-			raceList = 	(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
-			('Dragonborn',2),('Gnome',2),('Half-Elf',7),('Half-Orc',5),('Tiefling',2))
-		elif pcClass == "Monk":
-			raceList = 	(('Dwarf',10),('Elf',10),('Halfling',5),('Human',25),
-			('Dragonborn',3),('Gnome',2),('Half-Elf',6),('Half-Orc',5),('Tiefling',4))
-		elif pcClass == "Paladin":
-			raceList = 	(('Dwarf',15),('Elf',5),('Halfling',5),('Human',25),
-			('Dragonborn',5),('Gnome',2),('Half-Elf',7),('Half-Orc',10),('Tiefling',2))
-		elif pcClass == "Rouge":
-			raceList = 	(('Dwarf',8),('Elf',20),('Halfling',10),('Human',25),
-			('Dragonborn',2),('Gnome',8),('Half-Elf',5),('Half-Orc',1),('Tiefling',2))
-		elif pcClass == "Sorcerer":
-			raceList = 	(('Dwarf',10),('Elf',10),('Halfling',10),('Human',25),
-			('Dragonborn',2),('Gnome',4),('Half-Elf',11),('Half-Orc',1),('Tiefling',2))
-		elif pcClass == "Warlock":
-			raceList = 	(('Dwarf',10),('Elf',10),('Halfling',10),('Human',25),
-			('Dragonborn',2),('Gnome',4),('Half-Elf',11),('Half-Orc',1),('Tiefling',2))
-		elif pcClass == 'Commoner':
-			raceList = (('Dwarf',15),('Elf',15),('Halfling',15),('Human',50),
-			('Dragonborn',5),('Gnome',5),('Half-Elf',10),('Half-Orc',5),('Tiefling',5))
-		return wChoice(raceList)
-	except:
-		print "ERROR in getRace"
-		return 'Human'
+	d = {
+		"Fighter":(('Dwarf',10),('Elf',5),('Halfling',5),('Human',25),
+			('Dragonborn',3),('Gnome',2),('Half-Elf',5),('Half-Orc',5),
+			('Tiefling',2)),
+		"Ranger":(('Dwarf',10),('Elf',15),('Halfling',5),('Human',25),
+			('Dragonborn',1),('Gnome',5),('Half-Elf',5),('Half-Orc',1),
+			('Tiefling',1)),
+		"Barbarian":(('Dwarf',15),('Elf',5),('Halfling',5),('Human',25),
+			('Dragonborn',3),('Gnome',1),('Half-Elf',2),('Half-Orc',10),
+			('Tiefling',3)),
+		"Wizard":(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
+			('Dragonborn',2),('Gnome',8),('Half-Elf',10),('Half-Orc',1),
+			('Tiefling',2)),
+		"Cleric":(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
+			('Dragonborn',2),('Gnome',2),('Half-Elf',10),('Half-Orc',2),
+			('Tiefling',2)),
+		"Bard":(('Dwarf',5),('Elf',15),('Halfling',15),('Human',25),
+			('Dragonborn',5),('Gnome',5),('Half-Elf',10),('Half-Orc',5),
+			('Tiefling',5)),
+		"Druid":(('Dwarf',5),('Elf',15),('Halfling',5),('Human',25),
+			('Dragonborn',2),('Gnome',2),('Half-Elf',7),('Half-Orc',5),
+			('Tiefling',2)),
+		"Monk":(('Dwarf',10),('Elf',10),('Halfling',5),('Human',25),
+			('Dragonborn',3),('Gnome',2),('Half-Elf',6),('Half-Orc',5),
+			('Tiefling',4)),
+		"Paladin":(('Dwarf',15),('Elf',5),('Halfling',5),('Human',25),
+			('Dragonborn',5),('Gnome',2),('Half-Elf',7),('Half-Orc',10),
+			('Tiefling',2)),
+		"Rouge":(('Dwarf',8),('Elf',20),('Halfling',10),('Human',25),
+			('Dragonborn',2),('Gnome',8),('Half-Elf',5),('Half-Orc',1),
+			('Tiefling',2)),
+		"Sorcerer":(('Dwarf',10),('Elf',10),('Halfling',10),('Human',25),
+			('Dragonborn',2),('Gnome',4),('Half-Elf',11),('Half-Orc',1),
+			('Tiefling',2)),
+		"Warlock":(('Dwarf',10),('Elf',10),('Halfling',10),('Human',25),
+			('Dragonborn',2),('Gnome',4),('Half-Elf',11),('Half-Orc',1),
+			('Tiefling',2)),
+		'Commoner':(('Dwarf',15),('Elf',15),('Halfling',15),('Human',50),
+			('Dragonborn',5),('Gnome',5),('Half-Elf',10),('Half-Orc',5),
+			('Tiefling',5))
+			}
+	return wChoice(d[pcClass])
 
 
 def getAlignment(pcRace):
-	try:
-		if pcRace == "Human" :
-			alignmentList= (('N' ,1),('CG' ,1),('CN' ,1),('CE',1),
-			('LG' ,1),('LN' ,1),('LE' ,1),('NE',1),('NG',1))
-		elif pcRace == "Dwarf" :
-			alignmentList= (('N' ,20),('CG' ,10),('CN' ,50),('CE',5),
-			('LG',15),('LN',10),('LE' ,5),('NE',5),('NG',5))
-		elif pcRace == "Halfling" :
-			alignmentList= (('N' ,2),('CG' ,2),('CN' ,2),('CE',1),
-			('LG',20),('LN',2),('LE' ,2),('NE',2),('NG',2))
-		elif pcRace == "Elf" :
-			alignmentList= (('N' ,10),('CG' ,20),('CN' ,10),('CE',5),
-			('LG',15),('LN',30),('LE' ,5),('NE',5),('NG',5))
-		elif pcRace == "Dragonborn":
-			alignmentList= (('N' ,1),('CG' ,2),('CN' ,1),('CE',8),
-			('LG' ,35),('LN' ,1),('LE' ,1),('NE',2),('NG',2))
-		elif pcRace == "Gnome":
-			alignmentList= (('N' ,15),('CG' ,20),('CN' ,2),('CE',1),
-			('LG' ,20),('LN' ,2),('LE' ,1),('NE',1),('NG',5))
-		elif pcRace == "Half-Elf":
-			alignmentList= (('N' ,15),('CG' ,25),('CN' ,20),('CE',5),
-			('LG' ,25),('LN' ,20),('LE' ,7),('NE',5),('NG',15))
-		elif pcRace == "Half-Orc":
-			alignmentList= (('N' ,10),('CG' ,15),('CN' ,5),('CE',20),
-			('LG' ,5),('LN' ,10),('LE' ,20),('NE',15),('NG',10))
-		elif pcRace == "Tiefling":
-			alignmentList= (('N' ,8),('CG' ,15),('CN' ,15),('CE',15),
-			('LG' ,10),('LN' ,8),('LE' ,12),('NE',5),('NG',5))
-
-		return wChoice(alignmentList)
-	except:
-		return "Error in Alignment"
+	d = {
+		"Human":(('N' ,5),('CG' ,2),('CN' ,2),('CE',1),
+			('LG' ,2),('LN' ,2),('LE' ,1),('NE',1),('NG',2)),
+		"Dwarf":(('N' ,20),('CG' ,10),('CN' ,50),('CE',5),
+			('LG',15),('LN',10),('LE' ,5),('NE',5),('NG',5)),
+		"Halfling":(('N' ,2),('CG' ,2),('CN' ,2),('CE',1),
+			('LG',20),('LN',2),('LE' ,2),('NE',2),('NG',2)),
+		"Elf":(('N' ,10),('CG' ,20),('CN' ,10),('CE',5),
+			('LG',15),('LN',30),('LE' ,5),('NE',5),('NG',5)),
+		"Dragonborn":(('N' ,1),('CG' ,2),('CN' ,1),('CE',8),
+			('LG' ,35),('LN' ,1),('LE' ,1),('NE',2),('NG',2)),
+		"Gnome":(('N' ,15),('CG' ,20),('CN' ,2),('CE',1),
+			('LG' ,20),('LN' ,2),('LE' ,1),('NE',1),('NG',5)),
+		"Half-Elf":(('N' ,15),('CG' ,25),('CN' ,20),('CE',5),
+			('LG' ,25),('LN' ,20),('LE' ,7),('NE',5),('NG',15)),
+		"Half-Orc":(('N' ,10),('CG' ,15),('CN' ,5),('CE',20),
+			('LG' ,5),('LN' ,10),('LE' ,20),('NE',15),('NG',10)),
+		"Tiefling":(('N' ,8),('CG' ,15),('CN' ,15),('CE',15),
+			('LG' ,10),('LN' ,8),('LE' ,12),('NE',5),('NG',5)),
+		}
+	return wChoice(d[pcRace])
 
 
 def getName(pcRace, pcGender):
@@ -400,87 +447,76 @@ def getSkills(pcRace, pcClass):
 		pass
 
 def getBackground(pcClass):
-	if pcClass == "Cleric":
-		charBackground = (('Acolyte', 25), ('Charlatan', 5),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 5), ('Sage', 15), ('Sailor', 5),
-			('Soldier', 5), ('Urchin', 5))
-	elif pcClass == "Druid":
-		charBackground = (('Acolyte', 20), ('Charlatan', 5),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 10), ('Sage', 20), ('Sailor', 5),
-			('Soldier', 5), ('Urchin', 10))
-	elif pcClass == "Ranger":
-		charBackground = (('Acolyte', 15), ('Charlatan', 15),
-			('Criminal', 10), ('Entertainer', 10), ('Folk Hero', 15),
-			('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15),
-			('Outlander', 10), ('Sage', 15), ('Sailor', 5),
-			('Soldier', 15), ('Urchin', 10))
-	elif pcClass == "Paladin":
-		charBackground =  (('Acolyte', 20), ('Charlatan', 10),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 0), ('Hermit', 5), ('Noble', 20),
-			('Outlander', 10), ('Sage', 15), ('Sailor', 5),
-			('Soldier', 20), ('Urchin', 5))
-	elif pcClass == "Warlock":
-		charBackground = (('Acolyte', 5), ('Charlatan', 5),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 10), ('Sage', 25), ('Sailor', 10),
-			('Soldier', 5), ('Urchin', 10))
-	elif pcClass == "Wizard":
-		charBackground = (('Acolyte', 10), ('Charlatan', 5),
-			('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 10), ('Sage', 25), ('Sailor', 10),
-			('Soldier', 5), ('Urchin', 5))
-	elif pcClass == "Barbarian":
-		charBackground = (('Acolyte', 5), ('Charlatan', 5),
-			('Criminal', 15), ('Entertainer', 10), ('Folk Hero', 10),
-			('Guild Artisan', 10), ('Hermit', 5), ('Noble', 5),
-			('Outlander', 20), ('Sage', 5), ('Sailor', 10),
-			('Soldier', 5), ('Urchin', 10))
-	elif pcClass == "Fighter":
-		charBackground = (('Acolyte', 10), ('Charlatan', 15),
-			('Criminal', 15), ('Entertainer',15), ('Folk Hero', 20),
-			('Guild Artisan', 10), ('Hermit', 5), ('Noble', 20),
-			('Outlander', 15), ('Sage', 10), ('Sailor', 15),
-			('Soldier', 25), ('Urchin', 15))
-	elif pcClass == "Rouge":
-		charBackground = (('Acolyte', 5), ('Charlatan', 25),
-			('Criminal', 20), ('Entertainer', 15), ('Folk Hero', 10),
-			('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 15), ('Sage', 10), ('Sailor', 15),
-			('Soldier', 5), ('Urchin', 20))
-	elif pcClass == "Monk":
-		charBackground = (('Acolyte', 30), ('Charlatan', 5),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 5),
-			('Guild Artisan', 15), ('Hermit', 5), ('Noble', 15),
-			('Outlander', 15), ('Sage', 20), ('Sailor', 5),
-			('Soldier', 5), ('Urchin', 5))
-	elif pcClass == "Bard":
-		charBackground = (('Acolyte', 10), ('Charlatan', 25),
-			('Criminal', 15), ('Entertainer', 30), ('Folk Hero', 10),
-			('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
-			('Outlander', 5), ('Sage', 10), ('Sailor', 15),
-			('Soldier', 5), ('Urchin', 15))
-	elif pcClass == "Sorcerer":
-		charBackground = (('Acolyte', 10), ('Charlatan', 15),
-			('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
-			('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15),
-			('Outlander', 10), ('Sage', 20), ('Sailor', 10),
-			('Soldier', 5), ('Urchin', 10))
-	elif pcClass == 'Commoner':
-		charBackground = (('Acolyte', 3), ('Charlatan', 3),
-			('Criminal', 15), ('Entertainer', 15), ('Folk Hero', 3),
-			('Guild Artisan', 15), ('Hermit', 15), ('Noble', 15),
-			('Outlander', 5), ('Sage', 3), ('Sailor', 10),
-			('Soldier', 3), ('Urchin', 3))
+	d = {
+		"Cleric":(('Acolyte', 25), ('Charlatan', 5),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 5), ('Sage', 15), ('Sailor', 5),
+				('Soldier', 5), ('Urchin', 5)),
+		"Druid":(('Acolyte', 20), ('Charlatan', 5),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 10), ('Sage', 20), ('Sailor', 5),
+				('Soldier', 5), ('Urchin', 10)),
+		"Ranger":(('Acolyte', 15), ('Charlatan', 15),
+				('Criminal', 10), ('Entertainer', 10), ('Folk Hero', 15),
+				('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15),
+				('Outlander', 10), ('Sage', 15), ('Sailor', 5),
+				('Soldier', 15), ('Urchin', 10)),
+		"Paladin":(('Acolyte', 20), ('Charlatan', 10),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 0), ('Hermit', 5), ('Noble', 20),
+				('Outlander', 10), ('Sage', 15), ('Sailor', 5),
+				('Soldier', 20), ('Urchin', 5)),
+		"Warlock":(('Acolyte', 5), ('Charlatan', 5),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 10), ('Sage', 25), ('Sailor', 10),
+				('Soldier', 5), ('Urchin', 10)),
+		"Wizard":(('Acolyte', 10), ('Charlatan', 5),
+				('Criminal', 10), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 10), ('Sage', 25), ('Sailor', 10),
+				('Soldier', 5), ('Urchin', 5)),
+		"Barbarian":(('Acolyte', 5), ('Charlatan', 5),
+				('Criminal', 15), ('Entertainer', 10), ('Folk Hero', 10),
+				('Guild Artisan', 10), ('Hermit', 5), ('Noble', 5),
+				('Outlander', 20), ('Sage', 5), ('Sailor', 10),
+				('Soldier', 5), ('Urchin', 10)),
+		"Fighter":(('Acolyte', 10), ('Charlatan', 15),
+				('Criminal', 15), ('Entertainer',15), ('Folk Hero', 20),
+				('Guild Artisan', 10), ('Hermit', 5), ('Noble', 20),
+				('Outlander', 15), ('Sage', 10), ('Sailor', 15),
+				('Soldier', 25), ('Urchin', 15)),
+		"Rouge":(('Acolyte', 5), ('Charlatan', 25),
+				('Criminal', 20), ('Entertainer', 15), ('Folk Hero', 10),
+				('Guild Artisan', 5), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 15), ('Sage', 10), ('Sailor', 15),
+				('Soldier', 5), ('Urchin', 20)),
+		"Monk":(('Acolyte', 30), ('Charlatan', 5),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 5),
+				('Guild Artisan', 15), ('Hermit', 5), ('Noble', 15),
+				('Outlander', 15), ('Sage', 20), ('Sailor', 5),
+				('Soldier', 5), ('Urchin', 5)),
+		"Bard":(('Acolyte', 10), ('Charlatan', 25),
+				('Criminal', 15), ('Entertainer', 30), ('Folk Hero', 10),
+				('Guild Artisan', 15), ('Hermit', 5), ('Noble', 10),
+				('Outlander', 5), ('Sage', 10), ('Sailor', 15),
+				('Soldier', 5), ('Urchin', 15)),
+		"Sorcerer":(('Acolyte', 10), ('Charlatan', 15),
+				('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
+				('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15),
+				('Outlander', 10), ('Sage', 20), ('Sailor', 10),
+				('Soldier', 5), ('Urchin', 10)),
+		'Commoner':(('Acolyte', 3), ('Charlatan', 3),
+				('Criminal', 15), ('Entertainer', 15), ('Folk Hero', 3),
+				('Guild Artisan', 15), ('Hermit', 15), ('Noble', 15),
+				('Outlander', 5), ('Sage', 3), ('Sailor', 10),
+				('Soldier', 3), ('Urchin', 3)),
+			}
 
 	try:
-		background = wChoice(charBackground)
+		background = wChoice(d[pcClass])
 		bgData = get_background_list('data/char/'+background.lower()+'Background')
 		traits = random.sample(bgData[0],2)
 		trait = traits[0] + " " + traits[1]
@@ -496,15 +532,102 @@ def getBackground(pcClass):
 		return 'FAIL','FAIL','FAIL','FAIL','FAIL', 'FAIL', 'FAIL'
 
 
-def getProficiencies(pcRace, pcSubrace):
-	plist = list()
-	if pcRace == "Dwarf":
-		plist.append['Battleaxe','Handaxe','Throwing Hammer',
-		'Warhammer', 'Light Armor', 'Medium Armor']
-	if (pcSubrace == 'High') or (pcSubrace == 'Wood'):
-		plist.append['Longsword','Shortsword','Shortbow','Longbow']
-	if pcSubrace == 'Dark':
-		plist.append['Rapier','Shortsword','Hand Crossbow']
+def get_proficiencies(pcRace, pcSubrace):
+	global pc
+
+	bg_d = {
+		'Acolyte':('SK Insight', 'SK Religion','+2 Languages'),
+		'Charlatan':('SK Deception','SK Slight of Hand',
+					'Disguise Kit','Forgery Kit'),
+		'Criminal':('SK Deception', 'SK Stealth',
+					'Gaming Set', 'Thieves Tools'),
+		'Entertainer':('SK Acrobatics','SK Performance',
+					'Disgise Kit','Musical Instrument'),
+		'Folk Hero':('SK Animal Handling','SK Survival',
+					"Artisan's tools",'Land vehicles'),
+		'Guild Artisan':('SK Insight','SK Persuasion',
+						"Artisan's tools",'+1 Language'),
+		'Hermit':('SK Medicine','SK Religion',
+				'Herbalism Kit', '+1 Language'),
+		'Noble':('SK History','SK Persuasion',
+				'Gaming Set', '+1 Language'),
+		'Outlander':('SK Athletics', 'SK Survival',
+				'Musical Instrument', '+1 Language'),
+		'Sage':('SK Arcana', 'SK History',
+				'+2 Language'),
+		'Sailor':('SK Athletics','SK Perception',
+				"Navigator's Tools",'Water vehicles'),
+		'Soldier':('SK Athletics','SK Intimidation',
+					'Gaming set','Land vehicles'),
+		'Urchin':('SK Slight of Hand','SK Stealth',
+				'Disguise Kit',"Thieves' tools"),
+		}
+
+	for k, v in bg_d.iteritems():
+		if pc['Background'] == k:
+			for prof in v:
+				pc['Prof'].append(prof)
+
+	if pc['Race'] == "Dwarf":
+		pc['Prof'].append('Battleaxe')
+		pc['Prof'].append('Handaxe')
+		pc['Prof'].append('Throwing Hammer')
+		pc['Prof'].append('Warhammer')
+		pc['Prof'].append(random.choice(("Smith’s tools", "Brewer’s supplies", "Mason’s tools")))
+	if pc['Subrace'] == 'Mountain':
+		pc['Prof'].append('Light Armor')
+		pc['Prof'].append('Medium Armor')
+	if (pc['Subrace'] == 'High') or (pc['Subrace'] == 'Wood'):
+		pc['Prof'].append('Longsword')
+		pc['Prof'].append('Shortsword')
+		pc['Prof'].append('Shortbow')
+		pc['Prof'].append('Longbow')
+	if pc['Subrace'] == 'Dark':
+		pc['Prof'].append('Rapier')
+		pc['Prof'].append('Shortsword')
+		pc['Prof'].append('Hand Crossbow')
+
+	pro_d = {
+		"Fighter":('Heavy armor','Light armor','Medium armor','Shields',
+				'Simple weapons','Martial weapons','ST Strength',
+					'ST Constitution'),
+		"Ranger":('Light armor','Medium armor','Shields',
+				'Simple weapons','Martial weapons','ST Strength ',
+				'ST Dexterity '),
+		"Barbarian":('Light armor','Medium armor','Shields',
+					'Simple weapons','Martial weapons','ST Strength',
+					'ST Constitution '),
+		"Wizard":('Daggers','Darts','Slings','Quarterstaffs',
+				'Light crossbows','ST Intelligence','ST Wisdom'),
+		"Cleric":('Light armor', 'Medium armor', 'Shields',
+				'Simple weapons','ST Wisdom','ST Charisma'),
+		"Bard":('Light armor','Simple weapons','Hand crossbows',
+				'Longswords', 'Rapiers', 'Shortswords','ST Dexterity',
+				'ST Charisma'),
+		"Druid":('Light armor (nonmetal)','Medium armor (nonmetal)',
+				'Shields (nonmetal)','Clubs','Daggers',
+				'Darts', 'javelins', 'Maces', 'Quarterstaffs',
+				'Scimitars', 'Sickles', 'Slings', 'Spears',
+				'ST Intelligence','ST Wisdom'),
+		"Monk":('Simple weapons', 'Shortswords','ST Strength',
+				'ST Dexterity'),
+		"Paladin":('Heavy armor','Light armor','Medium armor','Shields',
+				'Simple weapons','Martial weapons','ST Wisdom',
+				'ST Charisma'),
+		"Rouge":('Light armor','Simple weapons','Hand crossbows',
+				'Longswords', 'Rapiers', 'Shortswords','ST Dexterity',
+				'ST Intelligence'),
+		"Sorcerer":('Daggers','Darts','Slings','Quarterstaffs',
+				'Light crossbows','ST Constitution','ST Charisma'),
+		"Warlock":('Light armor','Simple weapons','ST Wisdom',
+				'ST Charisma'),
+			}
+	for k, v in pro_d.iteritems():
+		if pc['Class'] == k:
+			for prof in v:
+				pc['Prof'].append(prof)
+
+
 
 def getLanguages(pcRace):
 	try:
@@ -627,7 +750,10 @@ def main():
 
 
 	pc = {}
+	pc['Prof'] = list()
+	pc['Traits'] = list()
 	pc['Level'] = pcLevel
+	pc['prof_level'] = get_prof_level(pc['Level'])
 
 	pc['Class']					= getStats()
 
@@ -654,6 +780,7 @@ def main():
 
 	(pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'],
 		pc['Specilty'], pc['Background'], pc['Feature']) = getBackground(pc['Class'])
+	get_proficiencies(pc['Race'], pc['Subrace'])
 
 	bio = """
 BIO:
@@ -719,8 +846,8 @@ STATS:
 WEAPON:
 	Name: 	 %s
 	Range:	 %s
-	Hit Die: 	%s
-	Dam Type:	%s
+	Hit Die: %s
+	Dam Type:%s
 
 	'''%(item_d['Name'],item_d['Weapon Type'],
 		item_d['Hit Die'],item_d['Damage Type'])
@@ -734,6 +861,14 @@ ARMOR:
 	Cost:	%s
 	'''%(armor_d['Name'],armor_d['Type'],
 		armor_d['AC'],armor_d['Cost'])
+
+	proficiencies = 'PROFIENCIES:\n'
+	for prof in pc['Prof']:
+		proficiencies = proficiencies + "\t%s\n"%prof
+
+	traits = 'TRAITS:\n'
+	for trait in pc['Traits']:
+		traits = traits + "\t%s\n"%trait
 
 
 	background = '''
@@ -752,7 +887,7 @@ FEATURE:\n%s
 	'''%(pc['Trait'], pc['Idea'],
 		pc['Bond'], pc['Flaw'], pc['Specilty'], pc['Feature'])
 
-	pc['Info'] = bio+stats+weapon+armor+spells+background
+	pc['Info'] = bio+stats+proficiencies+traits+weapon+armor+spells+background
 	if pc['Class'] == 'Commoner':
 		pc['Info'] = bio+stats
 	return pc
