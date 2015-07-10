@@ -182,7 +182,7 @@ def getRaceBonus(pcRace):
 		pc['DEX'] += 2
 		pc['Traits'].append('Darkvision')
 		pc['Traits'].append('Keen Senses')
-		pc['Prof'].append('Perception')
+		pc['Prof'].append('SK Perception')
 		pc['Traits'].append('Fey Ancestry')
 		pc['Traits'].append('Trance')
 	elif pcRace == "Halfling":
@@ -220,7 +220,7 @@ def getRaceBonus(pcRace):
 		pc['Traits'].append('Menacing')
 		pc['Traits'].append('Relentless Endurance')
 		pc['Traits'].append('Savage Attack')
-		pc['Prof'].append('Intimidation')
+		pc['Prof'].append('SK Intimidation')
 
 	elif pcRace == 'Tiefling':
 		pc['INT'] +=1; pc['CHR'] +=2
@@ -889,7 +889,7 @@ FEATURE:\n%s
 
 	pc['Info'] = bio+stats+proficiencies+traits+weapon+armor+spells+background
 	if pc['Class'] == 'Commoner':
-		pc['Info'] = bio+stats
+		pc['Info'] = bio+stats+background
 	return pc
 
 def custom_param(pc_config):
