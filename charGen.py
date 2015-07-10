@@ -37,7 +37,7 @@ classesTup = ('Cleric', 'Druid', 'Ranger', 'Paladin', 'Warlock', 'Wizard',
               'Commoner')
 
 
-def wChoice(wCh):
+def weighted_choice(wCh):
     """
 
     :rtype : single weighted item
@@ -68,13 +68,13 @@ def mini(l):
             return i
 
 
-def getFromFile_LoL(fi):
+def get_f_f_lol(fi):
     """
 
     :rtype : List of Lists
     """
     fi = open(fi)
-    # Builds a list of lists from a file, seperated by newline
+    # Builds a list of lists from a file, separated by newline
     li = [i.strip().split(',') for i in fi.readlines() if not i.startswith("#")]
     # ignore blank lines
     li = [x for x in li if x != ['']]
@@ -83,7 +83,7 @@ def getFromFile_LoL(fi):
     return li
 
 
-def getFromFile_Dic(fi):
+def get_f_f_dic(fi):
     d = {}
     with open(fi) as f:
         for line in f:
@@ -95,7 +95,7 @@ def getFromFile_Dic(fi):
 
 def get_background_list(fi):
     fi = open(fi)
-    # Builds a list of lists from a file, seperated by newline
+    # Builds a list of lists from a file, separated by newline
     li = [i.strip().split('::') for i in fi.readlines() if not i.startswith("#")]
     # ignore blank lines
     li = [x for x in li if x != ['']]
@@ -104,19 +104,19 @@ def get_background_list(fi):
     return li
 
 
-def force_class(pcClass):
+def force_class(pc_class):
     """
     Inefficient way of forcing a class, but since the stats are random,
     and need to go along with what sort of class you get, this is the way
     to do it.
     """
-    global newClass
-    lowClass = pcClass.lower()
-    lowNew = newClass.lower()
-    while lowClass != lowNew:
-        pcClass = get_stats()
-        lowClass = pcClass.lower()
-    return pcClass
+    global new_class
+    low_class = pc_class.lower()
+    low_new = new_class.lower()
+    while low_class != low_new:
+        pc_class = get_stats()
+        low_class = pc_class.lower()
+    return pc_class
 
 
 def get_stats():
@@ -126,7 +126,7 @@ def get_stats():
     would just make main() more bloated, no need.
     """
     global pc
-    if newClass == 'Commoner':
+    if new_class == 'Commoner':
         pc['STR'] = pc['DEX'] = pc['CON'] = 10
         pc['INT'] = pc['WIS'] = pc['CHR'] = 10
         return 'Commoner'
@@ -136,24 +136,24 @@ def get_stats():
     pc['INT'] = get_stat_roll()
     pc['WIS'] = get_stat_roll()
     pc['CHR'] = get_stat_roll()
-    statTup = (pc['STR'], pc['DEX'], pc['CON'], pc['INT'], pc['WIS'], pc['CHR'])
+    stat_tup = (pc['STR'], pc['DEX'], pc['CON'], pc['INT'], pc['WIS'], pc['CHR'])
 
     try:
-        if statTup[0] == max(statTup):
+        if stat_tup[0] == max(stat_tup):
             tup = (('Barbarian', 5), ('Fighter', 3), ('Paladin', 3))
-        elif statTup[1] == max(statTup):
+        elif stat_tup[1] == max(stat_tup):
             tup = (('Rouge', 5), ('Ranger', 3), ('Monk', 3), ('Fighter', 3))
-        elif statTup[2] == max(statTup):
+        elif stat_tup[2] == max(stat_tup):
             tup = (('Barbarian', 5), ('Fighter', 3), ('Sorcerer', 1))
-        elif statTup[3] == max(statTup):
+        elif stat_tup[3] == max(stat_tup):
             tup = (('Wizard', 5), ('Rouge', 1), ('Druid', 1))
-        elif statTup[4] == max(statTup):
+        elif stat_tup[4] == max(stat_tup):
             tup = (('Cleric', 5), ('Druid', 5), ('Ranger', 3),
                    ('Paladin', 1), ('Warlock', 1), ('Wizard', 1))
-        elif statTup[5] == max(statTup):
+        elif stat_tup[5] == max(stat_tup):
             tup = (('Bard', 5), ('Sorcerer', 5), ('Warlock', 5),
                    ('Paladin', 3), ('Cleric', 1))
-        return wChoice(tup)
+        return weighted_choice(tup)
     except:
         print "GETSTATS ERROR: DEFAULTING TO FIGHTER"
         return 'Fighter'
@@ -168,16 +168,16 @@ def get_stat_modifiers(st):
 
 
 def get_stat_roll():
-    '''
+    """
     Meant to accurately emulate a 4d6d1
-    '''
+    """
     r1 = random.randint(1, 6)
     r2 = random.randint(1, 6)
     r3 = random.randint(1, 6)
     r4 = random.randint(1, 6)
-    rList = [r1, r2, r3, r4]
-    rList.pop(mini(rList))
-    return (rList[0] + rList[1] + rList[2])
+    r_list = [r1, r2, r3, r4]
+    r_list.pop(mini(r_list))
+    return r_list[0] + r_list[1] + r_list[2]
 
 
 def get_prof_level(level):
@@ -199,12 +199,12 @@ def get_prof_level(level):
 
 
 def get_race_bonus(pc_race):
-    '''
+    """
     Easy, but ugly way to get bonuses per race, but since we have
     to use strings to compare things, this is the only way to go.
     Also, it may be better to make subrace in a different function, or even
     in getRace() itself, since this is messy.
-    '''
+    """
     global pc
     if pc_race == "Dwarf":
         sub_races = ('Mountain', 'Hill')
@@ -227,7 +227,7 @@ def get_race_bonus(pc_race):
         pc['Traits'].append('Halfling Nimbleness')
     elif pc_race == "Human":
         sub_races = ('Calishite', 'Chondathan', 'Shou', 'Damaran',
-                    'Tethyrian', 'Illuskan', 'Turami', 'Mulan', 'Rashemi')
+                     'Tethyrian', 'Illuskan', 'Turami', 'Mulan', 'Rashemi')
         pc['STR'] += 1
         pc['DEX'] += 1
         pc['CON'] += 1
@@ -236,7 +236,7 @@ def get_race_bonus(pc_race):
         pc['CHR'] += 1
     elif pc_race == "Dragonborn":
         sub_races = ('Black', 'Blue', 'Brass', 'Bronze', 'Copper',
-                    'Gold', 'Green', 'Red', 'White', 'Silver')
+                     'Gold', 'Green', 'Red', 'White', 'Silver')
         pc['STR'] += 2
         pc['CHR'] += 1
         pc['Traits'].append('Draconic Ancestry')
@@ -274,14 +274,18 @@ def get_race_bonus(pc_race):
     else:
         sub_races = ''
     try:
-        pcSubrace = random.choice(sub_races)
-        get_subrace_bonus(pcSubrace)
+        pc_subrace = random.choice(sub_races)
+        get_subrace_bonus(pc_subrace)
     except:
-        pcSubrace = ""
-    return pcSubrace
+        pc_subrace = ""
+    return pc_subrace
 
 
 def get_subrace_bonus(pc_subrace):
+    """
+    Just changes vars in global PC
+    :rtype : None
+    """
     global pc
     if pc_subrace == 'Hill':
         pc['WIS'] += 1
@@ -327,7 +331,7 @@ def get_hitpoints(pc_class, pc_level, pc_subrace):
     what exists above. Unfortunately, that wouldn't work up there because
     of the varying data that gets changed. This cannot be any more efficient.
     """
-    hpBonus = 0
+    hp_bonus = 0
     try:
         hit_dies = {
             'Sorcerer': 6, 'Wizard': 6, 'Bard': 8,
@@ -337,18 +341,18 @@ def get_hitpoints(pc_class, pc_level, pc_subrace):
         }
 
         if pc_subrace == 'Hill':
-            hpBonus = 1
+            hp_bonus = 1
 
         if pc_class == 'Commoner':
             hit_points = random.randint(1, 8)
         else:
-            hit_points = hit_dies[pc_class] + pc['conMod'] + hpBonus
+            hit_points = hit_dies[pc_class] + pc['conMod'] + hp_bonus
 
         if pc_level == 1:
             return hit_points
 
         for x in xrange(1, pc_level):
-            hit_points = hit_points + random.randint(1, hit_dies[pc_class]) + pc['conMod'] + hpBonus
+            hit_points = hit_points + random.randint(1, hit_dies[pc_class]) + pc['conMod'] + hp_bonus
         return hit_points
     except:
         return 1
@@ -401,7 +405,7 @@ def get_race(pc_class):
                      ('Dragonborn', 5), ('Gnome', 5), ('Half-Elf', 10), ('Half-Orc', 5),
                      ('Tiefling', 5))
     }
-    return wChoice(d[pc_class])
+    return weighted_choice(d[pc_class])
 
 
 def get_alignment(pc_race):
@@ -425,7 +429,7 @@ def get_alignment(pc_race):
         "Tiefling": (('N', 8), ('CG', 15), ('CN', 15), ('CE', 15),
                      ('LG', 10), ('LN', 8), ('LE', 12), ('NE', 5), ('NG', 5)),
     }
-    return wChoice(d[pc_race])
+    return weighted_choice(d[pc_race])
 
 
 def get_name(pc_race, pc_gender):
@@ -436,7 +440,7 @@ def get_name(pc_race, pc_gender):
     """
     global pc
     try:
-        names = getFromFile_LoL('data/char/' + (pc_race.lower() + 'Names'))
+        names = get_f_f_lol('data/char/' + (pc_race.lower() + 'Names'))
         pc['Last Name'] = random.choice(names[2])
         if pc_gender == 'Male':
             pc['First Name'] = random.choice(names[0])
@@ -450,7 +454,7 @@ def get_name(pc_race, pc_gender):
     return pcName
 
 
-def get_spells(pcClass, pcLevel):
+def get_spells(pc_class, pc_level):
     """
     Similar in build to getName(), however it uses a dict to find out
     how many spell slots a character can/will use, dependant on their level,
@@ -461,8 +465,8 @@ def get_spells(pcClass, pcLevel):
     known spells, based on level, and then list the amount of spell slots they would
     have. That is much simpler, but since this is meant for npcs, it doesn't matter.
     """
-    if pcLevel > 20:
-        pcLevel = 20
+    if pc_level > 20:
+        pc_level = 20
     # 'class':(cantrips,total spells,lvl1,lvl2,etc...)
     std_slots = {
         1: (2, 2),
@@ -486,16 +490,16 @@ def get_spells(pcClass, pcLevel):
         19: (4, 4, 3, 3, 3, 3, 2, 1, 1, 1),
         20: (4, 4, 3, 3, 3, 3, 2, 2, 1, 1),
     }
-    cur_slots = std_slots[pcLevel]
+    cur_slots = std_slots[pc_level]
     try:
         spells = list()
-        spell_lol = getFromFile_LoL('data/char/' + (pcClass.lower() + 'Spells'))
+        spell_lol = get_f_f_lol('data/char/' + (pc_class.lower() + 'Spells'))
         for spell in spell_lol:
             random.shuffle(spell)
         for s, l in zip(spell_lol, cur_slots):
             spells.append(s[0:l])
         return spells
-    except:
+    except Exception:
         return None
 
 
@@ -505,7 +509,7 @@ def get_skills(pc_race, pc_class):
         pass
 
 
-def getBackground(pcClass):
+def get_background(pc_class):
     d = {
         "Cleric": (('Acolyte', 25), ('Charlatan', 5),
                    ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
@@ -575,15 +579,15 @@ def getBackground(pcClass):
     }
 
     try:
-        background = wChoice(d[pcClass])
-        bgData = get_background_list('data/char/' + background.lower() + 'Background')
-        traits = random.sample(bgData[0], 2)
+        background = weighted_choice(d[pc_class])
+        bg_data = get_background_list('data/char/' + background.lower() + 'Background')
+        traits = random.sample(bg_data[0], 2)
         trait = traits[0] + " " + traits[1]
-        ideal = random.choice(bgData[1])
-        bond = random.choice(bgData[2])
-        flaw = random.choice(bgData[3])
-        specialty = random.choice(bgData[4])
-        feature = random.choice(bgData[5])
+        ideal = random.choice(bg_data[1])
+        bond = random.choice(bg_data[2])
+        flaw = random.choice(bg_data[3])
+        specialty = random.choice(bg_data[4])
+        feature = random.choice(bg_data[5])
 
         return trait, ideal, bond, flaw, specialty, background, feature
     except Exception as err:
@@ -591,7 +595,7 @@ def getBackground(pcClass):
         return 'FAIL', 'FAIL', 'FAIL', 'FAIL', 'FAIL', 'FAIL', 'FAIL'
 
 
-def get_proficiencies(pcRace, pc_subrace):
+def get_proficiencies(pc_race, pc_subrace):
     global pc
 
     bg_d = {
@@ -787,14 +791,14 @@ def get_height_weight(pc_race, pc_subrace):
 
 
 def settings_config(pc_config):
-    global newClass, newRace, pcLevel
+    global new_class, newRace, pcLevel
     if pc_config['use']:
         pcLevel = pc_config['Level']
         newRace = pc_config['Race']
-        newClass = pc_config['Class']
+        new_class = pc_config['Class']
     else:
         pcLevel = random.randint(1, 4)
-        newClass = None
+        new_class = None
         newRace = None
 
 
@@ -810,8 +814,8 @@ def main():
 
     pc['Class'] = get_stats()
 
-    if newClass is not None:
-        if newClass.title() in classesTup:
+    if new_class is not None:
+        if new_class.title() in classesTup:
             pc['Class'] = force_class(pc['Class'])
     pc['Gender'] = random.choice(('Male', 'Female'))
     pc['Race'] = get_race(pc['Class'])
@@ -835,7 +839,7 @@ def main():
     pc['Height'], pc['Weight'] = get_height_weight(pc['Race'], pc['Subrace'])
 
     (pc['Trait'], pc['Idea'], pc['Bond'], pc['Flaw'],
-     pc['Specialty'], pc['Background'], pc['Feature']) = getBackground(pc['Class'])
+     pc['Specialty'], pc['Background'], pc['Feature']) = get_background(pc['Class'])
     get_proficiencies(pc['Race'], pc['Subrace'])
 
     bio = """
@@ -849,8 +853,9 @@ BIO:
 	Align:	{8:s}	Weight:	{9:d}kg
 	Lang:	{10:s}
 
-	""".format(pc['Name'], pc['Gender'], pc['Race'],
-               pc['Subrace'], pc['Class'], pc['Background'], pc['Age'], pc['Height'], pc['Alignment'], pc['Weight'],
+	""".format(pc['Name'], pc['Gender'], pc['Race'], pc['Subrace'],
+               pc['Class'], pc['Background'], pc['Age'],
+               pc['Height'], pc['Alignment'],pc['Weight'],
                ", ".join([str(x) for x in pc['Lang']]))  # to get rid of ugly formatting
 
     pc['HP'] = get_hitpoints(pc['Class'], pc['Level'], pc['Subrace'])
@@ -874,7 +879,7 @@ STATS:
 
     pc['Spells'] = get_spells(pc['Class'], pc['Level'])
 
-    def neatListReturn(li):
+    def neat_list_return(li):
         s = str()
         for item in li:
             if item != 'None':
@@ -885,11 +890,11 @@ STATS:
 
     spells = str()
     if pc['Spells']:
-        spells += "\nCANTRIPS:\n" + neatListReturn(pc['Spells'][0])
+        spells += "\nCANTRIPS:\n" + neat_list_return(pc['Spells'][0])
         c = 1
         for spell in xrange(0, pc['Level']):
             try:
-                spells += u'\nLEVEL {0:d}:\n'.format(c) + (neatListReturn(pc['Spells'][c]))
+                spells += u'\nLEVEL {0:d}:\n'.format(c) + (neat_list_return(pc['Spells'][c]))
                 c += 1
             except:
                 break
