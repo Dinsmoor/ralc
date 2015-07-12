@@ -844,16 +844,16 @@ def main():
 
     bio = """
 BIO:
-	Name:	{0:s}
-	Gender:	{1:s}
-	Race:   {2:s} ({3:s})
-	Class:	{4:s}
-	Background:	{5:s}
-	Age:	{6:d}	Height:	{7:d}cm
-	Align:	{8:s}	Weight:	{9:d}kg
-	Lang:	{10:s}
+	Name:	%s
+	Gender:	%s
+	Race:   %s %s
+	Class:	%s
+	Background:	%s
+	Age:	%s	Height:	%dcm
+	Align:	%s	Weight:	%dkg
+	Lang:	%s
 
-	""".format(pc['Name'], pc['Gender'], pc['Race'], pc['Subrace'],
+	"""%(pc['Name'], pc['Gender'], pc['Race'], pc['Subrace'],
                pc['Class'], pc['Background'], pc['Age'],
                pc['Height'], pc['Alignment'],pc['Weight'],
                ", ".join([str(x) for x in pc['Lang']]))  # to get rid of ugly formatting
@@ -863,18 +863,18 @@ BIO:
 
     stats = """
 STATS:
-	Level:	{0:d}
-	HP:	{1:d}
-	Speed:	{2:d}
+	Level:	%d
+	HP:	%d
+	Speed:	%d
 
-	STR	{3:d} ({4:d})
-	DEX	{5:d} ({6:d})
-	CON	{7:d} ({8:d})
-	INT	{9:d} ({10:d})
-	WIS	{11:d} ({12:d})
-	CHR	{13:d} ({14:d})
+	STR	%d (%d)
+	DEX	%d (%d)
+	CON	%d (%d)
+	INT	%d (%d)
+	WIS	%d (%d)
+	CHR	%d (%d)
 
-""".format(pc['Level'], pc['HP'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
+"""%(pc['Level'], pc['HP'], pc['Speed'], pc['STR'], pc['strMod'], pc['DEX'], pc['dexMod'], pc['CON'],
            pc['conMod'], pc['INT'], pc['intMod'], pc['WIS'], pc['wisMod'], pc['CHR'], pc['chrMod'])
 
     pc['Spells'] = get_spells(pc['Class'], pc['Level'])
@@ -894,7 +894,7 @@ STATS:
         c = 1
         for spell in xrange(0, pc['Level']):
             try:
-                spells += u'\nLEVEL {0:d}:\n'.format(c) + (neat_list_return(pc['Spells'][c]))
+                spells += "\nLEVEL %d:\n"%c+(neat_list_return(pc['Spells'][c]))
                 c += 1
             except:
                 break
@@ -904,22 +904,22 @@ STATS:
     item_d = itemGen.main('wep', 'rnd')
     weapon = '''
 WEAPON:
-	Name: 	 {0:s}
-	Range:	 {1:s}
-	Hit Die: {2:s}
-	Dam Type:{3:s}
+	Name: 	 %s
+	Range:	 %s
+	Hit Die: %s
+	Dam Type:%s
 
-	'''.format(item_d['Name'], item_d['Weapon Type'],
+	'''%(item_d['Name'], item_d['Weapon Type'],
                item_d['Hit Die'], item_d['Damage Type'])
 
     armor_d = itemGen.main('arm', 'rnd')
     armor = '''
 ARMOR:
-	Name:	{0:s}
-	Type:	{1:s}
-	AC:	    {2:s}
-	Cost:	{3:s}
-	'''.format(armor_d['Name'], armor_d['Type'],
+	Name:	%s
+	Type:	%s
+	AC:	    %s
+	Cost:	%s
+	'''%(armor_d['Name'], armor_d['Type'],
                armor_d['AC'], armor_d['Cost'])
 
     proficiencies = 'PROFICIENCIES:\n'
@@ -932,21 +932,25 @@ ARMOR:
 
     background = '''
 BACKGROUND:
-TRAITS:\n{0:s}
+TRAITS:\n%s
 
-IDEAL:\n{1:s}
+IDEAL:\n%s
 
-BOND:\n{2:s}
+BOND:\n%s
 
-FLAW:\n{3:s}
+FLAW:\n%s
 
-SPECIALTY:\n{4:s}
+SPECIALTY:\n%s
 
-FEATURE:\n{5:s}
-	'''.format(pc['Trait'], pc['Idea'],
+FEATURE:\n%s
+	'''%(pc['Trait'], pc['Idea'],
                pc['Bond'], pc['Flaw'], pc['Specialty'], pc['Feature'])
-
-    pc['Info'] = bio + stats + proficiencies + traits + weapon + armor + spells + background
+    
+    try:
+        pc['Info'] = bio + stats + proficiencies + traits + weapon + armor + spells + background
+    except Exception as err:
+        print err
+    
     if pc['Class'] == 'Commoner':
         pc['Info'] = bio + stats + background
     return pc
