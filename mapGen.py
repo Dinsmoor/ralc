@@ -23,267 +23,267 @@
 #
 
 try:
-	import random
-	import townGen
-	import caveGen
-	from PIL import Image, ImageDraw, ImageTk, ImageFilter
+    import random
+    import townGen
+    import caveGen
+    from PIL import Image, ImageDraw, ImageTk, ImageFilter
 except ImportError:
-	print "You are missing essential Libraries. See README.md"
-	exit()
+    print "You are missing essential Libraries. See README.md"
+    exit()
 
 def getFromFile_T(fi):
-	fi = open(fi)
-	li = [i.strip().split('\n') for i in fi if not i.startswith("#")]
-	li = [x for x in li if x != ['']]
-	tu = tuple(li)
-	fi.close()
-	return tu
+    fi = open(fi)
+    li = [i.strip().split('\n') for i in fi if not i.startswith("#")]
+    li = [x for x in li if x != ['']]
+    tu = tuple(li)
+    fi.close()
+    return tu
 
 def getSmallName(small_type):
-	name = random.choice(getFromFile_T('data/'+small_type.lower()+'s'))
-	for s in name:
-		return s
+    name = random.choice(getFromFile_T('data/'+small_type.lower()+'s'))
+    for s in name:
+        return s
 def getCityName():
-	cityname = random.choice(getFromFile_T('data/cities'))
-	for s in cityname:
-		return s
+    cityname = random.choice(getFromFile_T('data/cities'))
+    for s in cityname:
+        return s
 def getVillageName():
-	villageName = random.choice(getFromFile_T('data/villages'))
-	for s in villageName:
-		return s
+    villageName = random.choice(getFromFile_T('data/villages'))
+    for s in villageName:
+        return s
 def getCampName():
-	campName = random.choice(getFromFile_T('data/camps'))
-	for s in campName:
-		return s
+    campName = random.choice(getFromFile_T('data/camps'))
+    for s in campName:
+        return s
 def getBldgName():
-	bldgName = random.choice(getFromFile_T('data/bldgs'))
-	for s in bldgName:
-		return s
+    bldgName = random.choice(getFromFile_T('data/bldgs'))
+    for s in bldgName:
+        return s
 def wChoice(wCh):
-	'''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
-	totalChoice = sum(w for c, w in wCh)
-	random_uniform = random.uniform(0, totalChoice)
-	upto = 0
-	for c, w in wCh:
-		if upto + w > random_uniform:
-			return c
-		upto += w
-	assert False, "Shouldn't get here"
+    '''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
+    totalChoice = sum(w for c, w in wCh)
+    random_uniform = random.uniform(0, totalChoice)
+    upto = 0
+    for c, w in wCh:
+        if upto + w > random_uniform:
+            return c
+        upto += w
+    assert False, "Shouldn't get here"
 def gridDistance(points):
-	import math
-	p0, p1 = points
-	return int(math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2))
+    import math
+    p0, p1 = points
+    return int(math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2))
 
 class Land_Image(object):
-	'''
-	All data needed to create a new image representing a land-generated
-	area.
-	'''
+    '''
+    All data needed to create a new image representing a land-generated
+    area.
+    '''
 
-	def __init__(self, biome_ovr):
-		'''
-		Collects needed data to draw on top of a canvas. Order matters!
-		'''
-		biome = self.get_biome(biome_ovr)
-		self.biome = biome
-		self.city_name = getCityName()
+    def __init__(self, biome_ovr):
+        '''
+        Collects needed data to draw on top of a canvas. Order matters!
+        '''
+        biome = self.get_biome(biome_ovr)
+        self.biome = biome
+        self.city_name = getCityName()
 
-		blacktext = ('tundra','desert','marsh')
-		if biome in blacktext:
-			self.text_color = 'black'
-		else:
-			self.text_color = 'white'
+        blacktext = ('tundra','desert','marsh')
+        if biome in blacktext:
+            self.text_color = 'black'
+        else:
+            self.text_color = 'white'
 
-		# set base img size
-		self.imgx = 600
-		self.imgy = self.imgx
-		# initilize the image
-		self.im = Image.new('RGBA',(self.imgx,self.imgy),'limegreen')
-		self.draw = ImageDraw.Draw(self.im)
+        # set base img size
+        self.imgx = 600
+        self.imgy = self.imgx
+        # initilize the image
+        self.im = Image.new('RGBA',(self.imgx,self.imgy),'limegreen')
+        self.draw = ImageDraw.Draw(self.im)
 
-		# start drawing on top of the image
-		self.draw_biome(biome)
-		self.draw_water(biome)
-		#self.draw_terrain()
-		self.draw_flora(biome)
+        # start drawing on top of the image
+        self.draw_biome(biome)
+        self.draw_water(biome)
+        #self.draw_terrain()
+        self.draw_flora(biome)
 
-		city_dic = self.draw_city()
-		self.town_names = self.draw_smalls()#camp_dic + vil_dic
-		self.town_names.append(city_dic)
-
-
-	def get_biome(self, override):
-
-		if override != None:
-			print "mapGen: biome is %s (override)" %override
-			return override.lower()
-
-		biomeLeanVal = (('marsh' ,1.0),('plains'  ,3.0),
-						('hills' ,1.5),('tundra'  ,1.0),
-						('desert',2.0),('forest'  ,3.0))
-		biome = wChoice(biomeLeanVal)
-		print "mapGen: biome is %s" %biome
-		return biome
-
-	def draw_biome(self,biome):
-
-		# new method for drawing biome, but my images are ugly D;
-		image_to_paste = Image.open('data/sprites/%s_texture.png'%biome)
-		y_paste = 0
-		for y_row in xrange(0,5):
-			for x_paste_interval in xrange(0,self.imgx):
-				if x_paste_interval % 128 == int():
-					self.im.paste(image_to_paste,
-						(x_paste_interval,y_paste), image_to_paste)
-			y_paste += 128
-
-	def draw_city(self):
-
-		x = random.randrange(10,self.imgx-50)
-		y = random.randrange(10,self.imgy-50)
-		image_to_paste = Image.open('data/sprites/city.png')
-		self.im.paste(image_to_paste, (x,y), image_to_paste)
-		self.draw.text((x-10,y+18),str(self.city_name), fill=self.text_color)
-		self.city_location = (x,y)
-		city_dic = {
-			'Name':self.city_name,
-			'Type':'Region Capital',
-			'Distance':0,
-			'click_area':self.city_location
-					}
-		return city_dic
-
-	def draw_smalls(self):
-
-		smalls_li = list()
-		types = ['Cave','Village',
-				'Camp','Temple']
-
-		for TYPE in types:
-			density = random.randint(1,5)
-			image_to_paste = Image.open('data/sprites/'+TYPE.lower()+'.png')
-			for c in xrange(0,density):
-				name = getSmallName(TYPE)
-				x = random.randrange(10,self.imgx-50)
-				y = random.randrange(10,self.imgy-50)
-				self.im.paste(image_to_paste, (x,y), image_to_paste)
-				self.draw.text((x-10,y+18),'%s'%name, fill=self.text_color)
-				roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
-				self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
-				smallsDat = {
-				'Type':TYPE,
-				'Name':name,
-				'Distance':str(roadLength),
-				'click_area':[x,y],
-				}
-				smalls_li.append(smallsDat)
-		return smalls_li
-
-	def draw_terrain(self):
-
-		def draw_scorch_marks():
-			density = random.randint(0,9)
-			if density > 2:
-				for c in xrange(0,density):
-					x = random.randrange(10,self.imgx-50)
-					y = random.randrange(10,self.imgy-50)
-					image_to_paste = Image.open('data/sprites/scorch_texture.png')
-					self.im.paste(image_to_paste, (x,y), image_to_paste)
+        city_dic = self.draw_city()
+        self.town_names = self.draw_smalls()#camp_dic + vil_dic
+        self.town_names.append(city_dic)
 
 
+    def get_biome(self, override):
 
-		def hills():
-			density = random.randint(1,3)
-			for c in xrange(0,density*100):
-				x = random.randint(0,self.imgx)
-				y = random.randint(0,self.imgy)
-				self.draw.arc((x,y,x+20,y+20),220,340, fill='gray')
+        if override != None:
+            print "mapGen: biome is %s (override)" %override
+            return override.lower()
 
-		draw_scorch_marks()
+        biomeLeanVal = (('marsh' ,1.0),('plains'  ,3.0),
+                        ('hills' ,1.5),('tundra'  ,1.0),
+                        ('desert',2.0),('forest'  ,3.0))
+        biome = wChoice(biomeLeanVal)
+        print "mapGen: biome is %s" %biome
+        return biome
 
-	def draw_water(self, biome):
+    def draw_biome(self,biome):
 
-		def river(densityFactor):
+        # new method for drawing biome, but my images are ugly D;
+        image_to_paste = Image.open('data/sprites/%s_texture.png'%biome)
+        y_paste = 0
+        for y_row in xrange(0,5):
+            for x_paste_interval in xrange(0,self.imgx):
+                if x_paste_interval % 128 == int():
+                    self.im.paste(image_to_paste,
+                        (x_paste_interval,y_paste), image_to_paste)
+            y_paste += 128
 
-			density = random.randint(0,4)
-			streamCount = int(density + (density*densityFactor))
-			for c in xrange(0,streamCount):
-				# determines whether to start on x or y axis
-				dir_num = random.randint(4,9)
-				if random.choice((True,False)):
-					x = random.randrange(0,self.imgx)
-					y = 0
-				else:
-					x = 0
-					y = random.randrange(0,self.imgy)
-				for null in xrange(0,10000):
-					# decides which direction to wander
-					if random.choice((True,False)):
-						if random.randint(0,random.randint(5,9)) < random.randint(0,9):
-							x -= 1
-						else:
-							x += 1
-						if (x >= self.imgx):
-							break
-					else:
-						if random.randint(0,dir_num) < random.randint(0,random.randint(5,9)):
-							y -= 1
-						else:
-							y += 1
-						if (y >= self.imgy):
-							break
-					self.draw.point((x,y), fill='#2A2CD8')
-					self.draw.point((x-1,y-1), fill='navy')
-					self.draw.point((x+1,y+1), fill='navy')
+    def draw_city(self):
 
-		def lake():
+        x = random.randrange(10,self.imgx-50)
+        y = random.randrange(10,self.imgy-50)
+        image_to_paste = Image.open('data/sprites/city.png')
+        self.im.paste(image_to_paste, (x,y), image_to_paste)
+        self.draw.text((x-10,y+18),str(self.city_name), fill=self.text_color)
+        self.city_location = (x,y)
+        city_dic = {
+            'Name':self.city_name,
+            'Type':'Region Capital',
+            'Distance':0,
+            'click_area':self.city_location
+                    }
+        return city_dic
 
-			# just have it be a shallow-looking pond, I suppose
-			self.draw.ellipse()
+    def draw_smalls(self):
 
-		d ={
-		'forest':0.7,
-		'plains':0.6,
-		'hills':0.7,
-		'tundra':0.3,
-		'marsh':1,
-		'desert':0.1
-		}
-		river(d[biome])
+        smalls_li = list()
+        types = ['Cave','Village',
+                'Camp','Temple']
 
-	def draw_flora(self,biome):
+        for TYPE in types:
+            density = random.randint(1,5)
+            image_to_paste = Image.open('data/sprites/'+TYPE.lower()+'.png')
+            for c in xrange(0,density):
+                name = getSmallName(TYPE)
+                x = random.randrange(10,self.imgx-50)
+                y = random.randrange(10,self.imgy-50)
+                self.im.paste(image_to_paste, (x,y), image_to_paste)
+                self.draw.text((x-10,y+18),'%s'%name, fill=self.text_color)
+                roadLength = int(gridDistance((self.city_location,(x,y))) / 15) # to be used for km
+                self.draw.text((x-10,y+25),'to city: %dkm'%(roadLength), fill=self.text_color)
+                smallsDat = {
+                'Type':TYPE,
+                'Name':name,
+                'Distance':str(roadLength),
+                'click_area':[x,y],
+                }
+                smalls_li.append(smallsDat)
+        return smalls_li
 
-		def trees(density,artList):
+    def draw_terrain(self):
 
-			density = density*225
-			#using tree sprites
-			for t in xrange(0,int(density)):
-				image_to_paste = Image.open('data/sprites/'+random.choice(artList)+'.png')
-				x = random.randrange(0,self.imgx)
-				y = random.randrange(0,self.imgy)
-				self.im.paste(image_to_paste, (x,y), image_to_paste)
+        def draw_scorch_marks():
+            density = random.randint(0,9)
+            if density > 2:
+                for c in xrange(0,density):
+                    x = random.randrange(10,self.imgx-50)
+                    y = random.randrange(10,self.imgy-50)
+                    image_to_paste = Image.open('data/sprites/scorch_texture.png')
+                    self.im.paste(image_to_paste, (x,y), image_to_paste)
 
 
-		# Tree intensity Modifiers
-		tree_mod ={
-		'forest':[random.randint(2,4),('tree1','tree2')],
-		'plains':[0.5,	('tree3','desertF1')],
-		'hills':[0.5,	('tree3','desertF1')],
-		'tundra':[0.2,	('tree3','desertF1')],
-		'marsh':[1,		('marshF1','tree2')],
-		'desert':[0.1,	('desertF1','desertF2')]
-		}
 
-		trees(tree_mod[biome][0],tree_mod[biome][1])
+        def hills():
+            density = random.randint(1,3)
+            for c in xrange(0,density*100):
+                x = random.randint(0,self.imgx)
+                y = random.randint(0,self.imgy)
+                self.draw.arc((x,y,x+20,y+20),220,340, fill='gray')
 
-	def draw_kingdom_flag(self):
-		pass
+        draw_scorch_marks()
 
-	def save_image(self):
-		self.im.save('landMap', "PNG")
+    def draw_water(self, biome):
 
-	def show_image(self):
-		self.im.show()
+        def river(densityFactor):
+
+            density = random.randint(0,4)
+            streamCount = int(density + (density*densityFactor))
+            for c in xrange(0,streamCount):
+                # determines whether to start on x or y axis
+                dir_num = random.randint(4,9)
+                if random.choice((True,False)):
+                    x = random.randrange(0,self.imgx)
+                    y = 0
+                else:
+                    x = 0
+                    y = random.randrange(0,self.imgy)
+                for null in xrange(0,10000):
+                    # decides which direction to wander
+                    if random.choice((True,False)):
+                        if random.randint(0,random.randint(5,9)) < random.randint(0,9):
+                            x -= 1
+                        else:
+                            x += 1
+                        if (x >= self.imgx):
+                            break
+                    else:
+                        if random.randint(0,dir_num) < random.randint(0,random.randint(5,9)):
+                            y -= 1
+                        else:
+                            y += 1
+                        if (y >= self.imgy):
+                            break
+                    self.draw.point((x,y), fill='#2A2CD8')
+                    self.draw.point((x-1,y-1), fill='navy')
+                    self.draw.point((x+1,y+1), fill='navy')
+
+        def lake():
+
+            # just have it be a shallow-looking pond, I suppose
+            self.draw.ellipse()
+
+        d ={
+        'forest':0.7,
+        'plains':0.6,
+        'hills':0.7,
+        'tundra':0.3,
+        'marsh':1,
+        'desert':0.1
+        }
+        river(d[biome])
+
+    def draw_flora(self,biome):
+
+        def trees(density,artList):
+
+            density = density*225
+            #using tree sprites
+            for t in xrange(0,int(density)):
+                image_to_paste = Image.open('data/sprites/'+random.choice(artList)+'.png')
+                x = random.randrange(0,self.imgx)
+                y = random.randrange(0,self.imgy)
+                self.im.paste(image_to_paste, (x,y), image_to_paste)
+
+
+        # Tree intensity Modifiers
+        tree_mod ={
+        'forest':[random.randint(2,4),('tree1','tree2')],
+        'plains':[0.5,  ('tree3','desertF1')],
+        'hills':[0.5,   ('tree3','desertF1')],
+        'tundra':[0.2,  ('tree3','desertF1')],
+        'marsh':[1,     ('marshF1','tree2')],
+        'desert':[0.1,  ('desertF1','desertF2')]
+        }
+
+        trees(tree_mod[biome][0],tree_mod[biome][1])
+
+    def draw_kingdom_flag(self):
+        pass
+
+    def save_image(self):
+        self.im.save('landMap', "PNG")
+
+    def show_image(self):
+        self.im.show()
 
 
 
@@ -292,177 +292,177 @@ class Land_Image(object):
 
 class Town_Image(object):
 
-	'''
-	All data needed to create a new image representing a Town-generated
-	area.
-	'''
+    '''
+    All data needed to create a new image representing a Town-generated
+    area.
+    '''
 
-	def __init__(self, pref):
+    def __init__(self, pref):
 
-		self.settings = pref
+        self.settings = pref
 
-		#get cityname from Land_Image
-		self.city_name = landImg.city_name
+        #get cityname from Land_Image
+        self.city_name = landImg.city_name
 
-		self.towns = self.populate_area()
-		self.imgx = 600
-		self.imgy = self.imgx
-		# initilize the image
-		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
-		# lets not draw things until it's ready
-		#self.draw = ImageDraw.Draw(self.im)
+        self.towns = self.populate_area()
+        self.imgx = 600
+        self.imgy = self.imgx
+        # initilize the image
+        self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
+        # lets not draw things until it's ready
+        #self.draw = ImageDraw.Draw(self.im)
 
-	def populate_area(self):
+    def populate_area(self):
 
-		city_list = list()
-		for city_dict in landImg.town_names:
-			cities = dict()
+        city_list = list()
+        for city_dict in landImg.town_names:
+            cities = dict()
 
-			if city_dict['Type'] == "Region Capital":
-				city_data = townGen.main('big',landImg.biome, self.settings)
-				city_dict['Data'] = city_data
-			elif city_dict['Type'] == 'Cave':
-				city_dict['Data'] = None
+            if city_dict['Type'] == "Region Capital":
+                city_data = townGen.main('big',landImg.biome, self.settings)
+                city_dict['Data'] = city_data
+            elif city_dict['Type'] == 'Cave':
+                city_dict['Data'] = None
 
-			else:
-				town_data = townGen.main('small',landImg.biome, self.settings)
-				city_dict['Data'] = town_data
-			city_list.append(city_dict)
-		return city_list
+            else:
+                town_data = townGen.main('small',landImg.biome, self.settings)
+                city_dict['Data'] = town_data
+            city_list.append(city_dict)
+        return city_list
 
-	def draw_walls(self):
+    def draw_walls(self):
 
-		img_city_walls = Image.open('data/sprites/cityWalls.png')
-		self.im.paste(img_city_walls, (0,0), img_city_walls)
+        img_city_walls = Image.open('data/sprites/cityWalls.png')
+        self.im.paste(img_city_walls, (0,0), img_city_walls)
 
-	def draw_streets(self):
+    def draw_streets(self):
 
-		img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
-		total_streets = len(self.streets)
-		street_interval = self.imgx / total_streets
+        img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
+        total_streets = len(self.streets)
+        street_interval = self.imgx / total_streets
 
-		x_axis_assigned = random.randint(1, total_streets -1)
-		y_axis_assigned = total_streets - x_axis_assigned
-		bldg_interval = 6
+        x_axis_assigned = random.randint(1, total_streets -1)
+        y_axis_assigned = total_streets - x_axis_assigned
+        bldg_interval = 6
 
-		x = 0 - (street_interval / 2)
-		y = x
+        x = 0 - (street_interval / 2)
+        y = x
 
-		x_interval = self.imgx / x_axis_assigned
-		y_interval = self.imgy / y_axis_assigned
+        x_interval = self.imgx / x_axis_assigned
+        y_interval = self.imgy / y_axis_assigned
 
-		for street in xrange(x_axis_assigned):
-			x += x_interval
-			self.draw.line((x,20,x,580), fill='#9A8857', width=3)
-			for bldg in xrange(1,6):
-				bldg_y = self.imgy / bldg
-				self.im.paste(img_bldgSimple, (x-10,bldg_y), img_bldgSimple)
+        for street in xrange(x_axis_assigned):
+            x += x_interval
+            self.draw.line((x,20,x,580), fill='#9A8857', width=3)
+            for bldg in xrange(1,6):
+                bldg_y = self.imgy / bldg
+                self.im.paste(img_bldgSimple, (x-10,bldg_y), img_bldgSimple)
 
-		for street in xrange(y_axis_assigned):
-			y += y_interval
-			self.draw.line((20,y,580,y), fill='#9A8857', width=3)
-			for bldg in xrange(1,6):
-				bldg_x = self.imgx / bldg
-				self.im.paste(img_bldgSimple, (bldg_x,y-10), img_bldgSimple)
+        for street in xrange(y_axis_assigned):
+            y += y_interval
+            self.draw.line((20,y,580,y), fill='#9A8857', width=3)
+            for bldg in xrange(1,6):
+                bldg_x = self.imgx / bldg
+                self.im.paste(img_bldgSimple, (bldg_x,y-10), img_bldgSimple)
 
-	def draw_lots(self):
-		pass
+    def draw_lots(self):
+        pass
 
-	def draw_flag(self):
-		pass
+    def draw_flag(self):
+        pass
 
-	def save_image(self):
-		self.im.save('landMap', "PNG")
+    def save_image(self):
+        self.im.save('landMap', "PNG")
 
-	def show_image(self):
-		self.im.show()
+    def show_image(self):
+        self.im.show()
 
 class Building_Image(object):
-	'''
-	All data needed to create a new image representing a Bldg-generated
-	area.
-	'''
+    '''
+    All data needed to create a new image representing a Bldg-generated
+    area.
+    '''
 
-	def __init__(self):
-		#get cityname from Land_Image
-		self.imgx = 600
-		self.imgy = self.imgx
-		# initilize the image
-		self.im = Image.new('RGB',(self.imgx,self.imgy),'maroon')
-		self.draw = ImageDraw.Draw(self.im)
+    def __init__(self):
+        #get cityname from Land_Image
+        self.imgx = 600
+        self.imgy = self.imgx
+        # initilize the image
+        self.im = Image.new('RGB',(self.imgx,self.imgy),'maroon')
+        self.draw = ImageDraw.Draw(self.im)
 
 
-	def save_image(self):
-		self.im.save('landMap', "PNG")
+    def save_image(self):
+        self.im.save('landMap', "PNG")
 
-	def show_image(self):
-		self.im.show()
+    def show_image(self):
+        self.im.show()
 
 class Cave_Image:
 
-	def __init__(self):
-		self.cave = caveGen.CA_CaveFactory(120,120,0.493)# Density
+    def __init__(self):
+        self.cave = caveGen.CA_CaveFactory(120,120,0.493)# Density
 
-		self.imgx = 600
-		self.imgy = self.imgx
-		self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
+        self.imgx = 600
+        self.imgy = self.imgx
+        self.im = Image.new('RGB',(self.imgx,self.imgy),'lightgray')
 
-		walls, floors = self.parse_arry()
-		self.pil_img = self.draw_cave(walls, floors)
+        walls, floors = self.parse_arry()
+        self.pil_img = self.draw_cave(walls, floors)
 
-		#self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
-		#self.im = self.im.filter(ImageFilter.SHARPEN)
+        #self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
+        #self.im = self.im.filter(ImageFilter.SHARPEN)
 
-		self.im.show()
+        self.im.show()
 
-	def parse_arry(self):
-		arry = self.cave.arry
+    def parse_arry(self):
+        arry = self.cave.arry
 
-		walls = []
-		floors = []
+        walls = []
+        floors = []
 
-		for r in range(0,120):
-			for c in range(0,120):
-				if arry[r][c] in (caveGen.WALL,caveGen.PERM_WALL):
-					walls.append((r * 5,c * 5))
-				else:
-					floors.append((r * 5,c * 5))
-		return walls, floors
+        for r in range(0,120):
+            for c in range(0,120):
+                if arry[r][c] in (caveGen.WALL,caveGen.PERM_WALL):
+                    walls.append((r * 5,c * 5))
+                else:
+                    floors.append((r * 5,c * 5))
+        return walls, floors
 
-	def draw_cave(self, walls, floors):
-		cave_draw = ImageDraw.Draw(self.im)
+    def draw_cave(self, walls, floors):
+        cave_draw = ImageDraw.Draw(self.im)
 
-		for x, y in walls:
-			x2 = x + 20
-			y2 = y + 20
-			cave_draw.rectangle((x,y,x2,y2), fill='black')
+        for x, y in walls:
+            x2 = x + 20
+            y2 = y + 20
+            cave_draw.rectangle((x,y,x2,y2), fill='black')
 
-	def filter_cave(self):
-		pass
+    def filter_cave(self):
+        pass
 
 
 
 def main(opt, pref):
-	global landImg, townImg, bldgImg
-	if opt == 'tk':
-		landImg = Land_Image(pref['map']['biome'])
-		townImg = Town_Image(pref)
-		#bldgImg = Building_Image()
-		return (landImg.im, landImg.city_name,
-			townImg.towns)
-	if opt == 'small':
-		pass
-	else:
-		#landImg = Land_Image(pref['map']['biome'])
-		#townImg = Town_Image(pref)
-		#bldgImg = Building_Image()
-		caveImg = Cave_Image()
-		#townImg.show_image()
+    global landImg, townImg, bldgImg
+    if opt == 'tk':
+        landImg = Land_Image(pref['map']['biome'])
+        townImg = Town_Image(pref)
+        #bldgImg = Building_Image()
+        return (landImg.im, landImg.city_name,
+            townImg.towns)
+    if opt == 'small':
+        pass
+    else:
+        #landImg = Land_Image(pref['map']['biome'])
+        #townImg = Town_Image(pref)
+        #bldgImg = Building_Image()
+        caveImg = Cave_Image()
+        #townImg.show_image()
 
-		return 0
+        return 0
 
 if __name__ == '__main__':
-	import def_settings
-	default_settings = def_settings.get_def_settings()
-	main('', default_settings)
+    import def_settings
+    default_settings = def_settings.get_def_settings()
+    main('', default_settings)
 

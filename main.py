@@ -335,6 +335,8 @@ https://www.gnu.org/licenses/gpl-2.0.html
         """
 		Fills tree with data and configs.
 		"""
+        # c is to prevent addressing errors with ttk.Treeview's limited number of items,
+        # preventing all sorts of wonky issues.
         c = 1
         for city_dic in self.towns:
             # Prevent overcounting population by resetting the population
