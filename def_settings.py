@@ -35,7 +35,7 @@ def get_def_settings():
 				}
 	town_settings = {
 				'size_mod': 1.0,
-				'affluence': 1.0,
+				'affluence': 0.8,
 				'govt':None,
 				}
 

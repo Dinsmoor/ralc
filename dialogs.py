@@ -211,6 +211,12 @@ class SettingsMenu(Dialog):
                 label='Town Size', length=200)
             self.city_size_mod_scale.grid(row=0, column=1)
             self.city_size_mod_scale.set(1.0)
+            
+            self.affluence_scale = tk.Scale(self.town_page,
+                orient='horizontal', from_=0.1, to=2.0, resolution=0.1,
+                label='Affluence', length=200)
+            self.affluence_scale.grid(row=1, column=1)
+            self.affluence_scale.set(1.0)
 
         def make_char_page():
             tk.Label(self.char_page, text="Median Char Level").grid(row=0, column=0)
@@ -231,6 +237,7 @@ class SettingsMenu(Dialog):
             self.parent.settings['map']['biome'] = None
         # Town Apply
         self.parent.settings['town']['size_mod'] = self.city_size_mod_scale.get()
+        self.parent.settings['town']['affluence'] = self.affluence_scale.get()
         # Char Apply
         self.parent.settings['char']['Level'] = self.level_scale.get()
 

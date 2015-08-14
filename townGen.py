@@ -68,8 +68,9 @@ def getStreetName():
 class Settlement(object):
     def __init__(self, biome, pref):
         self.settings = pref
-        #affluence = self.get_affluence()
-        #govt = self.get_govt(affluence)
+        affluence = self.get_affluence()
+        govt = self.get_govt(affluence)
+        econ_system = self.get_economy(affluence, govt)
         #senses = self.get_senses(affluence, govt)
         citySize = self.getCitySize(biome)
         self.s = self.getStreets(citySize, biome)
@@ -98,17 +99,40 @@ class Settlement(object):
         return int(mult * (random.randint(1,4) + 10))
 
     def get_govt(self, affluence):
-
-        d = {
-            1.0:'Democracy'
+        
+        political_systems = {
+            0.8:'Anarchism',
+            1.2:'City-state',
+            1.0:'Democracy',
+            1.4:'Federacy',
+            0.7:'Feudalism',
+            0.5:'Authoritarian state',
+            1.6:'Directorialism',
+            1.7:'Meritocracy',
+            0.8:'Monarchy',
+            0.4:'Theocracy',
             }
 
-        govt = d[affluence]
-        return govt
+        power_structure = None
+        power_source = None
+        
+        closest_num = min(political_systems.keys(), key=lambda x:abs(x-affluence))
+        return political_systems[closest_num]
 
     def get_affluence(self):
         aff = self.settings['town']['affluence']
-
+        
+        #use bonus
+        if bool(random.getrandbits(1)):
+            #positive
+            if bool(random.getrandbits(1)):
+                aff += random.random()
+            else:
+                aff -= random.random()
+        
+        if aff <= 0.0:
+            aff = 0.1
+        
         return aff
 
     def get_clans(self):
@@ -120,9 +144,36 @@ class Settlement(object):
     def get_wares(self, affluence):
         pass
     
-    def get_economy(self, govt, affluence):
-        pass
+    def get_economy(self, affluence, govt):
         
+        political_systems = {
+            'Anarchism':('Anarchist','Corporatist','Georgist'),
+            'City-state':('Capitalist','Corporatist','Participatory','Mercantilist'),
+            'Democracy':('Capitalist','Laissez-faire','Mercantilist'),
+            'Federacy':('Capitalist','Georgist','Mercantilist'),
+            'Feudalism':('Protectionist','Mercantilist'),
+            'Authoritarian state':('State capitalist','Mercantilist'),
+            'Directorialism':('Communist','Laissez-faire'),
+            'Meritocracy':('Communist','Laissez-faire','Market socialist'),
+            'Monarchy':('Protectionist','Mercantilist'),
+            'Theocracy':('Communist','Georgist','Market socialist'),
+            }
+        
+        # Took descriptions from child articles from https://en.wikipedia.org/wiki/Economic_system
+        economic_systems = {
+            'Anarchist'     :"The system of specialization in the various crafts, which would lead to a man's following the task for which he had the greatest aptitude, and distributing his surplus products to whoever may need them, receiving what he himself needs of other things from the surplus produced by his neighbours, but always on the basis of free distribution, not of exchange.",
+            'Capitalist'    :"System in which trade, industry, and the means of production are largely or entirely privately owned. Private firms and proprietorships usually operate in order to generate profit, but may operate as private nonprofit organizations.",
+            'Communist'     :"Characterized by common ownership of the means of production with free access to the articles of consumption and is classless and stateless, implying the end of the exploitation of labor.",
+            'Corporatist'   :"Sociopolitical organization of a society by major interest groups, or corporate groups, such as agricultural, business, ethnic, labour, military, patronage, or scientific affiliations, on the basis of common interests.",
+            'Georgist'      :"The economic value derived from natural resources and natural opportunities should belong equally to all residents of a community, but that people own the value they create.",
+            'Laissez-faire' :"An economic system in which transactions between private parties are free from government interference such as regulations, privileges, tariffs, and subsidies.",
+            'Market socialist':"A type of economic system involving the public, cooperative or social ownership of the means of production in the framework of a market economy. Market socialism differs from non-market socialism in that the market mechanism is utilized for the allocation of capital goods and the means of production.",
+            'Mercantilist'  :"Promotes governmental regulation of a nation's economy for the purpose of augmenting state power at the expense of rival national powers. Mercantilism includes a national economic policy aimed at accumulating monetary reserves through a positive balance of trade, especially of finished goods.",
+            'Participatory' :"An economic system based on participatory decision making as the primary economic mechanism for the allocation of the factors of production and guidance of production in a given society. Participatory economics is a form of decentralized economic planning and socialism involving the common ownership of the means of production.",
+            'Protectionist' :"The economic policy of restraining trade between states (countries) through methods such as tariffs on imported goods, restrictive quotas, and a variety of other government regulations designed to allow (according to proponents) fair competition between imports and goods and services produced domestically.",
+            'State capitalist':"Commercial economic activity is undertaken by the state, where the means of production are organized and managed as business enterprises, including the processes of capital accumulation, wage labor, and centralized management.",
+            }
+            
     def get_description(self):
         pass
 

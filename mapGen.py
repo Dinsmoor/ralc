@@ -88,7 +88,7 @@ class Land_Image(object):
         self.biome = biome
         self.city_name = getCityName()
 
-        blacktext = ('tundra','desert','marsh')
+        blacktext = ('tundra','desert','marsh','hills')
         if biome in blacktext:
             self.text_color = 'black'
         else:
@@ -401,7 +401,9 @@ class Building_Image(object):
 class Cave_Image:
 
     def __init__(self):
-        self.cave = caveGen.CA_CaveFactory(120,120,0.493)# Density
+        self.CAVE_SIZE = 120
+        
+        self.cave = caveGen.CA_CaveFactory(self.CAVE_SIZE,self.CAVE_SIZE,0.5)# Density
 
         self.imgx = 600
         self.imgy = self.imgx
@@ -410,7 +412,7 @@ class Cave_Image:
         walls, floors = self.parse_arry()
         self.pil_img = self.draw_cave(walls, floors)
 
-        #self.im = self.im.filter(ImageFilter.GaussianBlur(radius=3))
+        self.im = self.im.filter(ImageFilter.GaussianBlur(radius=1))
         #self.im = self.im.filter(ImageFilter.SHARPEN)
 
         self.im.show()
@@ -421,8 +423,8 @@ class Cave_Image:
         walls = []
         floors = []
 
-        for r in range(0,120):
-            for c in range(0,120):
+        for r in range(0,self.CAVE_SIZE):
+            for c in range(0,self.CAVE_SIZE):
                 if arry[r][c] in (caveGen.WALL,caveGen.PERM_WALL):
                     walls.append((r * 5,c * 5))
                 else:
