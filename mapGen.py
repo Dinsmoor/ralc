@@ -210,15 +210,15 @@ class Land_Image(object):
             for c in xrange(0,streamCount):
                 # determines whether to start on x or y axis
                 dir_num = random.randint(4,9)
-                if random.choice((True,False)):
+                if random.random() >= 0.5:
                     x = random.randrange(0,self.imgx)
                     y = 0
                 else:
                     x = 0
                     y = random.randrange(0,self.imgy)
-                for null in xrange(0,10000):
+                for null in xrange(0,10000): # try to make it at least reach end of screen
                     # decides which direction to wander
-                    if random.choice((True,False)):
+                    if random.random() >= 0.5:
                         if random.randint(0,random.randint(5,9)) < random.randint(0,9):
                             x -= 1
                         else:

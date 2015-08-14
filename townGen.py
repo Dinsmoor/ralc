@@ -123,9 +123,9 @@ class Settlement(object):
         aff = self.settings['town']['affluence']
         
         #use bonus
-        if bool(random.getrandbits(1)):
+        if random.random() >= 0.5:
             #positive
-            if bool(random.getrandbits(1)):
+            if random.random() >= 0.5:
                 aff += random.random()
             else:
                 aff -= random.random()
