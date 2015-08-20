@@ -27,6 +27,7 @@ try:
     import random
     import argparse
     import itemGen
+    from markovnames import nameGen
 except ImportError:
     print "You are missing essential Libraries. See README.md"
 
@@ -438,19 +439,24 @@ def get_name(pc_race, pc_gender):
     race name in a particular syntax, then imports all sorts of different names
     based upon their index in a list of lists.
     """
+    
+    
     global pc
     try:
         names = get_f_f_lol('data/char/' + (pc_race.lower() + 'Names'))
-        pc['Last Name'] = random.choice(names[2])
-        if pc_gender == 'Male':
-            pc['First Name'] = random.choice(names[0])
+        if pc_race == 'Half-Orc':
+            # half-orcs don't have last names
+            pc['Last Name'] = ''
         else:
-            pc['First Name'] = random.choice(names[1])
-        # if we want special exceptions
-        # if pcNameFirst == "Helga": pcNameLast = "SMASH";pc['STR'] += 10
+            pc['Last Name'] = nameGen.get_name(names[2])
+        if pc_gender == 'Male':
+            pc['First Name'] = nameGen.get_name(names[0])
+        else:
+            pc['First Name'] = nameGen.get_name(names[1])
         pcName = pc['First Name'] + ' ' + pc['Last Name']
-    except:
-        pcName = "Error- No cfg file for %s" % pc_race
+    except Exception as e:
+        print e
+        pcName = "ERR"
     return pcName
 
 

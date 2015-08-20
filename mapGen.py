@@ -319,14 +319,16 @@ class Town_Image(object):
             cities = dict()
 
             if city_dict['Type'] == "Region Capital":
-                city_data = townGen.main('big',landImg.biome, self.settings)
-                city_dict['Data'] = city_data
+                streets, desc = townGen.main('big',landImg.biome, self.settings)
+                city_dict['Data'] = streets
+                city_dict['Desc'] = desc
             elif city_dict['Type'] == 'Cave':
                 city_dict['Data'] = None
-
+                city_dict['Desc'] = None
             else:
-                town_data = townGen.main('small',landImg.biome, self.settings)
-                city_dict['Data'] = town_data
+                streets, desc = townGen.main('small',landImg.biome, self.settings)
+                city_dict['Data'] = streets
+                city_dict['Desc'] = desc
             city_list.append(city_dict)
         return city_list
 
@@ -400,9 +402,9 @@ class Building_Image(object):
 
 class Cave_Image:
 
-    def __init__(self):
+    def __init__(self, name=None):
         self.CAVE_SIZE = 120
-        
+
         self.cave = caveGen.CA_CaveFactory(self.CAVE_SIZE,self.CAVE_SIZE,0.5)# Density
 
         self.imgx = 600
@@ -454,6 +456,8 @@ def main(opt, pref):
             townImg.towns)
     if opt == 'small':
         pass
+    if opt == 'cave':
+        caveImg = Cave_Image(pref)
     else:
         #landImg = Land_Image(pref['map']['biome'])
         #townImg = Town_Image(pref)

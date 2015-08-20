@@ -1,0 +1,6 @@
+[submodule "ralc-markov-fantasy-names"]
+	path = markovnames
+	url = git@github.com:Dinsmoor/ralc-markov-fantasy-names.git
+[submodule "roguelike-dungeon-generator"]
+	path = dungeongenerator
+	url = git@github.com:Dinsmoor/roguelike-dungeon-generator.git

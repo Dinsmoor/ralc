@@ -48,8 +48,8 @@ except ImportError:
 
 class UI(tk.Frame):
     """
-	Class that describes the UI and how the information is formatted.
-	"""
+    Class that describes the UI and how the information is formatted.
+    """
 
     def __init__(self):
 
@@ -99,7 +99,7 @@ class UI(tk.Frame):
         (self.city_im, self.cityName,
          self.towns) = mapGen.main('tk', self.settings)
 
-        self.get_photo()
+        self.get_photo(pil_im=self.city_im)
         self.fill_tree()
         self.image_frame.grid(row=0, column=2)
         print "UI.new_data.Retrieved Data"
@@ -134,9 +134,9 @@ class UI(tk.Frame):
     def load_all(self, load_name):
 
         """
-		Ensures that the save name to load is valid, then loads the
-		associated content and refreshes widgets.
-		"""
+        Ensures that the save name to load is valid, then loads the
+        associated content and refreshes widgets.
+        """
 
         def check_dir():
 
@@ -162,7 +162,7 @@ class UI(tk.Frame):
             self.grid()
             self.new_button.destroy()
             self.create_widgets()
-            self.get_photo()
+            self.get_photo(pil_im=self.city_im)
             self.fill_tree()
             self.image_frame.grid(row=0, column=2)
             print 'UI.load_all.Refreshed Widgets'
@@ -176,14 +176,14 @@ class UI(tk.Frame):
     def create_widgets(self):
 
         """
-		Creates menu bar, tree view and details pane.
-		"""
+        Creates menu bar, tree view and details pane.
+        """
 
         def make_initial_button():
             """
-			Used as quick options to access things that would normally
-			be in the file menu when starting application.
-			"""
+            Used as quick options to access things that would normally
+            be in the file menu when starting application.
+            """
             if self.first_run:
                 self.new_button = tk.Button(text="New",
                                             padx=70, pady=30, command=self.new_data)
@@ -192,10 +192,10 @@ class UI(tk.Frame):
 
         def make_menu_bar():
             """
-			Used for callbacks, instrumental for loading/saving and
-			accessing the tools/about menus. Will feature many other
-			tools later.
-			"""
+            Used for callbacks, instrumental for loading/saving and
+            accessing the tools/about menus. Will feature many other
+            tools later.
+            """
             self.option_add('*tearOff', False)
             self.menubar = tk.Menu(self.master)
             self.filemenu = tk.Menu(self.menubar)
@@ -224,8 +224,8 @@ class UI(tk.Frame):
 
         def make_tree_view():
             """
-			Defines tree instance for use later in fill_tree
-			"""
+            Defines tree instance for use later in fill_tree
+            """
 
             self.tree = ttk.Treeview(self, height=25,
                                      selectmode='browse')
@@ -241,8 +241,8 @@ class UI(tk.Frame):
 
         def make_details_pane():
             """
-			Defines first instance of the details pane.
-			"""
+            Defines first instance of the details pane.
+            """
 
             self.details_frame = ttk.Frame(self, borderwidth=2,
                                            relief="sunken", width=200, height=600)
@@ -273,7 +273,7 @@ https://github.com/Dinsmoor/ralc
 
 Licenced under GNU GPLv2+
 https://www.gnu.org/licenses/gpl-2.0.html
-		''' % RALC_VERSION
+        ''' % RALC_VERSION
 
         tkMessageBox.showinfo(
             "About", info_text)
@@ -281,42 +281,42 @@ https://www.gnu.org/licenses/gpl-2.0.html
     def create_load_dialog(self):
 
         """
-		Interior handler for an external class
-		"""
+        Interior handler for an external class
+        """
 
         dialogs.LoadDialog(self)
 
     def create_settings_menu(self):
 
-        print self.settings
         dialogs.SettingsMenu(self)
-        print self.settings
 
     def create_save_dialog(self):
 
         """
-		Interior handler for an external class
-		"""
+        Interior handler for an external class
+        """
 
         dialogs.SaveDialog(self)
 
     def create_char_sheet_dialog(self):
 
         """
-		Interior handler for an external class
-		"""
+        Interior handler for an external class
+        """
 
         dialogs.CharSheetGen(self)
 
-    def get_photo(self, im_coor=None):
+    def get_photo(self, im_coor=None, pil_im=None):
 
         """
-		Converts PIL/PNG image into a Tk-compatible image type, creates
-		a canvas that has a clickable surface that is able to select
-		settlements using a callback to city_map_select.
-		"""
+        Converts PIL/PNG image into a Tk-compatible image type, creates
+        a canvas that has a clickable surface that is able to select
+        settlements using a callback to city_map_select.
+        """
+        if pil_im == None:
+            return
 
-        self.img = ImageTk.PhotoImage(self.city_im)
+        self.img = ImageTk.PhotoImage(pil_im)
 
         photos = self.photo_coor.iterkeys()
 
@@ -333,8 +333,8 @@ https://www.gnu.org/licenses/gpl-2.0.html
     def fill_tree(self):
 
         """
-		Fills tree with data and configs.
-		"""
+        Fills tree with data and configs.
+        """
         # c is to prevent addressing errors with ttk.Treeview's limited number of items,
         # preventing all sorts of wonky issues.
         c = 1
@@ -363,6 +363,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
                                                text=city_dic['Name'])
                 c += 1
                 self.click_coor[city_parent] = city_dic['click_area']
+                self.photo_coor[city_parent] = city_dic['Name']
             else:
                 # Same as above, except the blank line
                 city_parent = self.tree.insert('',
@@ -384,8 +385,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
                         street_parent = self.tree.insert(city_parent,
                                                          'end',
                                                          iid=c,
-                                                         text=street,
-                                                         tags=street)
+                                                         text=street)
                         c+=1
                         for bldg in bldg_li:
                             # add buildings to streets, listed by purpose
@@ -476,11 +476,11 @@ https://www.gnu.org/licenses/gpl-2.0.html
     def make_armor_metadata(arm):
 
         desc = '''
-Name:	%s
-Type:	%s
-Cost:	%s
-AC:	%s
-		''' % (arm['Name'], arm['Type'],
+Name:   %s
+Type:   %s
+Cost:   %s
+AC: %s
+        ''' % (arm['Name'], arm['Type'],
                arm['Cost'], arm['AC'])
         return desc
 
@@ -488,22 +488,22 @@ AC:	%s
     def make_weapon_metadata(wep):
 
         desc = '''
-Name:	%s
-Hit Die:	%s
-Damage Type:	%s
-Weapon Class:	%s
-Weapon Type:	%s
-		''' % (wep['Name'], wep['Hit Die'], wep['Damage Type'],
+Name:   %s
+Hit Die:    %s
+Damage Type:    %s
+Weapon Class:   %s
+Weapon Type:    %s
+        ''' % (wep['Name'], wep['Hit Die'], wep['Damage Type'],
                wep['Weapon Class'], wep['Weapon Type'])
         return desc
 
     def make_town_metadata(self, town):
         desc = '''
-Name:	%s
-Type:	%s
-Population:	%d
-Distance:	%skm to %s.
-		''' % (town['Name'], town['Type'],
+Name:   %s
+Type:   %s
+Population: %d
+Distance:   %skm to %s.
+        ''' % (town['Name'], town['Type'],
                town['Population'],
                town['Distance'], self.cityName)
         return desc
@@ -525,19 +525,27 @@ Distance:	%skm to %s.
 
     def update_ui(self, event):
         try:
-            self.get_photo(event)
+            #self.get_photo(event)
             self.update_details(event)
         except Exception as err:
             if DEBUG:
                 print err
 
+    def get_cave_image(self, name):
+        """
+        Grabs generated cave image from mapGen.
+        """
+
+        pil_cave_im = mapGen.main('cave', name)
+        self.get_photo(pil_im=pil_cave_im)
+
     def update_details(self, event):
 
         """
-		Since multiple types fo data will be updated, it inspects various
-		data sources and just plugs in whatever is applicible. Kind of dumb,
-		but works. Otherwise will just empty the text box.
-		"""
+        Since multiple types fo data will be updated, it inspects various
+        data sources and just plugs in whatever is applicible. Kind of dumb,
+        but works. Otherwise will just empty the text box.
+        """
 
         def actor_update():
             try:
@@ -587,13 +595,13 @@ Distance:	%skm to %s.
     def city_map_select(self, event):
 
         """
-		Checks click coordinates against a bounding box equivalent to
-		the graphic size of the settlement sprite in a coorelation
-		dictionary filled with each sprite's location.
+        Checks click coordinates against a bounding box equivalent to
+        the graphic size of the settlement sprite in a coorelation
+        dictionary filled with each sprite's location.
 
-		Sets selection and focus to corresponding town, then change is
-		reflected in self.details automatically.
-		"""
+        Sets selection and focus to corresponding town, then change is
+        reflected in self.details automatically.
+        """
 
         for city_id, click_corner in self.click_coor.items():
             x_true = event.x >= click_corner[0] >= event.x - 20  # png is 20x20px
