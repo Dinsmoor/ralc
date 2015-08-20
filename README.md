@@ -1,5 +1,5 @@
-Prog V: 0.68;
-Doc  V: 0.68
+Prog V: 0.70b;
+Doc  V: 0.70
 
 ###INTRO:
 R.A.L.C is an acronymn for Randomized Adventure Lore Creator, it is the

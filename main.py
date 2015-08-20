@@ -67,10 +67,10 @@ class UI(tk.Frame):
         self.click_coor = dict()
         self.photo_coor = dict()
 
-        print "UI.__init__.Starting"
+        if DEBUG: print "UI.__init__.Starting"
         self.first_run = True
         self.create_widgets()
-        print "UI.__init__.Done"
+        if DEBUG: print "UI.__init__.Done"
 
     ####
     # Data Gathering
@@ -96,13 +96,17 @@ class UI(tk.Frame):
         self.create_widgets()
         self.new_button.destroy()
         self.grid()
-        (self.city_im, self.cityName,
-         self.towns) = mapGen.main('tk', self.settings)
-
+        
+        self.map_dict = mapGen.main('tk', self.settings)
+        self.city_im = self.map_dict['landimg']
+        self.cityName = self.map_dict['cityname']
+        self.towns = self.map_dict['towns']
+        self.uninhab = self.map_dict['uninhab']
+        
         self.get_photo(pil_im=self.city_im)
         self.fill_tree()
         self.image_frame.grid(row=0, column=2)
-        print "UI.new_data.Retrieved Data"
+        if DEBUG: print "UI.new_data.Retrieved Data"
 
     @staticmethod
     def new_items(item_type):
@@ -127,9 +131,9 @@ class UI(tk.Frame):
 
         make_dir()
         save_images()
-        print 'UI.save_all.Image Saved'
+        if DEBUG: print 'UI.save_all.Image Saved'
         save_names()
-        print 'UI.save_all.Names Saved'
+        if DEBUG: print 'UI.save_all.Names Saved'
 
     def load_all(self, load_name):
 
@@ -165,7 +169,7 @@ class UI(tk.Frame):
             self.get_photo(pil_im=self.city_im)
             self.fill_tree()
             self.image_frame.grid(row=0, column=2)
-            print 'UI.load_all.Refreshed Widgets'
+            if DEBUG: print 'UI.load_all.Refreshed Widgets'
         else:
             print 'UI.load_all.Failed[NO FOLDER PRESENT]'
 
@@ -220,7 +224,7 @@ class UI(tk.Frame):
 
             self.tk.call(self.master, "config", "-menu", self.menubar)
 
-            print 'UI.make_menu_bar.Done'
+            if DEBUG: print 'UI.make_menu_bar.Done'
 
         def make_tree_view():
             """
@@ -237,7 +241,7 @@ class UI(tk.Frame):
             self.tree.grid(row=0, column=0, sticky='NSEW')
 
             self.tree.bind("<<TreeviewSelect>>", self.update_ui)
-            print "UI.make_tree_view.Done"
+            if DEBUG: print "UI.make_tree_view.Done"
 
         def make_details_pane():
             """
@@ -252,7 +256,7 @@ class UI(tk.Frame):
             self.details_frame.grid(row=0, column=4, sticky='N', pady=5)
             self.details.grid(row=0, column=0)
 
-            print "UI.make_details_pane.Done"
+            if DEBUG: print "UI.make_details_pane.Done"
 
         make_menu_bar()
         make_tree_view()
@@ -306,29 +310,25 @@ https://www.gnu.org/licenses/gpl-2.0.html
 
         dialogs.CharSheetGen(self)
 
-    def get_photo(self, im_coor=None, pil_im=None):
+    def get_photo(self, pil_im=None):
 
         """
         Converts PIL/PNG image into a Tk-compatible image type, creates
         a canvas that has a clickable surface that is able to select
-        settlements using a callback to city_map_select.
+        settlements using a callback to click_map_select.
         """
         if pil_im == None:
+            if DEBUG: print 'UI.get_photo.NoImageAssigned'
             return
 
         self.img = ImageTk.PhotoImage(pil_im)
-
-        photos = self.photo_coor.iterkeys()
-
-        if im_coor in photos:
-            self.img = ImageTk.PhotoImage(self.photo_coor[im_coor])
 
         self.canvas = tk.Canvas(self.image_frame, background='grey',
                                 width=600, height=600)
         self.canvas.grid(row=0, column=0)
         self.canvas.create_image(301, 301, state='normal', image=self.img)
-        self.canvas.bind('<Button>', self.city_map_select)
-        print 'UI.get_photo.Done'
+        self.canvas.bind('<Button>', self.click_map_select)
+        if DEBUG: print 'UI.get_photo.Done'
 
     def fill_tree(self):
 
@@ -338,6 +338,17 @@ https://www.gnu.org/licenses/gpl-2.0.html
         # c is to prevent addressing errors with ttk.Treeview's limited number of items,
         # preventing all sorts of wonky issues.
         c = 1
+        
+        # Simple things first
+        for uninhab_dict in self.uninhab:
+            uninhab_parent = self.tree.insert('',
+                                           'end',
+                                           iid=c,
+                                           text=uninhab_dict['Name'])
+            c += 1
+            self.click_coor[uninhab_parent] = uninhab_dict['click_area']
+            self.photo_coor[uninhab_parent] = uninhab_dict['Image']
+                
         for city_dic in self.towns:
             # Prevent overcounting population by resetting the population
             # to 0 every iteration of population
@@ -356,14 +367,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
                                  iid=c,)
                 c += 1
                 self.click_coor[city_parent] = city_dic['click_area']
-            elif city_dic['Type'] == 'Cave':
-                city_parent = self.tree.insert('',
-                                               'end',
-                                               iid=c,
-                                               text=city_dic['Name'])
-                c += 1
-                self.click_coor[city_parent] = city_dic['click_area']
-                self.photo_coor[city_parent] = city_dic['Name']
+                self.photo_coor[city_parent] = city_dic['Image']
             else:
                 # Same as above, except the blank line
                 city_parent = self.tree.insert('',
@@ -372,9 +376,11 @@ https://www.gnu.org/licenses/gpl-2.0.html
                                                text=city_dic['Name'])
                 c += 1
                 self.click_coor[city_parent] = city_dic['click_area']
+                self.photo_coor[city_parent] = city_dic['Image']
 
             for city_key, city_info in city_dic.iteritems():
-                if city_dic['Type'] == 'Cave':
+                
+                if city_info == None:
                     break
                 # There is other information, such as 'Name' and others,
                 # however we only need to populate from the information
@@ -518,26 +524,27 @@ Distance:   %skm to %s.
         except AttributeError as err:
             if DEBUG:
                 print err
-
+        
         self.selection_indicator = self.canvas.create_rectangle(
             bbox[0], bbox[1] + 20, bbox[0] + 20, bbox[1],
             outline='red', width=2)
 
     def update_ui(self, event):
         try:
-            #self.get_photo(event)
             self.update_details(event)
+            self.update_image()
         except Exception as err:
             if DEBUG:
                 print err
 
-    def get_cave_image(self, name):
-        """
-        Grabs generated cave image from mapGen.
-        """
-
-        pil_cave_im = mapGen.main('cave', name)
-        self.get_photo(pil_im=pil_cave_im)
+    def update_image():
+        try:
+            self.get_photo(pil_im=self.photo_coor[self.tree.focus()])
+            if DEBUG: print "UI.update_Image.Done"
+            return True
+        except KeyError as err:
+            if DEBUG:
+                print err
 
     def update_details(self, event):
 
@@ -550,7 +557,7 @@ Distance:   %skm to %s.
         def actor_update():
             try:
                 self.details.insert('end', self.actor_coor[self.tree.focus()]['Info'])
-                print "UI.update_details.Actor.Done"
+                if DEBUG: print "UI.update_details.Actor.Done"
             except KeyError as err:
                 if DEBUG:
                     print err
@@ -558,8 +565,7 @@ Distance:   %skm to %s.
         def object_update():
             try:
                 self.details.insert('end', str(self.town_coor[self.tree.focus()]))
-
-                print "UI.update_details.Object.Done"
+                if DEBUG: print "UI.update_details.Object.Done"
             except KeyError as err:
                 if DEBUG:
                     print err
@@ -568,7 +574,7 @@ Distance:   %skm to %s.
             try:
                 text = self.make_armor_metadata(self.arm_coor[self.tree.focus()])
                 self.details.insert('end', str(text))
-                print "UI.update_details.Arm.Done"
+                if DEBUG: print "UI.update_details.Arm.Done"
             except KeyError as err:
                 if DEBUG:
                     print err
@@ -577,7 +583,7 @@ Distance:   %skm to %s.
             try:
                 text = self.make_weapon_metadata(self.wep_coor[self.tree.focus()])
                 self.details.insert('end', str(text))
-                print "UI.update_details.Wep.Done"
+                if DEBUG: print "UI.update_details.Wep.Done"
             except KeyError as err:
                 if DEBUG:
                     print err
@@ -592,7 +598,7 @@ Distance:   %skm to %s.
         self.draw_select_ring(self.click_coor[self.tree.focus()])
         self.details.config(state='disabled')
 
-    def city_map_select(self, event):
+    def click_map_select(self, event):
 
         """
         Checks click coordinates against a bounding box equivalent to
@@ -602,13 +608,13 @@ Distance:   %skm to %s.
         Sets selection and focus to corresponding town, then change is
         reflected in self.details automatically.
         """
-
-        for city_id, click_corner in self.click_coor.items():
+        
+        for item_id, click_corner in self.click_coor.items():
             x_true = event.x >= click_corner[0] >= event.x - 20  # png is 20x20px
             y_true = event.y >= click_corner[1] >= event.y - 20
             if x_true and y_true:
-                self.tree.selection_set(city_id)
-                self.tree.focus(city_id)
+                self.tree.selection_set(item_id)
+                self.tree.focus(item_id)
                 self.draw_select_ring(click_corner)
 
 
