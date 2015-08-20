@@ -1,5 +1,5 @@
-Prog V: 0.65a;
-Doc  V: 0.65a
+Prog V: 0.68;
+Doc  V: 0.68
 
 ###INTRO:
 R.A.L.C is an acronymn for Randomized Adventure Lore Creator, it is the
@@ -25,7 +25,10 @@ python-imaging-tk`
 This program tries to be as cross-platform as possible, but will run best on
 a linux-based system. Reguardless, it _should_ run on any environment that
 has a python2.7 installation with the required dependancies.
-Run like:
-`python main.py`
+
+Make sure to clone with the --recursive tag or initilize the submodules.
+
+Run as:
+`python2 main.py`
 A GUI will then appear with an option to create a new area, or
 save/load/new character sheet.

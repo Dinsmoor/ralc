@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'Beta v0.66'
+RALC_VERSION = 'v0.68'
 DEBUG = True
 try:
     import Tkinter as tk
