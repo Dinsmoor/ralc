@@ -1,0 +1,47 @@
+# Name,Utility value (Cloth value)
+
+# Cloth-based
+Silk,76.0
+Cloth,1.0
+Light Wool,8.0
+Heavy Wool,12.0
+Textiles,25.0
+Linen,20.0
+Cotton,40.0
+
+#metals
+Iron,25.0
+Steel,35.0
+
+#arguculture
+Slaves,300.0
+Spices,50.0
+Milking Cows,65.0
+Sheep,35.0
+Lamb,30.0
+Fertilizer,2.0
+Fish,15.0
+
+#food/drink
+Wine,15.0
+
+#tools
+Wooden Tools,10.0
+Metal Tools,60.0
+Metalworking Tools,180.0
+Woodworking Tools,80.0
+Small Weapons,110.0
+Large Weapons,170.0
+Seige Equipment,530.0
+
+
+#vehicles
+Horse Wagon,180.0
+Small Ship, 1400.0
+
+
+
+#misc
+Luxury Goods,150.0
+Amber,65.0
+Furs,55.0
