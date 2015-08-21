@@ -255,6 +255,8 @@ class LoadDialog(Dialog):
         self.del_opt = bool()
         self.del_cb = tk.Button(master, text="Delete",
             command=self.delete_save).grid(row=2, columnspan=2)
+            
+        self.bind("<Delete>", self.delete_save)
 
     def get_save_dir(self):
 
@@ -281,7 +283,8 @@ class LoadDialog(Dialog):
             selected = self.file_listbox.curselection()
             load_name = str(self.file_listbox.get(selected))
             self.parent.load_all(load_name)
-        except:
+        except Exception as err:
+            print err
             tkMessageBox.showerror(
-            "Error","Problem loading save!\nSave from old version?")
+            "Error",err)
 

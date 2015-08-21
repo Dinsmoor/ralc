@@ -117,22 +117,18 @@ class UI(tk.Frame):
     def save_all(self, save_name):
 
         def make_dir():
+            if DEBUG: print "UI.save_all.Trying_to_make_dir_with_name:" + save_name
             if not os.path.exists('save/%s' % save_name):
                 os.makedirs('save/%s' % save_name)
 
-        def save_images():
-            self.city_im.save('save/%s/img' % save_name, 'PNG')
-
-        def save_names():
+        def save_data():
             savef = open('save/%s/name' % save_name, 'w')
-            pickle.dump((self.cityName,
-                         self.towns), savef)
+        
+            pickle.dump((self.map_dict), savef)
             savef.close()
 
         make_dir()
-        save_images()
-        if DEBUG: print 'UI.save_all.Image Saved'
-        save_names()
+        save_data()
         if DEBUG: print 'UI.save_all.Names Saved'
 
     def load_all(self, load_name):
@@ -145,23 +141,21 @@ class UI(tk.Frame):
         def check_dir():
 
             if os.path.exists('save/%s' % load_name):
-                return 1
+                if DEBUG: print "UI.load_all.check_dir.True"
+                return True
 
-        def load_image():
-
-            self.city_im = Image.open('save/%s/img' % load_name)
-
-        def load_names():
-
+        def load_data():
             savef = open('save/%s/name' % load_name, 'r')
-            (self.cityName,
-             self.towns) = pickle.load(savef)
+            self.map_dict = pickle.load(savef)
+            self.city_im = self.map_dict['landimg']
+            self.cityName = self.map_dict['cityname']
+            self.towns = self.map_dict['towns']
+            self.uninhab = self.map_dict['uninhab']
+            
             savef.close()
 
         if check_dir():
-            load_image()
-            print 'UI.load_all.Loaded Image From Disk'
-            load_names()
+            load_data()
             print 'UI.load_all.Loaded Names From Disk'
             self.grid()
             self.new_button.destroy()
@@ -319,9 +313,9 @@ https://www.gnu.org/licenses/gpl-2.0.html
         """
         if pil_im == None:
             if DEBUG: print 'UI.get_photo.NoImageAssigned'
-            return
-
-        self.img = ImageTk.PhotoImage(pil_im)
+            self.img = ImageTk.PhotoImage(self.city_im)
+        else:
+            self.img = ImageTk.PhotoImage(pil_im)
 
         self.canvas = tk.Canvas(self.image_frame, background='grey',
                                 width=600, height=600)
@@ -350,6 +344,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
             self.photo_coor[uninhab_parent] = uninhab_dict['Image']
                 
         for city_dic in self.towns:
+            
             # Prevent overcounting population by resetting the population
             # to 0 every iteration of population
 
@@ -377,106 +372,106 @@ https://www.gnu.org/licenses/gpl-2.0.html
                 c += 1
                 self.click_coor[city_parent] = city_dic['click_area']
                 self.photo_coor[city_parent] = city_dic['Image']
-
+            
+            if DEBUG: print "UI.fill_tree.FillingData", city_dic['Name']
             for city_key, city_info in city_dic.iteritems():
-                
                 if city_info == None:
                     break
                 # There is other information, such as 'Name' and others,
                 # however we only need to populate from the information
                 # further down the chain
-                if city_key == 'Data':
-                    for street, bldg_li in city_info.iteritems():
-                        # add streets to the listing
-                        street_parent = self.tree.insert(city_parent,
-                                                         'end',
-                                                         iid=c,
-                                                         text=street)
+                
+                for street, bldg_li in city_dic['Data'].iteritems():
+                    # add streets to the listing
+                    street_parent = self.tree.insert(city_parent,
+                                                     'end',
+                                                     iid=c,
+                                                     text=street)
+                    c+=1
+                    for bldg in bldg_li:
+                        # add buildings to streets, listed by purpose
+                        bldg_parent = self.tree.insert(street_parent,
+                                                       'end',
+                                                       iid=c,
+                                                       text=bldg['Name'])
                         c+=1
-                        for bldg in bldg_li:
-                            # add buildings to streets, listed by purpose
-                            bldg_parent = self.tree.insert(street_parent,
-                                                           'end',
-                                                           iid=c,
-                                                           text=bldg['Name'])
-                            c+=1
-                            for rooms, roomsdata in bldg.iteritems():
-                                # add list of rooms
-                                if type(roomsdata) == list:
-                                    for room in roomsdata:  # list
-                                        # ensure that the room type gets parsed first
-                                        room = col.OrderedDict(room)
-                                        tempvalue = room.pop('Actors')
-                                        room['Actors'] = tempvalue
-                                        tempvalue = room.pop('Weapons')
-                                        room['Weapons'] = tempvalue
-                                        tempvalue = room.pop('Armor')
-                                        room['Armor'] = tempvalue
+                        for rooms, roomsdata in bldg.iteritems():
+                            # add list of rooms
+                            if type(roomsdata) == list:
+                                for room in roomsdata:  # list
+                                    # ensure that the room type gets parsed first
+                                    room = col.OrderedDict(room)
+                                    tempvalue = room.pop('Actors')
+                                    room['Actors'] = tempvalue
+                                    tempvalue = room.pop('Weapons')
+                                    room['Weapons'] = tempvalue
+                                    tempvalue = room.pop('Armor')
+                                    room['Armor'] = tempvalue
 
-                                        for key, value in room.iteritems():  # dict
-                                            if key == 'Type':
-                                                # add the rooms themselves
-                                                room_parent = self.tree.insert(bldg_parent,
-                                                                               'end',
-                                                                               iid=c,
-                                                                               text=value)
+                                    for key, value in room.iteritems():  # dict
+                                        if key == 'Type':
+                                            # add the rooms themselves
+                                            room_parent = self.tree.insert(bldg_parent,
+                                                                           'end',
+                                                                           iid=c,
+                                                                           text=value)
+                                            c+=1
+
+                                        if key == 'Actors':
+                                            if room['Actors']:
+                                                # add the name of the actors
+                                                actor_parent = self.tree.insert(room_parent,
+                                                                                'end',
+                                                                                iid=c,
+                                                                                text=key)
                                                 c+=1
-
-                                            if key == 'Actors':
-                                                if room['Actors']:
-                                                    # add the name of the actors
-                                                    actor_parent = self.tree.insert(room_parent,
-                                                                                    'end',
-                                                                                    iid=c,
-                                                                                    text=key)
-                                                    c+=1
-                                                    for actor_name, actor_info in value.iteritems():
-                                                        if city_dic['Name'] == self.cityName:
-                                                            city_dic['Population'] += 1
-                                                        else:
-                                                            city_dic['Population'] += 1
-                                                        # The data of the actor
-                                                        actor = self.tree.insert(actor_parent,
-                                                                                 'end',
-                                                                                 iid=c,
-                                                                                 text=actor_name,
-                                                                                 value=actor_info,
-                                                                                 tags=actor_name)
-                                                        c+=1
-
-                                                        self.actor_coor[actor] = actor_info
-
-                                            if key == 'Weapons':
-                                                wep_items_parent = self.tree.insert(room_parent,
-                                                                                    'end',
-                                                                                    iid=c,
-                                                                                    text='Weapons')
-                                                c+=1
-                                                for item_dict in value:
-                                                    item = self.tree.insert(wep_items_parent,
-                                                                            'end',
-                                                                            iid=c,
-                                                                            text=item_dict['Name'])
+                                                for actor_name, actor_info in value.iteritems():
+                                                    if city_dic['Name'] == self.cityName:
+                                                        city_dic['Population'] += 1
+                                                    else:
+                                                        city_dic['Population'] += 1
+                                                    # The data of the actor
+                                                    actor = self.tree.insert(actor_parent,
+                                                                             'end',
+                                                                             iid=c,
+                                                                             text=actor_name,
+                                                                             value=actor_info,
+                                                                             tags=actor_name)
                                                     c+=1
 
-                                                    self.wep_coor[item] = item_dict
+                                                    self.actor_coor[actor] = actor_info
 
-                                            if key == 'Armor':
-                                                armor_items_parent = self.tree.insert(room_parent,
-                                                                                      'end',
-                                                                                      iid=c,
-                                                                                      text='Armor')
+                                        if key == 'Weapons':
+                                            wep_items_parent = self.tree.insert(room_parent,
+                                                                                'end',
+                                                                                iid=c,
+                                                                                text='Weapons')
+                                            c+=1
+                                            for item_dict in value:
+                                                item = self.tree.insert(wep_items_parent,
+                                                                        'end',
+                                                                        iid=c,
+                                                                        text=item_dict['Name'])
                                                 c+=1
-                                                for item_dict in value:
-                                                    item = self.tree.insert(armor_items_parent,
-                                                                            'end',
-                                                                            iid=c,
-                                                                            text=item_dict['Name'])
-                                                    c+=1
 
-                                                    self.arm_coor[item] = item_dict
+                                                self.wep_coor[item] = item_dict
 
-                                            self.town_coor[city_parent] = self.make_town_metadata(city_dic)
+                                        if key == 'Armor':
+                                            armor_items_parent = self.tree.insert(room_parent,
+                                                                                  'end',
+                                                                                  iid=c,
+                                                                                  text='Armor')
+                                            c+=1
+                                            for item_dict in value:
+                                                item = self.tree.insert(armor_items_parent,
+                                                                        'end',
+                                                                        iid=c,
+                                                                        text=item_dict['Name'])
+                                                c+=1
+
+                                                self.arm_coor[item] = item_dict
+
+                                        self.town_coor[city_parent] = self.make_town_metadata(city_dic)
 
     @staticmethod
     def make_armor_metadata(arm):
@@ -532,17 +527,9 @@ Distance:   %skm to %s.
     def update_ui(self, event):
         try:
             self.update_details(event)
-            self.update_image()
-        except Exception as err:
-            if DEBUG:
-                print err
-
-    def update_image():
-        try:
             self.get_photo(pil_im=self.photo_coor[self.tree.focus()])
-            if DEBUG: print "UI.update_Image.Done"
-            return True
-        except KeyError as err:
+            self.draw_select_ring(self.click_coor[self.tree.focus()])
+        except Exception as err:
             if DEBUG:
                 print err
 
@@ -559,16 +546,14 @@ Distance:   %skm to %s.
                 self.details.insert('end', self.actor_coor[self.tree.focus()]['Info'])
                 if DEBUG: print "UI.update_details.Actor.Done"
             except KeyError as err:
-                if DEBUG:
-                    print err
+                pass
 
         def object_update():
             try:
                 self.details.insert('end', str(self.town_coor[self.tree.focus()]))
                 if DEBUG: print "UI.update_details.Object.Done"
             except KeyError as err:
-                if DEBUG:
-                    print err
+                pass
 
         def arm_update():
             try:
@@ -576,8 +561,7 @@ Distance:   %skm to %s.
                 self.details.insert('end', str(text))
                 if DEBUG: print "UI.update_details.Arm.Done"
             except KeyError as err:
-                if DEBUG:
-                    print err
+                pass
 
         def wep_update():
             try:
@@ -585,12 +569,12 @@ Distance:   %skm to %s.
                 self.details.insert('end', str(text))
                 if DEBUG: print "UI.update_details.Wep.Done"
             except KeyError as err:
-                if DEBUG:
-                    print err
+                pass
 
         self.details.config(state='normal')
         self.details.delete(1.0, 'end')
-
+        
+        if DEBUG: print 'Key:', self.tree.focus()
         actor_update()
         object_update()
         wep_update()

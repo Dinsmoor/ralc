@@ -163,7 +163,6 @@ class Land_Image(object):
     
     def is_far_enough_away(self, x_cor, y_cor):
         
-        far_enough = True
         x_used_li = y_used_li = list()
         
         for coord in self.used_coords:
@@ -172,14 +171,15 @@ class Land_Image(object):
         
         for x in x_used_li:
             closest_x = min(x_used_li, key=lambda x:abs(x-x_cor))
-            far_enough = closest_x >= 22
+            if closest_x <= 22:
+                return False
         
-        if far_enough:
-            for y in y_used_li:
-                closest_y = min(y_used_li, key=lambda x:abs(x-y_cor))
-                far_enough = closest_y >= 22
+        for y in y_used_li:
+            closest_y = min(y_used_li, key=lambda x:abs(x-y_cor))
+            if closest_y <= 22:
+                return False
         
-        return far_enough
+        return True
     
     def draw_smalls(self):
 
@@ -221,6 +221,7 @@ class Land_Image(object):
                     uninhab_li.append(smallsDat)
                 else:
                     smalls_li.append(smallsDat)
+        print smalls_li[0]
         return smalls_li, uninhab_li
 
     def draw_terrain(self):
@@ -510,7 +511,7 @@ class Dungeon_Image:
         colors = {
             "#":"darkgrey",
             ".":"lightgrey",
-            ">":"red",
+            ">":"lightgrey",#"red", No multiple levels for now
             "<":"green",
             " ":""
             }
@@ -541,7 +542,8 @@ class Dungeon_Image:
             if symbol == "<":
                 dg_draw.text((x,y+10), "UP", fill=color_fill)
             if symbol == ">":
-                dg_draw.text((x,y+10), "DOWN", fill=color_fill)
+                pass
+                #dg_draw.text((x,y+10), "DOWN", fill=color_fill)
         
         self.draw_treasure(dg_draw, floors, random.randint(1,15)) #yarr!
         
