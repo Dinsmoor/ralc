@@ -221,7 +221,6 @@ class Land_Image(object):
                     uninhab_li.append(smallsDat)
                 else:
                     smalls_li.append(smallsDat)
-        print smalls_li[0]
         return smalls_li, uninhab_li
 
     def draw_terrain(self):

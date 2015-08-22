@@ -28,7 +28,6 @@ import Tkinter as tk
 import ttk
 import tkMessageBox
 import os
-import shutil
 import charGen
 
 class Dialog(tk.Toplevel):
@@ -271,7 +270,7 @@ class LoadDialog(Dialog):
         selected = self.file_listbox.curselection()
         del_name = str(self.file_listbox.get(selected))
         try:
-            shutil.rmtree('save/%s'%del_name)
+            os.remove('save/%s'%del_name)
             print "LoadDialog.delete_save.Done"
         except OSError:
             print "LoadDialog.delete_save.OSError['Item not a Dir?']"
