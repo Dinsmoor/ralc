@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'v0.68'
+RALC_VERSION = 'v0.69'
 DEBUG = True
 try:
     import Tkinter as tk
@@ -96,7 +96,15 @@ class UI(tk.Frame):
         self.create_widgets()
         self.new_button.destroy()
         self.grid()
-
+        
+        #flush out old correlation information
+        self.actor_coor = dict()
+        self.town_coor = dict()
+        self.wep_coor = dict()
+        self.arm_coor = dict()
+        self.click_coor = dict()
+        self.photo_coor = dict()
+        
         self.map_dict = mapGen.main('tk', self.settings)
         self.city_im = self.map_dict['landimg']
         self.cityName = self.map_dict['cityname']
@@ -158,7 +166,16 @@ class UI(tk.Frame):
 
             savef.close()
 
+        def clear_old_data():
+            self.actor_coor = dict()
+            self.town_coor = dict()
+            self.wep_coor = dict()
+            self.arm_coor = dict()
+            self.click_coor = dict()
+            self.photo_coor = dict()
+
         if check_dir():
+            clear_old_data()
             load_data()
             print 'UI.load_all.Loaded Names From Disk'
             self.grid()
@@ -250,9 +267,12 @@ class UI(tk.Frame):
                                            relief="sunken", width=200, height=600)
             self.details = tk.Text(self.details_frame, width=50,
                                    height=40, state='disabled')
-
+            self.print_button = tk.Button(self.details_frame, text="Print",
+                                        padx=70, pady=10, command=self.print_details)
+                                        
             self.details_frame.grid(row=0, column=4, sticky='N', pady=5)
             self.details.grid(row=0, column=0)
+            self.print_button.grid(row=1, column=0)
 
             if DEBUG: print "UI.make_details_pane.Done"
 
@@ -470,6 +490,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
                                             self.arm_coor[item] = item_dict
 
                                     self.town_coor[city_parent] = self.make_town_metadata(city_dic)
+        c = 1
 
     @staticmethod
     def make_armor_metadata(arm):
@@ -519,6 +540,12 @@ Distance:   %skm to %s.
     ####
     # Callbacks
     ####
+
+    def print_details(self):
+        import subprocess
+        text = self.details.get(1.0,'end')
+        lpr = subprocess.Popen("/usr/bin/lpr", stdin=subprocess.PIPE)
+        lpr.stdin.write(text)
 
     def draw_select_ring(self, bbox):
         try:

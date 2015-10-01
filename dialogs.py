@@ -5,22 +5,6 @@
 #
 #  Copyright 2015 Tyler Dinsmoor <pappad@airmail.cc>
 #
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
 
 
 # Master Dialog modified for grid (tkSimpleDialog)
@@ -114,6 +98,34 @@ class CharSheetGen(Dialog):
             height=30, state='disabled')
         self.char_text.grid(row=1, column=0)
 
+        self.use_custom_b = tk.BooleanVar()
+        use_custom = ttk.Checkbutton(self.set_page, variable=self.use_custom_b,
+                    text='Custom Char').grid(row=0, column=0)
+
+        self.pl_level = tk.Scale(self.set_page,
+                orient='horizontal', from_=1, to=20, resolution=1,
+                label='Level', length=200)
+        self.pl_level.grid(row=1, column=0)
+        self.pl_level.set(1)
+
+        self.class_ch = tk.Listbox(self.set_page, selectmode='single')
+        self.class_ch.grid(row=2, column=0)
+
+        class_list = ('Cleric', 'Druid', 'Ranger', 'Paladin', 'Warlock', 'Wizard',
+              'Barbarian', 'Fighter', 'Rouge', 'Monk', 'Bard', 'Sorcerer',
+              'Commoner')
+        for cl in class_list:
+            self.class_ch.insert('end', cl)
+
+        self.race_ch = tk.Listbox(self.set_page, selectmode='single')
+        self.race_ch.grid(row=2, column=1)
+
+        race_list = ('Human', 'Elf', 'Dwarf', 'Halfling', 'Half-Elf', 'Half-Orc',
+            'Dragonborn', 'Gnome')
+        for rc in race_list:
+            self.race_ch.insert('end', rc)
+
+
         self.apply()
 
     def buttonbox(self):
@@ -134,10 +146,18 @@ class CharSheetGen(Dialog):
         Need to replace stock ok() because I don't want it to exit
         immediately after creating a new sheet.
         '''
+        self.mod_settings = self.parent.settings
+
+
 
         self.apply()
 
     def apply(self):
+
+        #selected = self.class_ch.curselection()
+        #class_name = str(self.class_ch.get(selected))
+        #char_sheet = charGen.custom_param(self.parent.settings)
+
         char_sheet = charGen.custom_param(self.parent.settings)
         self.char_text.config(state='normal')
         self.char_text.delete(1.0, 'end')
@@ -210,7 +230,7 @@ class SettingsMenu(Dialog):
                 label='Town Size', length=200)
             self.city_size_mod_scale.grid(row=0, column=1)
             self.city_size_mod_scale.set(1.0)
-            
+
             self.affluence_scale = tk.Scale(self.town_page,
                 orient='horizontal', from_=0.1, to=2.0, resolution=0.1,
                 label='Affluence', length=200)
@@ -218,7 +238,7 @@ class SettingsMenu(Dialog):
             self.affluence_scale.set(1.0)
 
         def make_char_page():
-            tk.Label(self.char_page, text="Median Char Level").grid(row=0, column=0)
+            tk.Label(self.char_page, text="Character Level").grid(row=0, column=0)
             self.level_scale = tk.Scale(self.char_page,
                 orient='horizontal', from_=1, to=20)
             self.level_scale.grid(row=0, column=1)
@@ -254,7 +274,7 @@ class LoadDialog(Dialog):
         self.del_opt = bool()
         self.del_cb = tk.Button(master, text="Delete",
             command=self.delete_save).grid(row=2, columnspan=2)
-            
+
         self.bind("<Delete>", self.delete_save)
 
     def get_save_dir(self):

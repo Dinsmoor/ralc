@@ -18,8 +18,8 @@ cross-platform free software.
 ###DEPENDENCIES:
 `python2.7
 python-tk
-python-imaging
-python-imaging-tk`
+python-pil
+python-pil.imagetk`
 
 ###USAGE:
 This program tries to be as cross-platform as possible, but will run best on

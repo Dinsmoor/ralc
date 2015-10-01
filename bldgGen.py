@@ -5,23 +5,6 @@
 #
 #  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
 #
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-# gets information provided from landGen to decide building construction
-# passes info to townGen, which then makes a lot of buildings
 
 try:
     import random
@@ -62,6 +45,10 @@ class Building(object):
 
     def get_rooms(self, rooms):
 
+        types = (('Shack',20),('Residence',50),('General Store',10),
+                ('Armory',5),('Farm',5),('Weapon Forge',5),
+                ('Tavern',5),('Inn',10))
+
         d = {
             'Shack':['Entry','Kitchen','Common Area'],
 
@@ -83,7 +70,8 @@ class Building(object):
                 'Common Area', 'Sleeping Quarters']
             }
 
-        purpose = random.choice(d.keys())
+
+        purpose = wChoice(types)
         roomTypes = d[purpose]
         roomDat = list()
         for room in roomTypes:

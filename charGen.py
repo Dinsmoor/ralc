@@ -4,24 +4,7 @@
 #  charGen.py
 #
 #  Copyright 2014 Tyler Dinsmoor <pappad@airmail.cc>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#  Responsible for generation of characters, their stats, abilites,
-#  and bios. Passes to townGen to populate buildings with people
+
 
 try:
     import random
@@ -439,8 +422,8 @@ def get_name(pc_race, pc_gender):
     race name in a particular syntax, then imports all sorts of different names
     based upon their index in a list of lists.
     """
-    
-    
+
+
     global pc
     try:
         names = get_f_f_lol('data/char/' + (pc_race.lower() + 'Names'))
@@ -799,7 +782,7 @@ def get_height_weight(pc_race, pc_subrace):
 def settings_config(pc_config):
     global new_class, newRace, pcLevel
     if pc_config['use']:
-        pcLevel = pc_config['Level']
+        pcLevel = pc_config['Level']#random.randint(1, pc_config['Level']+ random.randint(0,3))
         newRace = pc_config['Race']
         new_class = pc_config['Class']
     else:
@@ -905,7 +888,7 @@ STATS:
             except:
                 break
     else:
-        spells = "\nNo Spells"
+        spells = "\nNo Spells\n"
 
     item_d = itemGen.main('wep', 'rnd')
     weapon = '''
@@ -951,12 +934,12 @@ SPECIALTY:\n%s
 FEATURE:\n%s
 	'''%(pc['Trait'], pc['Idea'],
                pc['Bond'], pc['Flaw'], pc['Specialty'], pc['Feature'])
-    
+
     try:
         pc['Info'] = bio + stats + proficiencies + traits + weapon + armor + spells + background
     except Exception as err:
         print err
-    
+
     if pc['Class'] == 'Commoner':
         pc['Info'] = bio + stats + background
     return pc

@@ -5,31 +5,17 @@
 #
 #  Copyright 2015 Tyler Dinsmoor <pappad@airmail.cc>
 #
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
 
 try:
     import random
     import townGen
     import caveGen
     from dungeongenerator import dungeon
+    from markovnames import nameGen
     from PIL import Image, ImageDraw, ImageTk, ImageFilter
-except ImportError:
+except ImportError as err:
     print "You are missing essential Libraries. See README.md"
+    print err
     exit()
 
 def getFromFile_T(fi):
@@ -40,26 +26,10 @@ def getFromFile_T(fi):
     fi.close()
     return tu
 
-def getSmallName(small_type):
-    name = random.choice(getFromFile_T('data/'+small_type.lower()+'s'))
-    for s in name:
-        return s
-def getCityName():
-    cityname = random.choice(getFromFile_T('data/cities'))
-    for s in cityname:
-        return s
-def getVillageName():
-    villageName = random.choice(getFromFile_T('data/villages'))
-    for s in villageName:
-        return s
-def getCampName():
-    campName = random.choice(getFromFile_T('data/camps'))
-    for s in campName:
-        return s
-def getBldgName():
-    bldgName = random.choice(getFromFile_T('data/bldgs'))
-    for s in bldgName:
-        return s
+def getSettlementName():
+    names = random.choice(getFromFile_T('data/settlement_names'))
+    return nameGen.get_name(names)
+
 def wChoice(wCh):
     '''must be in format: wChoice(('a',1.0),('b',2.0),('c',3.0))'''
     totalChoice = sum(w for c, w in wCh)
@@ -87,7 +57,7 @@ class Land_Image(object):
         '''
         biome = self.get_biome(biome_ovr)
         self.biome = biome
-        self.city_name = getCityName()
+        self.city_name = getSettlementName()
 
         blacktext = ('tundra','desert','marsh','hills')
         if biome in blacktext:
@@ -107,13 +77,13 @@ class Land_Image(object):
         self.draw_water(biome)
         #self.draw_terrain()
         self.draw_flora(biome)
-        
+
         self.used_coords = list()
         city_dic = self.draw_city()
         self.town_names, self.uninhab = self.draw_smalls()#camp_dic + vil_dic
         city_dic['Image'] = self.im
         self.town_names.append(city_dic)
-    
+
     def get_biome(self, override):
 
         if override != None:
@@ -155,32 +125,32 @@ class Land_Image(object):
             'Image':None, #added at end
                     }
         return city_dic
-    
+
     def get_some_coords(self):
         x = random.randrange(10,self.imgx-50)
         y = random.randrange(10,self.imgy-50)
         return x, y
-    
+
     def is_far_enough_away(self, x_cor, y_cor):
-        
+
         x_used_li = y_used_li = list()
-        
+
         for coord in self.used_coords:
             x_used_li.append(coord[0])
             y_used_li.append(coord[1])
-        
+
         for x in x_used_li:
             closest_x = min(x_used_li, key=lambda x:abs(x-x_cor))
             if closest_x <= 22:
                 return False
-        
+
         for y in y_used_li:
             closest_y = min(y_used_li, key=lambda x:abs(x-y_cor))
             if closest_y <= 22:
                 return False
-        
+
         return True
-    
+
     def draw_smalls(self):
 
         smalls_li = list()
@@ -193,12 +163,12 @@ class Land_Image(object):
             density = random.randint(1,5)
             image_to_paste = Image.open('data/sprites/'+TYPE.lower()+'.png')
             for c in xrange(0,density):
-                name = getSmallName(TYPE)
+                name = getSettlementName()
                 x, y = self.get_some_coords()
-                
+
                 while not self.is_far_enough_away(x,y):
                     x, y = self.get_some_coords()
-                
+
                 self.used_coords.append((x,y))
                 self.im.paste(image_to_paste, (x,y), image_to_paste)
                 self.draw.text((x-10,y+18),name, fill=self.text_color)
@@ -246,6 +216,7 @@ class Land_Image(object):
         draw_scorch_marks()
 
     def draw_water(self, biome):
+        river_points = []
 
         def river(densityFactor):
 
@@ -279,11 +250,20 @@ class Land_Image(object):
                     self.draw.point((x,y), fill='#2A2CD8')
                     self.draw.point((x-1,y-1), fill='navy')
                     self.draw.point((x+1,y+1), fill='navy')
+                    river_points.append((x,y))
 
         def lake():
 
             # just have it be a shallow-looking pond, I suppose
-            self.draw.ellipse()
+            lake_amount = random.randint(0,5)
+
+            for lake in xrange(0,lake_amount):
+                point = random.choice(river_points)
+                x = point[0]
+                y = point[1]
+
+                self.draw.ellipse((x,y,x+35,y+15), fill='#2A2CD8')
+
 
         d ={
         'forest':0.7,
@@ -293,7 +273,11 @@ class Land_Image(object):
         'marsh':1,
         'desert':0.1
         }
+
         river(d[biome])
+        print len(river_points)
+        if len(river_points) > 1:
+            lake()
 
     def draw_flora(self,biome):
 
@@ -328,11 +312,6 @@ class Land_Image(object):
 
     def show_image(self):
         self.im.show()
-
-
-
-
-
 
 class Town_Image(object):
 
@@ -484,15 +463,15 @@ class Cave_Image:
 
     def filter_cave(self):
         pass
-        
-        
+
+
 class Dungeon_Image:
 
     def __init__(self, name=None):
         self.DUNGEON_SIZE = 7
         # second is /2 to make it square
         tile_dict = dungeon.generate(self.DUNGEON_SIZE,self.DUNGEON_SIZE,8)# Density
-        
+
         self.imgx = 600
         self.imgy = self.imgx
         self.im = Image.new('RGB',(self.imgx,self.imgy),'black')
@@ -506,7 +485,7 @@ class Dungeon_Image:
 
     def draw_dg(self, tile_dict):
         dg_draw = ImageDraw.Draw(self.im)
-        
+
         colors = {
             "#":"darkgrey",
             ".":"lightgrey",
@@ -514,9 +493,9 @@ class Dungeon_Image:
             "<":"green",
             " ":""
             }
-        
+
         floors = []
-        
+
         # draw everything but labled items first
         for coords, symbol in tile_dict.iteritems():
             color_fill = colors[symbol]
@@ -530,7 +509,7 @@ class Dungeon_Image:
                 dg_draw.rectangle((x,y,x2,y2), fill=color_fill)
             if symbol == ".":
                 floors.append(coords)
-                
+
         #to make sure that text gets drawn on top
         for coords, symbol in tile_dict.iteritems():
             color_fill = colors[symbol]
@@ -543,11 +522,11 @@ class Dungeon_Image:
             if symbol == ">":
                 pass
                 #dg_draw.text((x,y+10), "DOWN", fill=color_fill)
-        
+
         self.draw_treasure(dg_draw, floors, random.randint(1,15)) #yarr!
-        
+
     def draw_treasure(self, draw_surface, valid_area, number):
-        
+
         where_to_drop = random.sample(valid_area, number)
         containers = (('Open Chest',10),
                     ('Locked Chest',3),
@@ -556,7 +535,7 @@ class Dungeon_Image:
                     ('Box',10),
                     ('Mimic',1),
                     ('Cursed Chest',1))
-        
+
         for place in where_to_drop:
             x = place[0] * 10
             y = place[1] * 10
@@ -585,7 +564,8 @@ def main(opt, pref):
     if opt == 'cave':
         caveImg = Cave_Image(pref)
     else:
-        #landImg = Land_Image(pref['map']['biome'])
+        landImg = Land_Image(pref['map']['biome'])
+        landImg.im.show()
         #townImg = Town_Image(pref)
         #bldgImg = Building_Image()
         #caveImg = Cave_Image()
