@@ -415,81 +415,24 @@ https://www.gnu.org/licenses/gpl-2.0.html
                     c+=1
                     for rooms, roomsdata in bldg.iteritems():
                         # add list of rooms
-                        if type(roomsdata) == list:
-                            for room in roomsdata:  # list
-                                # ensure that the room type gets parsed first
-                                room = col.OrderedDict(room)
-                                tempvalue = room.pop('Actors')
-                                room['Actors'] = tempvalue
-                                tempvalue = room.pop('Weapons')
-                                room['Weapons'] = tempvalue
-                                tempvalue = room.pop('Armor')
-                                room['Armor'] = tempvalue
+                        if type(roomsdata) == dict:
+                            for actor_name, actor_info in roomsdata.iteritems():
+                                if city_dic['Name'] == self.cityName:
+                                    city_dic['Population'] += 1
+                                else:
+                                    city_dic['Population'] += 1
+                                # The data of the actor
+                                actor = self.tree.insert(bldg_parent,
+                                                         'end',
+                                                         iid=c,
+                                                         text=actor_name,
+                                                         value=actor_info,
+                                                         tags=actor_name)
+                                c+=1
 
-                                for key, value in room.iteritems():  # dict
-                                    if key == 'Type':
-                                        # add the rooms themselves
-                                        room_parent = self.tree.insert(bldg_parent,
-                                                                       'end',
-                                                                       iid=c,
-                                                                       text=value)
-                                        c+=1
+                                self.actor_coor[actor] = actor_info
 
-                                    if key == 'Actors':
-                                        if room['Actors']:
-                                            # add the name of the actors
-                                            actor_parent = self.tree.insert(room_parent,
-                                                                            'end',
-                                                                            iid=c,
-                                                                            text=key)
-                                            c+=1
-                                            for actor_name, actor_info in value.iteritems():
-                                                if city_dic['Name'] == self.cityName:
-                                                    city_dic['Population'] += 1
-                                                else:
-                                                    city_dic['Population'] += 1
-                                                # The data of the actor
-                                                actor = self.tree.insert(actor_parent,
-                                                                         'end',
-                                                                         iid=c,
-                                                                         text=actor_name,
-                                                                         value=actor_info,
-                                                                         tags=actor_name)
-                                                c+=1
-
-                                                self.actor_coor[actor] = actor_info
-
-                                    if key == 'Weapons':
-                                        wep_items_parent = self.tree.insert(room_parent,
-                                                                            'end',
-                                                                            iid=c,
-                                                                            text='Weapons')
-                                        c+=1
-                                        for item_dict in value:
-                                            item = self.tree.insert(wep_items_parent,
-                                                                    'end',
-                                                                    iid=c,
-                                                                    text=item_dict['Name'])
-                                            c+=1
-
-                                            self.wep_coor[item] = item_dict
-
-                                    if key == 'Armor':
-                                        armor_items_parent = self.tree.insert(room_parent,
-                                                                              'end',
-                                                                              iid=c,
-                                                                              text='Armor')
-                                        c+=1
-                                        for item_dict in value:
-                                            item = self.tree.insert(armor_items_parent,
-                                                                    'end',
-                                                                    iid=c,
-                                                                    text=item_dict['Name'])
-                                            c+=1
-
-                                            self.arm_coor[item] = item_dict
-
-                                    self.town_coor[city_parent] = self.make_town_metadata(city_dic)
+                            self.town_coor[city_parent] = self.make_town_metadata(city_dic)
         c = 1
 
     @staticmethod

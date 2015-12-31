@@ -34,55 +34,37 @@ class Building(object):
         self.settings = pref
 
         self.bldgDat = dict()
-        self.bldgDat['Rooms'] = {}
-        self.bldgDat['Purpose'], self.bldgDat['Rooms'] = self.get_rooms(random.randint(1,3))
+        self.bldgDat['Actors'] = {}
+        self.bldgDat['Purpose'], self.bldgDat['Actors'] = self.get_actors()
         try:
-            owner = random.choice(self.bldgDat['Rooms'][0]['Actors'].values())
+            owner = random.choice(self.bldgDat['Actors'].values())
         except IndexError:
             owner = "Community"
         self.bldgDat['Name'] = owner['First Name']+"'s %s"%self.bldgDat['Purpose']
 
 
-    def get_rooms(self, rooms):
+    def get_actors(self):
 
         types = (('Shack',20),('Residence',50),('General Store',10),
                 ('Armory',5),('Farm',5),('Weapon Forge',5),
                 ('Tavern',5),('Inn',10))
 
         d = {
-            'Shack':['Entry','Kitchen','Common Area'],
-
-            'Residence':['Entry','Kitchen','Living Area','Dining Area',
-                'Common Area', 'Sleeping Quarters'],
-
-            'General Store':['Entry','Store Room', 'Counter'],
-
-            'Armory':['Entry','Forge', 'Counter'],
-
-            'Farm':['Gate','Barn','Slaughter Room'],
-
-            'Weapon Forge':['Entry','Forge', 'Counter',
-                'Grinding Wheel'],
-
-            'Tavern':['Entry','Kitchen','Social Area', 'Harlot Room'],
-
-            'Inn':['Entry','Kitchen',
-                'Common Area', 'Sleeping Quarters']
+            'Shack':4,
+            'Residence':3,
+            'General Store':7,
+            'Armory':5,
+            'Farm':14,
+            'Weapon Forge':7,
+            'Tavern':20,
+            'Inn':25,
             }
 
 
         purpose = wChoice(types)
-        roomTypes = d[purpose]
-        roomDat = list()
-        for room in roomTypes:
-            roomDat.append({
-            'Actors':self.get_inhabitants(random.randint(1,5)),
-            'Weapons':self.get_random_items('wep',random.randint(0,2)),
-            'Armor':self.get_random_items('arm',random.randint(0,2)),
-            'Type':room,
-            })
-        # needs to return list
-        return purpose, roomDat
+        
+        actors = self.get_inhabitants(random.randint(1,d[purpose]))
+        return purpose, actors
 
     def get_random_items(self, typ, amount):
         item_l = list()

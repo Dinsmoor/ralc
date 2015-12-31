@@ -361,31 +361,11 @@ class Town_Image(object):
 
         img_bldgSimple = Image.open('data/sprites/cityBldgSimple.png')
         total_streets = len(self.streets)
-        street_interval = self.imgx / total_streets
-
-        x_axis_assigned = random.randint(1, total_streets -1)
-        y_axis_assigned = total_streets - x_axis_assigned
-        bldg_interval = 6
-
-        x = 0 - (street_interval / 2)
-        y = x
-
-        x_interval = self.imgx / x_axis_assigned
-        y_interval = self.imgy / y_axis_assigned
-
-        for street in xrange(x_axis_assigned):
-            x += x_interval
-            self.draw.line((x,20,x,580), fill='#9A8857', width=3)
-            for bldg in xrange(1,6):
-                bldg_y = self.imgy / bldg
-                self.im.paste(img_bldgSimple, (x-10,bldg_y), img_bldgSimple)
-
-        for street in xrange(y_axis_assigned):
-            y += y_interval
-            self.draw.line((20,y,580,y), fill='#9A8857', width=3)
-            for bldg in xrange(1,6):
-                bldg_x = self.imgx / bldg
-                self.im.paste(img_bldgSimple, (bldg_x,y-10), img_bldgSimple)
+        
+        # load random streets from art resources
+        # search for red dots (houses) and 2xgreen dots(label orientation)
+        # paste them onto the screen layer by layer, respecting transperency
+        # 
 
     def draw_lots(self):
         pass
@@ -565,11 +545,11 @@ def main(opt, pref):
         caveImg = Cave_Image(pref)
     else:
         landImg = Land_Image(pref['map']['biome'])
-        landImg.im.show()
-        #townImg = Town_Image(pref)
+        #landImg.im.show()
+        townImg = Town_Image(pref)
         #bldgImg = Building_Image()
         #caveImg = Cave_Image()
-        #townImg.show_image()
+        townImg.show_image()
         #dungeonImg = Dungeon_Image()
 
         return 0

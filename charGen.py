@@ -17,8 +17,7 @@ except ImportError:
 racesTup = ('Human', 'Elf', 'Dwarf', 'Halfling', 'Half-Elf', 'Half-Orc',
             'Dragonborn', 'Gnome')
 classesTup = ('Cleric', 'Druid', 'Ranger', 'Paladin', 'Warlock', 'Wizard',
-              'Barbarian', 'Fighter', 'Rouge', 'Monk', 'Bard', 'Sorcerer',
-              'Commoner')
+              'Barbarian', 'Fighter', 'Rouge', 'Monk', 'Bard', 'Sorcerer')
 
 
 def weighted_choice(wCh):
@@ -110,10 +109,6 @@ def get_stats():
     would just make main() more bloated, no need.
     """
     global pc
-    if new_class == 'Commoner':
-        pc['STR'] = pc['DEX'] = pc['CON'] = 10
-        pc['INT'] = pc['WIS'] = pc['CHR'] = 10
-        return 'Commoner'
     pc['STR'] = get_stat_roll()
     pc['DEX'] = get_stat_roll()
     pc['CON'] = get_stat_roll()
@@ -327,10 +322,7 @@ def get_hitpoints(pc_class, pc_level, pc_subrace):
         if pc_subrace == 'Hill':
             hp_bonus = 1
 
-        if pc_class == 'Commoner':
-            hit_points = random.randint(1, 8)
-        else:
-            hit_points = hit_dies[pc_class] + pc['conMod'] + hp_bonus
+        hit_points = hit_dies[pc_class] + pc['conMod'] + hp_bonus
 
         if pc_level == 1:
             return hit_points
@@ -384,10 +376,7 @@ def get_race(pc_class):
                      ('Tiefling', 2)),
         "Warlock": (('Dwarf', 10), ('Elf', 10), ('Halfling', 10), ('Human', 25),
                     ('Dragonborn', 2), ('Gnome', 4), ('Half-Elf', 11), ('Half-Orc', 1),
-                    ('Tiefling', 2)),
-        'Commoner': (('Dwarf', 15), ('Elf', 15), ('Halfling', 15), ('Human', 50),
-                     ('Dragonborn', 5), ('Gnome', 5), ('Half-Elf', 10), ('Half-Orc', 5),
-                     ('Tiefling', 5))
+                    ('Tiefling', 2))
     }
     return weighted_choice(d[pc_class])
 
@@ -559,12 +548,7 @@ def get_background(pc_class):
                      ('Criminal', 5), ('Entertainer', 5), ('Folk Hero', 10),
                      ('Guild Artisan', 10), ('Hermit', 5), ('Noble', 15),
                      ('Outlander', 10), ('Sage', 20), ('Sailor', 10),
-                     ('Soldier', 5), ('Urchin', 10)),
-        'Commoner': (('Acolyte', 3), ('Charlatan', 3),
-                     ('Criminal', 15), ('Entertainer', 15), ('Folk Hero', 3),
-                     ('Guild Artisan', 15), ('Hermit', 15), ('Noble', 15),
-                     ('Outlander', 5), ('Sage', 3), ('Sailor', 10),
-                     ('Soldier', 3), ('Urchin', 3)),
+                     ('Soldier', 5), ('Urchin', 10))
     }
 
     try:
@@ -940,8 +924,6 @@ FEATURE:\n%s
     except Exception as err:
         print err
 
-    if pc['Class'] == 'Commoner':
-        pc['Info'] = bio + stats + background
     return pc
 
 
