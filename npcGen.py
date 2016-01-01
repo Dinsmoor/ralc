@@ -36,8 +36,9 @@ class NPC:
         self.describe_me()
 
     def describe_me(self):
+        self.desc = str()
         for desc in self.npcdesc.itervalues():
-            print desc
+            self.desc += desc + "\n"
 
     def build_desc(self):
         npcinfo = self.npcinfo
@@ -50,7 +51,8 @@ class NPC:
         npc_pronoun = pronouns[npcinfo['gender']]
         self.npcdesc[0] = '''
 By looking at this %s %s %s, %s has %s.
-%s appears %s, but also seems %s.'''%(npc_age,npcinfo['gender'],npcinfo['race'],
+%s appears %s, but also seems %s.
+            '''%(npc_age,npcinfo['gender'],npcinfo['race'],
             npc_pronoun[1],npcinfo['appearance'],npc_pronoun[1].capitalize(),
             npcinfo['abil_high_desc'],npcinfo['abil_low_desc'])
         self.npcdesc[1] = '''
@@ -237,5 +239,3 @@ You also learn %s is plauged by %s.
                 'foodlhardy bravery',
                 )
         self.npcinfo['flaw'] = random.choice(flaws)
-
-NPC()

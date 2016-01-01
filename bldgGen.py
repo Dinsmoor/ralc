@@ -8,7 +8,8 @@
 
 try:
     import random
-    import charGen
+    #import charGen
+    import npcGen
     import itemGen
 except ImportError:
     print "You are missing essential Libraries. See README.md"
@@ -37,33 +38,36 @@ class Building(object):
         self.bldgDat['Actors'] = {}
         self.bldgDat['Purpose'], self.bldgDat['Actors'] = self.get_actors()
         try:
-            owner = random.choice(self.bldgDat['Actors'].values())
+            owner = random.choice(self.bldgDat['Actors'].keys())
         except IndexError:
             owner = "Community"
-        self.bldgDat['Name'] = owner['First Name']+"'s %s"%self.bldgDat['Purpose']
+        self.bldgDat['Name'] = owner+"'s %s"%self.bldgDat['Purpose']
 
 
     def get_actors(self):
 
         types = (('Shack',20),('Residence',50),('General Store',10),
                 ('Armory',5),('Farm',5),('Weapon Forge',5),
-                ('Tavern',5),('Inn',10))
+                ('Tavern',5),('Inn',10),('Hardware Store',5),
+                ('Woodsmith',5))
 
         d = {
             'Shack':4,
-            'Residence':3,
+            'Residence':4,
             'General Store':7,
             'Armory':5,
             'Farm':14,
             'Weapon Forge':7,
             'Tavern':20,
             'Inn':25,
+            'Hardware Store':7,
+            'Woodsmith':10,
             }
 
 
         purpose = wChoice(types)
         
-        actors = self.get_inhabitants(random.randint(1,d[purpose]))
+        actors = self.get_inhabitants(random.randint(3,d[purpose]))
         return purpose, actors
 
     def get_random_items(self, typ, amount):
@@ -79,21 +83,23 @@ class Building(object):
     def get_inhabitants(self, popul):
         inhabitants = dict()
         for inhabitant in xrange(0,popul):
-            if random.choice((True, True, False)):
-                char_setting = {
-                    'use':True,
-                    'Level':random.randint(1,3),
-                    'Class':'Commoner',
-                    'Race':None,
-                        }
-                settings = {
-                        'char':char_setting
-                            }
-                person = charGen.custom_param(settings)
-            else:
-                person = charGen.custom_param(self.settings)
+            npc = npcGen.NPC()
+            person = npc.desc
+            #if random.choice((True, True, False)):
+                #char_setting = {
+                    #'use':True,
+                    #'Level':random.randint(1,3),
+                    #'Class':'Commoner',
+                    #'Race':None,
+                        #}
+                #settings = {
+                        #'char':char_setting
+                            #}
+                #person = charGen.custom_param(settings)
+            #else:
+                #person = charGen.custom_param(self.settings)
 
-            key_name = person['Name']
+            key_name = npc.npcinfo['name']
             inhabitants[key_name] = person
         return inhabitants
 

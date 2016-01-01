@@ -99,13 +99,13 @@ class Settlement(object):
             'tundra':0.3,
             'marsh':0.5,
             'desert':0.2,
-            'small':0.2,
+            'small':0.5,
             }
         mult = size_mult[biome]
         if self.settings['town']['size_mod'] != 1.0:
             mult = mult * self.settings['town']['size_mod']
 
-        return int(mult * (random.randint(1,4) + 10))
+        return int(mult * (random.randint(3,8) + 12))
 
     def get_govt(self, affluence):
 

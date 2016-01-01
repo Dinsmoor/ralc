@@ -414,9 +414,10 @@ https://www.gnu.org/licenses/gpl-2.0.html
                                                    text=bldg['Name'])
                     c+=1
                     for rooms, roomsdata in bldg.iteritems():
-                        # add list of rooms
+                        # add list of actors
                         if type(roomsdata) == dict:
                             for actor_name, actor_info in roomsdata.iteritems():
+                                
                                 if city_dic['Name'] == self.cityName:
                                     city_dic['Population'] += 1
                                 else:
@@ -520,7 +521,7 @@ Distance:   %skm to %s.
 
         def actor_update():
             try:
-                self.details.insert('end', self.actor_coor[self.tree.focus()]['Info'])
+                self.details.insert('end', self.actor_coor[self.tree.focus()])
                 if DEBUG: print "UI.update_details.Actor.Done"
             except KeyError as err:
                 pass
