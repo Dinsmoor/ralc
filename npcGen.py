@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#  monGen.py
+#  
+#  Copyright 2016 Tyler Dinsmoor <pappad@airmail.cc>
+#  
 
 import random
 from markovnames import nameGen
@@ -31,6 +38,7 @@ class NPC:
         self.ideals()
         self.bonds()
         self.flaws()
+        self.quest()
         #print self.npcinfo
         self.build_desc()
         self.describe_me()
@@ -50,7 +58,7 @@ class NPC:
                 }
         npc_pronoun = pronouns[npcinfo['gender']]
         self.npcdesc[0] = '''
-By looking at this %s %s %s, %s has %s.
+A %s %s %s, %s has %s.
 %s appears %s, but also seems %s.
             '''%(npc_age,npcinfo['gender'],npcinfo['race'],
             npc_pronoun[1],npcinfo['appearance'],npc_pronoun[1].capitalize(),
@@ -77,7 +85,8 @@ Either through spying, or becoming a good friend, it has become known
 to you that %s is %s.
 You also learn %s is plauged by %s.
         '''%(npcinfo['name'], npcinfo['bond'],npc_pronoun[1], npcinfo['flaw'])
-
+        
+        self.npcdesc[5] = "SIDE-QUEST:\n" + self.npcinfo['quest']
 
     def race(self):
         self.npcinfo['race']= random.choice(('human', 'elf', 'dwarf', 'halfling', 'half-elf', 'half-orc',
@@ -239,3 +248,9 @@ You also learn %s is plauged by %s.
                 'foodlhardy bravery',
                 )
         self.npcinfo['flaw'] = random.choice(flaws)
+        
+    def quest(self):
+        if random.randint(0,4) == 0:
+            import questGen
+            self.npcinfo['quest'] = questGen.Quest(owner=self.npcinfo['name']).quest_desc
+        else: self.npcinfo['quest'] = "No, I have no need of help."

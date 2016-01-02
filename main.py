@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'v0.69'
+RALC_VERSION = 'v0.71'
 DEBUG = True
 try:
     import Tkinter as tk
@@ -444,8 +444,8 @@ Name:   %s
 Type:   %s
 Cost:   %s
 AC: %s
-        ''' % (arm['Name'], arm['Type'],
-               arm['Cost'], arm['AC'])
+        ''' % (arm['name'], arm['type'],
+               arm['cost'], arm['ac'])
         return desc
 
     @staticmethod
@@ -457,8 +457,8 @@ Hit Die:    %s
 Damage Type:    %s
 Weapon Class:   %s
 Weapon Type:    %s
-        ''' % (wep['Name'], wep['Hit Die'], wep['Damage Type'],
-               wep['Weapon Class'], wep['Weapon Type'])
+        ''' % (wep['name'], wep['hit_die'], wep['damage_type'],
+               wep['weapon_class'], wep['weapon_type'])
         return desc
 
     def make_bldg_metadata(self, bldg):

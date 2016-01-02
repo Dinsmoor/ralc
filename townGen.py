@@ -90,6 +90,9 @@ class Settlement(object):
     def getBldgData(self, biome):
         return bldgGen.main('town', biome, self.settings)
 
+    def get_description(self):
+        pass
+
     def getCitySize(self, biome):
         # city size multipliers
         size_mult ={
@@ -253,7 +256,7 @@ class Settlement(object):
         ec_sys = random.choice(political_systems[govt])
         return ec_sys
 
-    def get_description(self):
+    def get_economic_sys(self):
         # Took descriptions from child articles from https://en.wikipedia.org/wiki/Economic_system
         economic_systems = {
             'Anarchist'     :"The system of specialization in the various crafts, which would lead to a man's following the task for which he had the greatest aptitude, and distributing his surplus products to whoever may need them, receiving what he himself needs of other things from the surplus produced by his neighbours, but always on the basis of free distribution, not of exchange.",

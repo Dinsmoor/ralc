@@ -248,7 +248,14 @@ def get_race_bonus(pc_race):
         pc['INT'] += 1
         pc['CHR'] += 2
         pc['Traits'].append('Darkvision')
-        pc['Traits'].append('Hellish Resistance')
+        pc['Traits'].append('Hellish Resistance')#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#  monGen.py
+#  
+#  Copyright 2016 Tyler Dinsmoor <pappad@airmail.cc>
+#  
+
         pc['Traits'].append('Infernal Legacy')
     else:
         sub_races = ''

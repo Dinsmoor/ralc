@@ -40,11 +40,11 @@ def load_weapons():
     #Name,attack roll, damage type, weapon class, weapon type, str req, dex req, int req
     for wep in wepdata: # every list in this list of lists
         weapon_list.append([ {
-            'Name':wep[0],
-            'Hit Die':wep[1],
-            'Damage Type':wep[2],
-            'Weapon Class':wep[3],
-            'Weapon Type':wep[4],
+            'name':wep[0],
+            'hit_die':wep[1],
+            'damage_type':wep[2],
+            'weapon_class':wep[3],
+            'weapon_type':wep[4],
             }])
     return weapon_list
 
@@ -54,10 +54,10 @@ def load_armor():
     #name,type,cost,AC
     for arm in armdata:
         armor_list.append([{
-        'Name':arm[0],
-        'Type':arm[1],
-        'Cost':arm[2],
-        'AC':arm[3],
+        'name':arm[0],
+        'type':arm[1],
+        'cost':arm[2],
+        'ac':arm[3],
         }])
     return armor_list
 
@@ -71,6 +71,12 @@ def rand_weapon():
     weapons = load_weapons() #list
     rnd_wep = random.randint(0,len(weapons)-1)
     for data in weapons[rnd_wep]:
+        return data
+
+def rand_item():
+    itms = load_weapons() + load_armor()
+    rnd_itm = random.randint(0,len(itms)-1)
+    for data in itms[rnd_itm]:
         return data
 
 def main(opt, item):
