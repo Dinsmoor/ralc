@@ -265,15 +265,18 @@ class UI(tk.Frame):
             """
 
             self.details_frame = ttk.Frame(self, borderwidth=2,
-                                           relief="sunken", width=200, height=600)
+                                           relief="sunken", width=300, height=600)
             self.details = tk.Text(self.details_frame, width=50,
                                    height=40, state='disabled')
-            self.print_button = tk.Button(self.details_frame, text="Print",
-                                        padx=70, pady=10, command=self.print_details)
+            self.print_details_button = tk.Button(self.details_frame, text="Print Details",
+                                        padx=10, pady=10, command=self.print_details)
+            self.print_image_button = tk.Button(self.details_frame, text="Print Image",
+                                        padx=10, pady=10, command=self.print_image)
                                         
             self.details_frame.grid(row=0, column=4, sticky='N', pady=5)
             self.details.grid(row=0, column=0)
-            self.print_button.grid(row=1, column=0)
+            self.print_details_button.grid(row=1, column=0, sticky='E')
+            self.print_image_button.grid(row=1, column=0, sticky='W')
 
             if DEBUG: print "UI.make_details_pane.Done"
 
@@ -492,6 +495,14 @@ Distance:   %skm to %s.
         text = self.details.get(1.0,'end')
         lpr = subprocess.Popen("/usr/bin/lpr", stdin=subprocess.PIPE)
         lpr.stdin.write(text)
+    
+    def print_image(self):
+        import subprocess
+        img = self.city_im
+        img.save('tmpimg.png')
+        lpr = subprocess.Popen("/usr/bin/lpr", stdin=subprocess.PIPE)
+        lpr.stdin.write('tmpimg.png')
+        os.remove('tmpimg.png')
 
     def draw_select_ring(self, bbox):
         try:
