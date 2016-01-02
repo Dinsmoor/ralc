@@ -173,6 +173,7 @@ class UI(tk.Frame):
             self.arm_coor = dict()
             self.click_coor = dict()
             self.photo_coor = dict()
+            self.nored_list = list()
 
         if check_dir():
             clear_old_data()
@@ -356,7 +357,6 @@ https://www.gnu.org/licenses/gpl-2.0.html
         # c is to prevent addressing errors with ttk.Treeview's limited number of items,
         # preventing all sorts of wonky issues.
         c = 1
-
         # Simple things first
         for uninhab_dict in self.uninhab:
             uninhab_parent = self.tree.insert('',
@@ -366,6 +366,8 @@ https://www.gnu.org/licenses/gpl-2.0.html
             c += 1
             self.click_coor[uninhab_parent] = uninhab_dict['click_area']
             self.photo_coor[uninhab_parent] = uninhab_dict['Image']
+            self.nored_list.append(uninhab_parent)
+            
 
         for city_dic in self.towns:
 
@@ -497,6 +499,8 @@ Distance:   %skm to %s.
         except AttributeError as err:
             if DEBUG:
                 print err
+        if self.tree.focus() in self.nored_list:
+            return
 
         self.selection_indicator = self.canvas.create_rectangle(
             bbox[0], bbox[1] + 20, bbox[0] + 20, bbox[1],
