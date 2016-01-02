@@ -889,8 +889,8 @@ WEAPON:
 	Hit Die: %s
 	Dam Type:%s
 
-	'''%(item_d['Name'], item_d['Weapon Type'],
-               item_d['Hit Die'], item_d['Damage Type'])
+	'''%(item_d['name'], item_d['weapon_type'],
+               item_d['hit_die'], item_d['damage_type'])
 
     armor_d = itemGen.main('arm', 'rnd')
     armor = '''
@@ -899,8 +899,8 @@ ARMOR:
 	Type:	%s
 	AC:	    %s
 	Cost:	%s
-	'''%(armor_d['Name'], armor_d['Type'],
-               armor_d['AC'], armor_d['Cost'])
+	'''%(armor_d['name'], armor_d['type'],
+               armor_d['ac'], armor_d['cost'])
 
     proficiencies = 'PROFICIENCIES:\n'
     for prof in pc['Prof']:

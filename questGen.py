@@ -21,10 +21,10 @@ def wChoice(wCh):
     assert False, "Shouldn't get here"
 
 class Quest():
-    import npcGen
-    npc = npcGen.NPC()
     def __init__(self, owner="Bob the Builder"):
         self.quest_owner = owner
+        import npcGen
+        self.npc = npcGen.NPC()
         self.quest_type()
         self.get_reward()
         self.quest_description()
