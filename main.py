@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'v0.71'
+RALC_VERSION = 'v0.72'
 DEBUG = True
 try:
     import Tkinter as tk
@@ -66,6 +66,7 @@ class UI(tk.Frame):
         self.arm_coor = dict()
         self.click_coor = dict()
         self.photo_coor = dict()
+        self.nored_list = list()
 
         if DEBUG: print "UI.__init__.Starting"
         self.first_run = True
@@ -104,6 +105,7 @@ class UI(tk.Frame):
         self.arm_coor = dict()
         self.click_coor = dict()
         self.photo_coor = dict()
+        self.nored_list = list()
         
         self.map_dict = mapGen.main('tk', self.settings)
         self.city_im = self.map_dict['landimg']
@@ -234,6 +236,7 @@ class UI(tk.Frame):
 
             self.menubar.add_cascade(label="Tools", menu=self.toolmenu)
             self.toolmenu.add_command(label="Char Sheet", command=self.create_char_sheet_dialog)
+            self.toolmenu.add_command(label="Encounter Gen", command=self.create_encounter_dialog)
 
             self.menubar.add_cascade(label="Info", menu=self.infomenu)
             self.infomenu.add_command(label="About", command=self.create_about_dialog)
@@ -331,6 +334,10 @@ https://www.gnu.org/licenses/gpl-2.0.html
         """
 
         dialogs.CharSheetGen(self)
+    
+    def create_encounter_dialog(self):
+        
+        dialogs.EncounterDialog(self)
 
     def get_photo(self, pil_im=None):
 
@@ -351,6 +358,29 @@ https://www.gnu.org/licenses/gpl-2.0.html
         self.canvas.create_image(301, 301, state='normal', image=self.img)
         self.canvas.bind('<Button>', self.click_map_select)
         if DEBUG: print 'UI.get_photo.Done'
+
+    def parse_party(self, unitext=""):
+        d = dict()
+        strtext = str(unitext)
+        try:
+            lines = strtext.split('\n')
+            lines = filter(None, lines)
+            for line in lines:
+                if not line.startswith("#"):
+                    (key, val) = line.split(':')
+                    val = int(val.strip())
+                    if val not in range(1,20):
+                        tkMessageBox.showerror(title="Level Error",
+                            message="Character %s level out of range"%key)
+                        continue
+                    d[key] = val
+            self.settings['party'] = d
+            print d
+        except Exception as e:
+            print e
+            tkMessageBox.showerror(title="Parse Error",
+                message="Party parse error. Check format?\n%s"%e)
+        
 
     def fill_tree(self):
 

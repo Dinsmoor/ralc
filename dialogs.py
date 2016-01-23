@@ -197,20 +197,22 @@ class SettingsMenu(Dialog):
         self.settings_tabs = ttk.Notebook(self)
         self.settings_tabs.grid()
 
-        self.main_page = tk.Frame(self)
+        self.party_page = tk.Frame(self)
         self.map_page = tk.Frame(self)
         self.town_page = tk.Frame(self)
         self.char_page = tk.Frame(self)
 
-        self.settings_tabs.add(self.main_page,text="Main")
+        self.settings_tabs.add(self.party_page,text="Party")
         self.settings_tabs.add(self.map_page,text="Map")
         self.settings_tabs.add(self.town_page,text="Towns")
         self.settings_tabs.add(self.char_page,text="Chars")
 
-        def make_main_page():
-            self.use_img = tk.BooleanVar()
-            ttk.Checkbutton(self.main_page, variable=self.use_img,
-                text="Future option").grid()
+        def make_party_page():
+            tk.Label(self.party_page, text="List your party members here").grid(row=0)
+            self.partydesc = tk.Text(self.party_page, width=28, height=10)
+            self.partydesc.grid(row=1)
+            for char, lvl in self.parent.settings['party'].iteritems():
+                self.partydesc.insert('end',"%s:%d\n"%(char, lvl))
 
         def make_map_page():
             biomes = ('Random','Marsh','Plains',
@@ -243,7 +245,7 @@ class SettingsMenu(Dialog):
                 orient='horizontal', from_=1, to=20)
             self.level_scale.grid(row=0, column=1)
 
-        make_main_page()
+        make_party_page()
         make_map_page()
         make_town_page()
         make_char_page()
@@ -259,6 +261,7 @@ class SettingsMenu(Dialog):
         self.parent.settings['town']['affluence'] = self.affluence_scale.get()
         # Char Apply
         self.parent.settings['char']['Level'] = self.level_scale.get()
+        self.parent.parse_party(self.partydesc.get(1.0, 'end'))
 
 class LoadDialog(Dialog):
 
@@ -307,3 +310,21 @@ class LoadDialog(Dialog):
             tkMessageBox.showerror(
             "Error",err)
 
+class MonsterDialog(Dialog):
+
+    def body(self, master):
+        pass
+
+class EncounterDialog(Dialog):
+    
+    def body(self, master):
+        types = ('humanoid','monstrosity','beast','undead','construct','fiend','plant')
+        self.title('Encounter Generator')
+        self.type_listbox = tk.Listbox(master, selectmode='multiple')
+        for t in types:
+            self.type_listbox.insert('end', t)
+        tk.Label(master, text="Select Monster Type").grid(row=0)
+        self.type_listbox.grid(row=1)
+        
+    def apply(self):
+        pass
