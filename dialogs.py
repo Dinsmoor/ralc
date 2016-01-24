@@ -318,13 +318,46 @@ class MonsterDialog(Dialog):
 class EncounterDialog(Dialog):
     
     def body(self, master):
-        types = ('humanoid','monstrosity','beast','undead','construct','fiend','plant')
-        self.title('Encounter Generator')
-        self.type_listbox = tk.Listbox(master, selectmode='multiple')
-        for t in types:
-            self.type_listbox.insert('end', t)
-        tk.Label(master, text="Select Monster Type").grid(row=0)
-        self.type_listbox.grid(row=1)
+        self.encounter_tabs = ttk.Notebook(self)
+        self.encounter_tabs.grid()
+
+        self.details_page = tk.Frame(self)
+        self.output_page = tk.Frame(self)
         
+        self.encounter_tabs.add(self.details_page,text="Settings")
+        self.encounter_tabs.add(self.output_page,text="Output")
+        
+        def make_details_page():
+            
+            types = ('humanoid','monstrosity','beast','undead','construct','fiend','plant')
+            self.title('Encounter Generator')
+            self.type_listbox = tk.Listbox(self.details_page, selectmode='single')
+            for t in types:
+                self.type_listbox.insert('end', t)
+            tk.Label(self.details_page, text="Select Monster Type").grid(row=0)
+            self.type_listbox.grid(row=1)
+        
+        def make_output_page():
+            
+            self.tbox = tk.Text(self.output_page, width=28, height=10)
+            self.tbox.grid()
+            
+        make_details_page()
+        make_output_page()
+        
+    def ok(self, event=None):
+        '''
+        Need to replace stock ok() because I don't want it to exit
+        immediately after creating a new sheet.
+        '''
+
+        self.apply()
+    
     def apply(self):
-        pass
+        import monGen
+        selected = self.type_listbox.curselection()
+        montype = str(self.type_listbox.get(selected))
+        
+        mon = monGen.Encounter(self.parent, montype=montype)
+        self.tbox.delete(1.0, 'end')
+        self.tbox.insert('end', str(mon.mondesc))

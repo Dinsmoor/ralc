@@ -9,16 +9,19 @@
 import random
 import csv
 
-# 'chars' example data
-exmp_party = [{'name':'Bobby', 'lvl':5}, {'name':'Billy', 'lvl':5}, {'name':'Bo', 'lvl':5}]
 
 class Encounter:
-    def __init__(self, chars=exmp_party):
-        self.party = chars
-        
-        self.encounter_build()
+    def __init__(self, parent, montype='humanoid'):
+        self.party = parent.settings['party']
+        self.montype = montype
 
-    def get_xp_threshold(self, diff=0):
+        mons, mons_xp, xp_thresh = self.encounter_build()
+        
+        self.mondesc = "%d/%d\nNAME | XP\n"%(mons_xp, xp_thresh)
+        for m in mons:
+            self.mondesc += m['name'] + m['xp'] + "\n"
+        
+    def get_xp_threshold(self, diff=1):
         lvl_diff = {
             #lvl: easy, medium, hard, deadly
             1:((25),(50),(75),(100)),
@@ -42,30 +45,32 @@ class Encounter:
             19:((2400),(4900),(7300),(10900)),
             20:((2800),(5700),(8500),(10700)),
                     }
-        
+
         xp_total = 0
         cha_total = 0
-        
-        for cha in self.party:
-            xp_total += lvl_diff[cha['lvl']][diff]
+
+        for cha,lvl in self.party.iteritems():
+            xp_total += lvl_diff[lvl][diff]
             cha_total += 1
-        
-        
+
+
         return xp_total
 
     def encounter_mult(self, mon_count, party_count):
-        mon_mults = {
-            (1):1,
-            (2):1.5,
-            (3,4,5,6):2,
-            (7,8,9,10):2.5,
-            (11,12,13,14):3
-                    }
-        for k,v in mon_mults.iteritems():
-            if mon_count >= 15:
-                mon_mult = 4
-            elif mon_count in k:
-                mon_mult = v
+        mon_mults = dict()
+        mon_mults[1] = 1
+        mon_mults[2] = 1.5
+        for i in range(3,7):
+            mon_mults[i] = 2
+        for i in range(7,11):
+            mon_mults[i] = 2.5
+        for i in range(11,15):
+            mon_mults[i] = 3
+
+        if mon_count >= 15:
+            mon_mult = 4
+        else:
+            mon_mult = mon_mults[mon_count]
         multlist = [0.5,1,1.5,2,2.5,3,4,5]
 
         mon_mult_pos = multlist.index(mon_mult)
@@ -73,33 +78,56 @@ class Encounter:
             return multlist[mon_mult_pos-1]
         elif party_count >= 6:
             return multlist[mon_mult_pos+1]
-    
-    def type_select(self):
-        types = ('humanoid','monstrosity','beast','undead','construct','fiend','plant')
-    
+        else:
+            return multlist[mon_mult_pos]
+
     def encounter_build(self):
-        xp_thresh = self.get_xp_threshold(2)
+        xp_thresh = self.get_xp_threshold(3)
         mons = []
         mons_xp = 0
+
+        monlist = Monster().monlist
+        #self.montype = random.choice(('humanoid','monstrosity','beast','undead','construct','fiend','plant'))
         
-        while mons_xp <= xp_thresh - (xp_thresh*0.1):
-            cur_mon = Monster().mon
-            mon_xp = int(cur_mon['xp'].replace(',',''))
-            if (mon_xp < xp_thresh) and (mons_xp+mon_xp < xp_thresh):
-                
-                mons.append(cur_mon)
-                mons_xp += mon_xp
+        futility_counter = 0
+        while mons_xp <= xp_thresh - (xp_thresh*0.25):
+            cur_mon = random.choice(monlist)
+            if self.montype not in cur_mon['type']:
+                continue
+            futility_counter += 1
+            if futility_counter > 2000:
+                break
+            mons.append(cur_mon)
+
+            def recalc_xp():
+                mons_xp = 0
+                for mon in mons:
+                    mons_xp += int(mon['xp'].replace(',',''))
+                mons_xp_mod = self.encounter_mult(len(mons), len(self.party))
+                mons_xp = mons_xp_mod * mons_xp
+                return mons_xp
+            mons_xp = recalc_xp()
+
+            if mons_xp >= ((xp_thresh) + (xp_thresh*0.1)):
+                try:
+                    #print "REMVOING",mons[-1]['name']
+                    del mons[-1]
+                except KeyError:
+                    pass
+                if mons == []:
+                    mons_xp = 0
+                    continue
+                mons_xp = recalc_xp()
+
+        print mons_xp,"/", xp_thresh
         
-        print mons_xp, xp_thresh
-        
-        for mon in mons:
-            print mon['name'], mon['xp'], mon['type'].lower()
-            
+        return mons, mons_xp, xp_thresh
+
 class Monster:
     monlist = list()
     def __init__(self):
         self.build_monlist()
-        self.mon =self.rand_mon()
+        self.mon = random.choice(self.monlist)
         self.mon_desc = self.desc_mon(self.mon)
 
     def build_monlist(self):
@@ -110,18 +138,8 @@ class Monster:
                 #speed;str;dex;con;int;wis;cha;save_throws;skills;
                 #dam_resist;dam_immune;cond_immune;senses;language;
                 #challenge;xp;none;actions;leg_actions;abilities
-                self.monlist.append(row['name'])
-                #print row[0],row[26]
+                self.monlist.append(row)
             f.close()
-
-    def rand_mon(self):
-        mon = random.choice(self.monlist)
-        with open('data/monsters.csv', 'rb') as f:
-            monreader = csv.DictReader(f, delimiter=';')
-            for row in monreader:
-                if row['name'] == mon:
-                    return row
-        f.close()
 
     def desc_mon(self, mr):
         mondesc = """
@@ -154,5 +172,3 @@ Abilities:%s
     mr['cond_immune'],mr['senses'],mr['language'],mr['actions'].replace('<br>','\n'),
     mr['leg_actions'].replace('<br>','\n'),mr['abilities'].replace('<br>','\n'))
         return mondesc
-
-Encounter()
