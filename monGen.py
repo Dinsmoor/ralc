@@ -16,7 +16,7 @@ class Encounter:
         self.montype = montype
 
         mons, mons_xp, xp_thresh = self.encounter_build()
-        
+        self.mons = mons
         self.mondesc = "%d/%d\nNAME | XP\n"%(mons_xp, xp_thresh)
         for m in mons:
             self.mondesc += m['name'] + m['xp'] + "\n"
@@ -87,7 +87,6 @@ class Encounter:
         mons_xp = 0
 
         monlist = Monster().monlist
-        #self.montype = random.choice(('humanoid','monstrosity','beast','undead','construct','fiend','plant'))
         
         futility_counter = 0
         while mons_xp <= xp_thresh - (xp_thresh*0.25):
@@ -110,7 +109,6 @@ class Encounter:
 
             if mons_xp >= ((xp_thresh) + (xp_thresh*0.1)):
                 try:
-                    #print "REMVOING",mons[-1]['name']
                     del mons[-1]
                 except KeyError:
                     pass
@@ -118,8 +116,6 @@ class Encounter:
                     mons_xp = 0
                     continue
                 mons_xp = recalc_xp()
-
-        print mons_xp,"/", xp_thresh
         
         return mons, mons_xp, xp_thresh
 
@@ -128,7 +124,6 @@ class Monster:
     def __init__(self):
         self.build_monlist()
         self.mon = random.choice(self.monlist)
-        self.mon_desc = self.desc_mon(self.mon)
 
     def build_monlist(self):
         with open('data/monsters.csv', 'rb') as f:
@@ -138,6 +133,7 @@ class Monster:
                 #speed;str;dex;con;int;wis;cha;save_throws;skills;
                 #dam_resist;dam_immune;cond_immune;senses;language;
                 #challenge;xp;none;actions;leg_actions;abilities
+                row['desc'] = self.desc_mon(row)
                 self.monlist.append(row)
             f.close()
 

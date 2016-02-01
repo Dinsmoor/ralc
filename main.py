@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #
 #
-RALC_VERSION = 'v0.72'
+RALC_VERSION = 'v0.73'
 DEBUG = True
 try:
     import Tkinter as tk
@@ -59,7 +59,13 @@ class UI(tk.Frame):
         self.settings = self.init_settings()
         self.image_frame = tk.Frame(self)
         self.master.title('RALC %s' % RALC_VERSION)
-
+        
+        # experemental resizing support
+        #self.master.columnconfigure(0, weight=1)
+        #self.master.rowconfigure(0, weight=0)
+        #self.master.rowconfigure(1, weight=1)
+        #self.master.rowconfigure(2, weight=1)
+        
         self.actor_coor = dict()
         self.town_coor = dict()
         self.wep_coor = dict()
@@ -295,7 +301,6 @@ RALC %s
 
 Authored by:
 Tyler Dinsmoor - (pappad@airmail.cc)
-Madii Salazar - (madison.m.salazar@gmail.com)
 
 Source:
 https://github.com/Dinsmoor/ralc
@@ -338,6 +343,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
     def create_encounter_dialog(self):
         
         dialogs.EncounterDialog(self)
+        print "Ok me now"
 
     def get_photo(self, pil_im=None):
 
@@ -375,7 +381,6 @@ https://www.gnu.org/licenses/gpl-2.0.html
                         continue
                     d[key] = val
             self.settings['party'] = d
-            print d
         except Exception as e:
             print e
             tkMessageBox.showerror(title="Parse Error",

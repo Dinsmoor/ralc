@@ -13,6 +13,7 @@ import ttk
 import tkMessageBox
 import os
 import charGen
+import random
 
 class Dialog(tk.Toplevel):
 
@@ -48,7 +49,7 @@ class Dialog(tk.Toplevel):
         w = tk.Button(box, text="Cancel", width=10, command=self.cancel)
         w.grid(row=0,column=1, padx=5, pady=5)
 
-        self.bind("<Return>", self.ok)
+        #self.bind("<Return>", self.ok)
         self.bind("<Escape>", self.cancel)
 
         box.grid(row=2)
@@ -310,41 +311,48 @@ class LoadDialog(Dialog):
             tkMessageBox.showerror(
             "Error",err)
 
-class MonsterDialog(Dialog):
-
-    def body(self, master):
-        pass
-
 class EncounterDialog(Dialog):
     
     def body(self, master):
-        self.encounter_tabs = ttk.Notebook(self)
-        self.encounter_tabs.grid()
+        self.master = master
+        self.title('Encounter Generator')
+        
+        self.encounter_tabs = ttk.Notebook(self, height=300, width=650)
+        self.encounter_tabs.grid(row=2, columnspan=2,sticky="w")
 
-        self.details_page = tk.Frame(self)
-        self.output_page = tk.Frame(self)
+        self.details_page = tk.Frame(self, height=300, width=650)
         
         self.encounter_tabs.add(self.details_page,text="Settings")
-        self.encounter_tabs.add(self.output_page,text="Output")
         
         def make_details_page():
             
             types = ('humanoid','monstrosity','beast','undead','construct','fiend','plant')
-            self.title('Encounter Generator')
-            self.type_listbox = tk.Listbox(self.details_page, selectmode='single')
-            for t in types:
-                self.type_listbox.insert('end', t)
-            tk.Label(self.details_page, text="Select Monster Type").grid(row=0)
-            self.type_listbox.grid(row=1)
-        
-        def make_output_page():
+            self.v = tk.StringVar()
+            try:
+                self.v.set(self.montypesave)
+            except AttributeError:
+                self.v.set(types[random.randint(0,len(types)-1)])
             
-            self.tbox = tk.Text(self.output_page, width=28, height=10)
-            self.tbox.grid()
+            for t in types:
+                self.om = tk.OptionMenu(self, self.v, *types)
+            tk.Label(self.details_page, text="Select Monster Type").grid(row=0)
+            self.om.grid(row=0, column=0)
             
         make_details_page()
-        make_output_page()
-        
+
+    def buttonbox(self):
+        box = tk.Frame(self)
+
+        w = tk.Button(box, text="OK", width=10, command=self.ok, default='active')
+        w.grid(row=0,column=0, padx=5, pady=5)
+        w = tk.Button(box, text="Cancel", width=10, command=self.cancel)
+        w.grid(row=0,column=1, padx=5, pady=5)
+
+        #self.bind("<Return>", self.ok)
+        self.bind("<Escape>", self.cancel)
+
+        box.grid(row=0, column=1)
+
     def ok(self, event=None):
         '''
         Need to replace stock ok() because I don't want it to exit
@@ -352,12 +360,29 @@ class EncounterDialog(Dialog):
         '''
 
         self.apply()
-    
+
     def apply(self):
         import monGen
-        selected = self.type_listbox.curselection()
-        montype = str(self.type_listbox.get(selected))
+        montype = self.v.get()
+        try:
+            self.encounter_tabs.forget(self.details_page)
+            enc = monGen.Encounter(self.parent, montype=montype)
+            for mon in enc.mons:
+                self.new_page = tk.Frame(self, height=300, width=650)
+                self.encounter_tabs.add(self.new_page, text=mon['name'])
+                m = tk.Message(self.new_page)
+                txt = tk.Text(self.new_page, wrap='word', background=m.cget("background"), relief="flat",
+                    borderwidth=0, font=m.cget("font"))
+                txt.grid()
+                m.destroy()
+                txt.insert('end', mon['desc'])
+                txt.insert('end', "\n")
+        except Exception as e:
+            print e
+            self.montypesave = self.v.get()
+            self.encounter_tabs.destroy()
+            self.om.destroy()
+            self.buttonbox()
+            self.body(self.master)
+            
         
-        mon = monGen.Encounter(self.parent, montype=montype)
-        self.tbox.delete(1.0, 'end')
-        self.tbox.insert('end', str(mon.mondesc))
