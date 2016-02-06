@@ -1,6 +1,6 @@
 [submodule "ralc-markov-fantasy-names"]
 	path = markovnames
-	url = https://github.com/Dinsmoor/ralc-markov-fantasy-names
+	url = https://neetco.de/pappad/ralc-markov-fantasy-names
 [submodule "roguelike-dungeon-generator"]
 	path = dungeongenerator
-	url = https://github.com/Dinsmoor/roguelike-dungeon-generator
+	url = https://neetco.de/pappad/roguelike-dungeon-generator

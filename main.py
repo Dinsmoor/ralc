@@ -343,7 +343,6 @@ https://www.gnu.org/licenses/gpl-2.0.html
     def create_encounter_dialog(self):
         
         dialogs.EncounterDialog(self)
-        print "Ok me now"
 
     def get_photo(self, pil_im=None):
 

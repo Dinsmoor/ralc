@@ -318,7 +318,7 @@ class EncounterDialog(Dialog):
         self.title('Encounter Generator')
         
         self.encounter_tabs = ttk.Notebook(self, height=300, width=650)
-        self.encounter_tabs.grid(row=2, columnspan=2,sticky="w")
+        self.encounter_tabs.grid(row=2, columnspan=4,sticky="w")
 
         self.details_page = tk.Frame(self, height=300, width=650)
         
@@ -336,9 +336,22 @@ class EncounterDialog(Dialog):
             for t in types:
                 self.om = tk.OptionMenu(self, self.v, *types)
             tk.Label(self.details_page, text="Select Monster Type").grid(row=0)
+            
+            self.diff_choice = tk.StringVar()
+            self.diff_om = tk.OptionMenu(self, self.diff_choice, "Random", "Easy", "Medium", "Hard", "Deadly")
+            
+            self.xplabel = tk.Label(self, fg="green")
+            
+            try:
+                self.diff_choice.set(self.encdiffsave)
+            except AttributeError:
+                self.diff_choice.set("Random")
             self.om.grid(row=0, column=0)
+            self.diff_om.grid(row=0, column=1)
+            self.xplabel.grid(row=0, column=2)
             
         make_details_page()
+        self.apply()
 
     def buttonbox(self):
         box = tk.Frame(self)
@@ -351,7 +364,7 @@ class EncounterDialog(Dialog):
         #self.bind("<Return>", self.ok)
         self.bind("<Escape>", self.cancel)
 
-        box.grid(row=0, column=1)
+        box.grid(row=0, column=3)
 
     def ok(self, event=None):
         '''
@@ -364,9 +377,18 @@ class EncounterDialog(Dialog):
     def apply(self):
         import monGen
         montype = self.v.get()
+        diffs = {
+            'Random':random.randint(0,3),
+            'Easy':0,
+            'Medium':1,
+            'Hard':2,
+            'Deadly':3,
+            }
+        diff = diffs[self.diff_choice.get()]
         try:
             self.encounter_tabs.forget(self.details_page)
-            enc = monGen.Encounter(self.parent, montype=montype)
+            enc = monGen.Encounter(self.parent, montype=montype, diff=diff)
+            self.xplabel.config(text=str(enc.mons_xp))
             for mon in enc.mons:
                 self.new_page = tk.Frame(self, height=300, width=650)
                 self.encounter_tabs.add(self.new_page, text=mon['name'])
@@ -380,8 +402,10 @@ class EncounterDialog(Dialog):
         except Exception as e:
             print e
             self.montypesave = self.v.get()
+            self.encdiffsave = self.diff_choice.get()
             self.encounter_tabs.destroy()
             self.om.destroy()
+            self.diff_om.destroy()
             self.buttonbox()
             self.body(self.master)
             

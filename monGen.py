@@ -11,12 +11,14 @@ import csv
 
 
 class Encounter:
-    def __init__(self, parent, montype='humanoid'):
+    def __init__(self, parent, montype='humanoid', diff=1):
         self.party = parent.settings['party']
         self.montype = montype
+        self.diff = diff
 
         mons, mons_xp, xp_thresh = self.encounter_build()
         self.mons = mons
+        self.mons_xp = mons_xp
         self.mondesc = "%d/%d\nNAME | XP\n"%(mons_xp, xp_thresh)
         for m in mons:
             self.mondesc += m['name'] + m['xp'] + "\n"
@@ -82,7 +84,7 @@ class Encounter:
             return multlist[mon_mult_pos]
 
     def encounter_build(self):
-        xp_thresh = self.get_xp_threshold(3)
+        xp_thresh = self.get_xp_threshold(self.diff)
         mons = []
         mons_xp = 0
 
