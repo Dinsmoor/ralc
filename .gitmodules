@@ -1,6 +1,0 @@
-[submodule "ralc-markov-fantasy-names"]
-	path = markovnames
-	url = https://neetco.de/pappad/ralc-markov-fantasy-names
-[submodule "roguelike-dungeon-generator"]
-	path = dungeongenerator
-	url = https://neetco.de/pappad/roguelike-dungeon-generator
