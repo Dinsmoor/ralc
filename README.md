@@ -1,3 +1,16 @@
+TL;DR: ralc is no longer hosted on GitHub. Find it on GitLab!
+
+For some time now, GitHub has been abandoning its culture of sharing based on the principles of openness, meritocracy and equality for all contributors, regardless of race and gender; all aparently due to pressure from political groups.
+
+Hearing about the internal restructuring over at GitHub was the final nail in the coffin that pushed me to accept that GitHub has lost track of the values that made it grow.
+
+So with that, I (@pappad) will stop using GitHub for all my projects and will no longer recommend it for people looking to host theirs.
+
+I will now use GitLab for hosting git repos and my profile can be found on gitlab.
+
+So long GitHub, and thanks for all the git!
+
+
 Prog V: 0.70b;
 Doc  V: 0.70
 
